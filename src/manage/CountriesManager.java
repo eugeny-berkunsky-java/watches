@@ -1,6 +1,7 @@
 package manage;
 
 import model.Country;
+import model.CountryDAO;
 import model.Customer;
 
 import java.util.ArrayList;
@@ -9,18 +10,14 @@ import java.util.Collections;
 import java.util.List;
 
 public class CountriesManager {
-    private List<Country> countries = new ArrayList<>(
-            Arrays.asList(
-                    new Country(1, "Ukraine"),
-                    new Country(2, "USA"),
-                    new Country(3, "China"),
-                    new Country(4, "Switzerland")
-            )
-    );
+private List<Country> countries;
+private CountryDAO countryDAO;
 
+    public CountriesManager() {
+       countryDAO=new CountryDAO();
+       countries=countryDAO.generateCountries();
 
-
-
+    }
    public void showCountries() {
         System.out.println("-------- Countries --------------");
         for (Country country : countries) {
@@ -28,6 +25,10 @@ public class CountriesManager {
         }
         System.out.println("----------------------------------");
     }
+    public void addCountry(Country country){
+    countries.add(country);
+    }
 
 
 }
+
