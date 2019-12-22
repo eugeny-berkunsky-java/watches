@@ -1,15 +1,18 @@
 package main;
 
 import manage.CountriesManager;
+import manage.CustomerManager;
 import ui.Menu;
 
 import static ui.Menu.COUNTRIES;
+import static ui.Menu.CUSTOMERS;
 import static ui.Menu.VENDORS;
 
 public class Main {
 
     private Menu menu = new Menu();
     private CountriesManager cm = new CountriesManager();
+    private CustomerManager customerManager = new CustomerManager();
 
     public static void main(String[] args) {
         new Main().run();
@@ -25,6 +28,9 @@ public class Main {
                 case VENDORS:
                     showVendors();
                     break;
+                case CUSTOMERS:
+               customerManager.showCustomers();
+                    break;
             }
         }
     }
@@ -32,5 +38,6 @@ public class Main {
     private void showVendors() {
 
     }
+
 
 }
