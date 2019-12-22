@@ -2,11 +2,7 @@ package manage;
 
 import model.Country;
 import model.CountryDAO;
-import model.Customer;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class CountriesManager {

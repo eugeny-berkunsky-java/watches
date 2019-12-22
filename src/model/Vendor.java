@@ -24,4 +24,12 @@ public class Vendor {
     public void setCountry(Country country) {
         this.country = country;
     }
+
+    @Override
+    public String toString() {
+        return "Vendor{" +
+                "vendorName='" + vendorName + '\'' +
+                ", country=" + country +
+                '}';
+    }
 }
