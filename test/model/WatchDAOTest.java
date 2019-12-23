@@ -22,7 +22,7 @@ class WatchDAOTest {
         assertEquals(0, dao.getAll().size());
 
         dao.generateWatches();
-        assertEquals(6, dao.getAll().size());
+        assertEquals(7, dao.getAll().size());
     }
 
     @Test
