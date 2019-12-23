@@ -6,7 +6,6 @@ import model.Watch;
 import model.WatchDAO;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -71,8 +70,7 @@ public class WatchManager {
         BigDecimal result = BigDecimal.ZERO;
 
         for (Watch watch : watches) {
-            result = result.add(watch.getPrice().multiply(new BigDecimal(watch.getQuantity(),
-                    new MathContext(2))));
+            result = result.add(watch.getPrice().multiply(new BigDecimal(watch.getQuantity())));
         }
 
         return result;

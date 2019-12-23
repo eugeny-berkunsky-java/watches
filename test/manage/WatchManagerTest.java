@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.Comparator;
 import java.util.List;
 
@@ -33,19 +32,19 @@ class WatchManagerTest {
     void getByTypeAndPriceNotGreaterThan() {
         assertEquals(0, manager.getByTypeAndPriceNotGreaterThan(
                 Watch.WatchType.ANALOGUE,
-                new BigDecimal("10.00", new MathContext(2))).size());
+                new BigDecimal("10.00")).size());
 
         assertEquals(2, manager.getByTypeAndPriceNotGreaterThan(
                 Watch.WatchType.ANALOGUE,
-                new BigDecimal("100.00", new MathContext(2))).size());
+                new BigDecimal("100.00")).size());
 
         assertEquals(2, manager.getByTypeAndPriceNotGreaterThan(
                 Watch.WatchType.ANALOGUE,
-                new BigDecimal("500.00", new MathContext(2))).size());
+                new BigDecimal("500.00")).size());
 
         assertEquals(3, manager.getByTypeAndPriceNotGreaterThan(
                 Watch.WatchType.ANALOGUE,
-                new BigDecimal("1000.00", new MathContext(2))).size());
+                new BigDecimal("1000.00")).size());
 
         assertEquals(0, manager.getByTypeAndPriceNotGreaterThan(null, null).size());
     }
@@ -63,17 +62,14 @@ class WatchManagerTest {
 
     @Test
     void getVendorByTotalSumNotGreaterThan() {
-        assertEquals(0, manager.getVendorByTotalSumNotGreaterThan(new BigDecimal("1000.00",
-                new MathContext(2))).size());
+        assertEquals(0, manager.getVendorByTotalSumNotGreaterThan(new BigDecimal("1000.00")).size());
 
-        List<Vendor> vendors = manager.getVendorByTotalSumNotGreaterThan(new BigDecimal("2300.00",
-                new MathContext(2)));
+        List<Vendor> vendors = manager.getVendorByTotalSumNotGreaterThan(new BigDecimal("2300.00"));
         assertEquals(1, vendors.size());
         assertEquals("Cartier", vendors.get(0).getVendorName());
 
         //
-        vendors = manager.getVendorByTotalSumNotGreaterThan(new BigDecimal("2500.00",
-                new MathContext(2)));
+        vendors = manager.getVendorByTotalSumNotGreaterThan(new BigDecimal("2500.00"));
         assertEquals(2, vendors.size());
 
         vendors.sort(Comparator.comparing(Vendor::getVendorName));
@@ -81,8 +77,7 @@ class WatchManagerTest {
         assertEquals("Cartier", vendors.get(1).getVendorName());
 
         //
-        vendors = manager.getVendorByTotalSumNotGreaterThan(new BigDecimal("20000.00",
-                new MathContext(2)));
+        vendors = manager.getVendorByTotalSumNotGreaterThan(new BigDecimal("20000.00"));
         assertEquals(3, vendors.size());
 
         vendors.sort(Comparator.comparing(Vendor::getVendorName));
