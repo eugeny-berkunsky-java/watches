@@ -1,27 +1,25 @@
 package manage;
 
-import model.Country;
 import model.Vendor;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import model.VendorDAO;
 
 public class VendorManager {
-    private List<Vendor> vendors = new ArrayList<>(
-            Arrays.asList(
-                    new Vendor("Cartier", new Country(1, "Italy")),
-                    new Vendor("Bell & Ross", new Country(2, "France")),
-                    new Vendor("Bremont", new Country(3, "UK")),
-                    new Vendor("Beijing Watch Factory", new Country(4, "China"))));
+    private VendorDAO dao;
+
+    public VendorManager() {
+        dao = new VendorDAO();
+        dao.generateVendors();
+    }
 
     public void showVendors() {
         System.out.println("------------------------Vendors-----------------------");
-        for (Vendor vendor : vendors) {
-            System.out.format("name: %s [%s]%n", vendor.getVendorName(),
-                    vendor.getCountry().getName());
-        }
+        dao.getAll().stream().map(this::vendorView).forEach(System.out::println);
         System.out.println("------------------------------------------------------");
+    }
+
+    private String vendorView(Vendor vendor) {
+        return vendor == null ? "" : String.format("name: %s [%s]",
+                vendor.getVendorName(), vendor.getCountry().getName());
     }
 }
 

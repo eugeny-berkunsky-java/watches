@@ -34,7 +34,7 @@ public class WatchDAO {
         add(new Watch("Model 6", DIGITAL, new BigDecimal("100.00"), 10, vendor3));
     }
 
-    public void load() {
+    public void load(VendorDAO vendorDAO) {
         throw new NotImplementedException();
     }
 
