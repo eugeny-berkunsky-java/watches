@@ -3,6 +3,8 @@ package manage;
 import model.Order;
 import model.OrderDAO;
 
+import java.time.format.DateTimeFormatter;
+
 public class OrderManager {
     private OrderDAO dao;
 
@@ -18,7 +20,8 @@ public class OrderManager {
     }
 
     private String orderView(Order order) {
-        return String.format("%d - %s - %s - %.02f", order.getId(), order.getDate(),
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
+        return String.format("%d - %s - %s - %.02f", order.getId(), order.getDate().format(formatter),
                 order.getCustomer().getName(), order.getTotalPrice());
     }
 }
