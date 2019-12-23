@@ -3,18 +3,19 @@ package main;
 import manage.CountriesManager;
 import manage.CustomerManager;
 import manage.VendorManager;
+import manage.WatchManager;
 import ui.Menu;
 
-import static ui.Menu.COUNTRIES;
-import static ui.Menu.CUSTOMERS;
-import static ui.Menu.VENDORS;
+import static ui.Menu.*;
 
 public class Main {
 
     private Menu menu = new Menu();
     private CountriesManager cm = new CountriesManager();
     private CustomerManager customerManager = new CustomerManager();
-private VendorManager vendorManager = new VendorManager();
+    private VendorManager vendorManager = new VendorManager();
+    private WatchManager watchManager = new WatchManager();
+
     public static void main(String[] args) {
         new Main().run();
     }
@@ -23,19 +24,25 @@ private VendorManager vendorManager = new VendorManager();
         int selection;
         while ((selection = menu.menu()) != 0) {
             switch (selection) {
-                case COUNTRIES:
+                case COUNTRIES: {
                     cm.showCountries();
                     break;
-                case VENDORS:
+                }
+                case VENDORS: {
                     vendorManager.showVendors();
                     break;
-                case CUSTOMERS:
-               customerManager.showCustomers();
+                }
+                case CUSTOMERS: {
+                    customerManager.showCustomers();
                     break;
+                }
+                case WATCHES: {
+                    watchManager.showWatches();
+                    break;
+                }
             }
         }
     }
-
 
 
 }
