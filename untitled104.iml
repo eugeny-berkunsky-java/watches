@@ -24,6 +24,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="org.postgresql:postgresql:42.0.0.jre7" level="project" />
+    <orderEntry type="library" name="org.postgresql:postgresql:42.2.9" level="project" />
   </component>
 </module>

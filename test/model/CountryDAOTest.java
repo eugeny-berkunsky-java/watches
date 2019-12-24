@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,46 +19,51 @@ class CountryDAOTest {
 
     @Test
     void getAll() {
-        assertEquals(4, dao.getAll().size());
-
-        List<Country> countries = dao.getAll();
-        countries.add(new Country(5, "test country"));
-        assertEquals(4, dao.getAll().size());
+        assertNotNull(dao.getAll());
     }
 
     @Test
     void getById() {
-        assertEquals(1, dao.getById(1).getId());
+        assertNotNull(dao.getById(1));
         assertNull(dao.getById(-1));
     }
 
     @Test
     void create() {
+        UUID uuid = UUID.randomUUID();
+        Country country = dao.create(uuid.toString());
+        assertEquals(uuid.toString(), country.getName());
+        System.out.println(country);
+    }
 
-        Country country = dao.create("test country");
-        assertEquals(5, dao.getAll().size());
-        assertEquals(5, country.getId());
+    @Test
+    void update() {
+        final List<Country> list = dao.getAll();
+        assertTrue(list.size() > 0);
 
-        //
-        assertNull(dao.create(null));
-        assertNull(dao.create(""));
-        assertNull(dao.create("  "));
+        Country country = list.get(list.size() - 1);
+        final UUID uuid = UUID.randomUUID();
+        assertNotEquals(uuid.toString(), country.getName());
 
-        //
-        Country country1 = dao.create("Italy");
-        assertNotNull(country1);
-        assertEquals(1, country1.getId());
+        country.setName(uuid.toString());
+        assertTrue(dao.update(country));
+
+        final Country updatedCountry = dao.getById(country.getId());
+        assertEquals(country.getName(), updatedCountry.getName());
     }
 
     @Test
     void delete() {
-        assertEquals(4, dao.getAll().size());
+        final List<Country> list = dao.getAll();
+        assertTrue(list.size() > 0);
 
-        dao.delete(new Country(-1, ""));
-        assertEquals(4, dao.getAll().size());
+        Country country = list.get(list.size() - 1);
 
-        Country country = dao.getById(1);
-        dao.delete(country);
-        assertEquals(3, dao.getAll().size());
+        assertTrue(dao.delete(country.getId()));
+
+        final List<Country> updatedList = dao.getAll();
+        assertTrue(updatedList.size() < list.size());
+        assertNull(dao.getById(country.getId()));
     }
+
 }

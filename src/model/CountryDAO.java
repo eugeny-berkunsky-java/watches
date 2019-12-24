@@ -1,6 +1,6 @@
 package model;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import main.Settings;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -8,43 +8,43 @@ import java.util.List;
 import java.util.Properties;
 
 public class CountryDAO {
-    private static final String url = "jdbc:postgresql://localhost:5432/watches";
+    private final String url;
     private Properties properties;
 
     public CountryDAO() {
-        properties = new Properties();
-        properties.setProperty("user", "watches");
-        properties.setProperty("password", "watches");
+        url = Settings.getConnectionURL();
+        properties = Settings.getConnectionProperties();
     }
 
     public Country create(String name) {
-        final String sql = "insert into public.country (name) values (?) ";
 
         if (name == null || name.trim().length() == 0) {
             return null;
         }
 
-        try (Connection connection = DriverManager.getConnection(url, properties)) {
-            PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            statement.setString(1, name);
-            statement.executeUpdate(sql);
-            ResultSet resultSet = statement.getGeneratedKeys();
-            if (resultSet != null && resultSet.next()) {
-                int id = resultSet.getInt("id");
-                return getById(id);
-            } else {
-                return null;
-            }
+        final String sql = "insert into public.\"Country\" (name) values (?) returning *";
 
+        try (Connection connection = DriverManager.getConnection(url, properties)) {
+            PreparedStatement st = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            st.setString(1, name);
+            st.execute();
+            ResultSet rs = st.getGeneratedKeys();
+            if (rs.next()) {
+                int savedId = rs.getInt("id");
+                String savedName = rs.getString("name");
+
+                return new Country(savedId, savedName);
+            }
         } catch (SQLException e) {
             e.printStackTrace(System.err);
-            return null;
         }
+
+        return null;
     }
 
     public List<Country> getAll() {
         List<Country> result = new ArrayList<>();
-        final String query = "select id, name from public.country";
+        final String query = "select id, name from public.\"Country\"";
 
         try (Connection connection = DriverManager.getConnection(url, properties)) {
             Statement statement = connection.createStatement();
@@ -62,7 +62,7 @@ public class CountryDAO {
     }
 
     public Country getById(int id) {
-        final String query = "select id, name from public.country where id = ?;";
+        final String query = "select id, name from public.\"Country\" where id = ?;";
 
         try (Connection connection = DriverManager.getConnection(url, properties)) {
             PreparedStatement statement = connection.prepareStatement(query);
@@ -79,8 +79,38 @@ public class CountryDAO {
         }
     }
 
+    public boolean update(Country country) {
 
-    public void delete(Country country) {
-        throw new NotImplementedException();
+        if (country == null || country.getName().trim().length() == 0) {
+            return false;
+        }
+
+        final String query = "update public.\"Country\" set name = ? where id = ?;";
+        try (Connection connection = DriverManager.getConnection(url, properties)) {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, country.getName());
+            statement.setInt(2, country.getId());
+            final int result = statement.executeUpdate();
+            return result > 0;
+        } catch (SQLException e) {
+            e.printStackTrace(System.err);
+        }
+
+        return false;
+    }
+
+
+    public boolean delete(int id) {
+        final String query = "delete from public.\"Country\" where id = ?;";
+        try (final Connection connection = DriverManager.getConnection(url, properties)) {
+            final PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, id);
+            final int result = statement.executeUpdate();
+            return result > 0;
+        } catch (SQLException e) {
+            e.printStackTrace(System.err);
+        }
+
+        return false;
     }
 }

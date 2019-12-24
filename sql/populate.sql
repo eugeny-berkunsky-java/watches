@@ -1,5 +1,5 @@
-INSERT INTO public."Country"(id, name)
-VALUES (1, 'Italy'),
-       (2, 'France'),
-       (3, 'UK'),
-       (4, 'China');
+INSERT INTO public."Country" (name)
+VALUES ('Italy'),
+       ('France'),
+       ('UK'),
+       ('China');
