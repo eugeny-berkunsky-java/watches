@@ -2,13 +2,13 @@ package manage;
 
 import model.Country;
 import model.CountryDAO;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class CountriesManager {
     private CountryDAO countryDAO;
 
     public CountriesManager() {
         countryDAO = new CountryDAO();
-        countryDAO.generateCountries();
     }
 
     public void showCountries() {
@@ -20,7 +20,8 @@ public class CountriesManager {
     }
 
     public void addCountry(Country country) {
-        countryDAO.create(country.getName());
+        throw new NotImplementedException();
     }
+
 }
 
