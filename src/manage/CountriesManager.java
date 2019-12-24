@@ -2,7 +2,6 @@ package manage;
 
 import model.Country;
 import model.CountryDAO;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class CountriesManager {
     private CountryDAO countryDAO;
@@ -12,16 +11,28 @@ public class CountriesManager {
     }
 
     public void showCountries() {
-        System.out.println("-------- Countries --------------");
+        System.out.println("----------- Countries ------------");
         for (Country country : countryDAO.getAll()) {
             System.out.println(country.getId() + " " + country.getName());
         }
         System.out.println("----------------------------------");
     }
 
-    public void addCountry(Country country) {
-        throw new NotImplementedException();
+    public Country addCountry(String countryName) {
+        return countryDAO.create(countryName);
     }
 
+    public Country updateCountry(int countryId, String countryName) {
+        Country country = new Country(countryId, countryName);
+        if (countryDAO.update(country)) {
+            return country;
+        }
+
+        return null;
+    }
+
+    public boolean deleteCountry(int countryId) {
+        return countryDAO.delete(countryId);
+    }
 }
 

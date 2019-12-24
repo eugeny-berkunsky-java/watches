@@ -1,6 +1,7 @@
 package ui;
 
 import manage.CountriesManager;
+import model.Country;
 
 import java.util.Scanner;
 
@@ -37,17 +38,43 @@ public class CountriesMenu {
                 }
 
                 case ADD_COUNTRY: {
-                    //todo: add country menu
+                    System.out.print("write new country name: ");
+                    String countryName = scanner.next();
+                    Country country = countriesManager.addCountry(countryName);
+                    if (country != null) {
+                        System.out.format("added successfully: %s%n", country.getName());
+                    } else {
+                        System.out.println("operation failed");
+                    }
                     break;
                 }
 
                 case UPDATE_COUNTRY: {
-                    //todo: update country menu
+                    System.out.println("which country do you want to update?");
+                    System.out.print("id: ");
+                    int countryId = scanner.nextInt();
+
+                    System.out.print("NEW name: ");
+                    String countryName = scanner.next();
+
+                    Country country = countriesManager.updateCountry(countryId, countryName);
+                    if (country != null) {
+                        System.out.format("updated successfully: %s%n", country.getName());
+                    } else {
+                        System.out.println("operation failed");
+                    }
                     break;
                 }
 
                 case DELETE_COUNTRY: {
-                    //todo: delete country menu
+                    System.out.println("which country do you want to delete?");
+                    System.out.print("id: ");
+                    int countryId = scanner.nextInt();
+                    if (countriesManager.deleteCountry(countryId)) {
+                        System.out.println("deleted successfully");
+                    } else {
+                        System.out.println("operation failed");
+                    }
                     break;
                 }
             }
