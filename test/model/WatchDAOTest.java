@@ -38,7 +38,7 @@ class WatchDAOTest {
         assertEquals(0, dao.getAll().size());
 
         Watch watch = new Watch("test brand", Watch.WatchType.ANALOGUE, BigDecimal.TEN, 1,
-                new Vendor("vendor", new Country(1, "country")));
+                new Vendor(1, "vendor", new Country(1, "country")));
 
         dao.add(watch);
         assertEquals(1, dao.getAll().size());
@@ -52,7 +52,7 @@ class WatchDAOTest {
     void add() {
         assertEquals(0, dao.getAll().size());
         Watch watch = new Watch("test brand", Watch.WatchType.ANALOGUE, BigDecimal.TEN, 1,
-                new Vendor("vendor", new Country(1, "country")));
+                new Vendor(1, "vendor", new Country(1, "country")));
 
         dao.add(watch);
         assertEquals(1, dao.getAll().size());

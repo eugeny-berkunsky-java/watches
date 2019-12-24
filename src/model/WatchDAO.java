@@ -20,9 +20,9 @@ public class WatchDAO {
     }
 
     public void generateWatches() {
-        Vendor vendor1 = new Vendor("Cartier", new Country(1, "Italy"));
-        Vendor vendor2 = new Vendor("Bell & Ross", new Country(2, "France"));
-        Vendor vendor3 = new Vendor("Bremont", new Country(3, "UK"));
+        Vendor vendor1 = new Vendor(1, "Cartier", new Country(1, "Italy"));
+        Vendor vendor2 = new Vendor(2, "Bell & Ross", new Country(2, "France"));
+        Vendor vendor3 = new Vendor(3, "Bremont", new Country(3, "UK"));
 
         add(new Watch("Model 1", ANALOGUE, new BigDecimal("10.00"), 10, vendor1));
         add(new Watch("Model 2", DIGITAL, new BigDecimal("200.00"), 10, vendor1));

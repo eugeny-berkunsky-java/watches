@@ -31,7 +31,7 @@ class CountryDAOTest {
     @Test
     void create() {
         UUID uuid = UUID.randomUUID();
-        Country country = dao.create(uuid.toString());
+        Country country = dao.create(new Country(-1, uuid.toString()));
         assertEquals(uuid.toString(), country.getName());
         System.out.println(country);
     }

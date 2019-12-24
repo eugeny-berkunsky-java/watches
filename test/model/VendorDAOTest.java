@@ -10,14 +10,12 @@ class VendorDAOTest {
     private VendorDAO dao;
 
     public VendorDAOTest() {
-        dao = new VendorDAO();
+        dao = new VendorDAO(null);
     }
 
     @Test
     void generateVendors() {
         assertEquals(0, dao.getAll().size());
-
-        dao.generateVendors();
         assertEquals(3, dao.getAll().size());
     }
 
@@ -25,28 +23,28 @@ class VendorDAOTest {
     void add() {
         assertEquals(0, dao.getAll().size());
 
-        Vendor vendor1 = new Vendor("test vendor1", new Country(1, "test country"));
-        dao.add(vendor1);
+        Vendor vendor1 = new Vendor(1, "test vendor1", new Country(1, "test country"));
+        dao.create(vendor1);
         assertEquals(1, dao.getAll().size());
 
-        dao.add(vendor1);
+        dao.create(vendor1);
         assertEquals(1, dao.getAll().size());
 
-        dao.add(null);
+        dao.create(null);
         assertEquals(1, dao.getAll().size());
 
         //
-        Vendor vendor2 = new Vendor("test vendor2", new Country(1, "test country"));
-        dao.add(vendor2);
+        Vendor vendor2 = new Vendor(1, "test vendor2", new Country(1, "test country"));
+        dao.create(vendor2);
         assertEquals(2, dao.getAll().size());
 
-        dao.add(new Vendor("TEST vendor2", new Country(1, "test country")));
+        dao.create(new Vendor(1, "TEST vendor2", new Country(1, "test country")));
         assertEquals(2, dao.getAll().size());
 
-        dao.add(new Vendor("", new Country(1, "test country")));
+        dao.create(new Vendor(1, "", new Country(1, "test country")));
         assertEquals(2, dao.getAll().size());
 
-        dao.add(new Vendor("  ", new Country(1, "test country")));
+        dao.create(new Vendor(1, "  ", new Country(1, "test country")));
         assertEquals(2, dao.getAll().size());
 
     }
@@ -54,12 +52,11 @@ class VendorDAOTest {
     @Test
     void getAll() {
         assertEquals(0, dao.getAll().size());
-        dao.generateVendors();
 
         assertEquals(3, dao.getAll().size());
 
         List<Vendor> list = dao.getAll();
-        list.add(new Vendor("test vendor", new Country(1, "test country")));
+        list.add(new Vendor(1, "test vendor", new Country(1, "test country")));
         assertEquals(3, dao.getAll().size());
     }
 }

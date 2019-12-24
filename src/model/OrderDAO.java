@@ -1,8 +1,6 @@
 package model;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +25,7 @@ public class OrderDAO {
 
     public void generateOrders() {
         Customer customer = new Customer(1235, "Tom");
-        Vendor vendor = new Vendor("Cartier", new Country(1, "Italy"));
+        Vendor vendor = new Vendor(1, "Cartier", new Country(1, "Italy"));
         Watch watch1 = new Watch("Model 1", ANALOGUE, new BigDecimal("10.00"), 10, vendor);
         Watch watch2 = new Watch("Model 2", DIGITAL, new BigDecimal("10.00"), 10, vendor);
         Watch watch3 = new Watch("Model 3", ANALOGUE, new BigDecimal("10.00"), 10, vendor);

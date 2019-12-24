@@ -1,14 +1,14 @@
 package manage;
 
+import model.DAO;
+import model.DAOFactory;
 import model.Vendor;
-import model.VendorDAO;
 
 public class VendorManager {
-    private VendorDAO dao;
+    private DAO<Vendor> dao;
 
     public VendorManager() {
-        dao = new VendorDAO();
-        dao.generateVendors();
+        dao = DAOFactory.getVendorsDAO();
     }
 
     public void showVendors() {

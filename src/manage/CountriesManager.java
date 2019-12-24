@@ -1,13 +1,14 @@
 package manage;
 
 import model.Country;
-import model.CountryDAO;
+import model.DAO;
+import model.DAOFactory;
 
 public class CountriesManager {
-    private CountryDAO countryDAO;
+    private DAO<Country> countryDAO;
 
     public CountriesManager() {
-        countryDAO = new CountryDAO();
+        countryDAO = DAOFactory.getCountriesDAO();
     }
 
     public void showCountries() {
@@ -19,7 +20,7 @@ public class CountriesManager {
     }
 
     public Country addCountry(String countryName) {
-        return countryDAO.create(countryName);
+        return countryDAO.create(new Country(-1, countryName));
     }
 
     public Country updateCountry(int countryId, String countryName) {

@@ -1,12 +1,20 @@
 package model;
 
-public class Vendor {
-    String vendorName;
-    Country country;
+import java.util.Objects;
 
-    public Vendor(String vendorName, Country country) {
+public class Vendor {
+    private int id;
+    private String vendorName;
+    private Country country;
+
+    public Vendor(int id, String vendorName, Country country) {
+        this.id = id;
         this.vendorName = vendorName;
         this.country = country;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getVendorName() {
@@ -23,6 +31,23 @@ public class Vendor {
 
     public void setCountry(Country country) {
         this.country = country;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Vendor vendor = (Vendor) o;
+        return id == vendor.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     @Override

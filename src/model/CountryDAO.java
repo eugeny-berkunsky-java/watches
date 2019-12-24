@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-public class CountryDAO {
+class CountryDAO implements DAO<Country> {
     private final String url;
     private Properties properties;
 
@@ -16,9 +16,12 @@ public class CountryDAO {
         properties = Settings.getConnectionProperties();
     }
 
-    public Country create(String name) {
+    @Override
+    public Country create(Country country) {
 
-        if (name == null || name.trim().length() == 0) {
+        if (country == null
+                || country.getName() == null
+                || country.getName().trim().length() == 0) {
             return null;
         }
 
@@ -26,7 +29,7 @@ public class CountryDAO {
 
         try (Connection connection = DriverManager.getConnection(url, properties)) {
             PreparedStatement st = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            st.setString(1, name);
+            st.setString(1, country.getName());
             st.execute();
             ResultSet rs = st.getGeneratedKeys();
             if (rs.next()) {
@@ -79,6 +82,7 @@ public class CountryDAO {
         }
     }
 
+    @Override
     public boolean update(Country country) {
 
         if (country == null || country.getName().trim().length() == 0) {

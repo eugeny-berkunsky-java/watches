@@ -1,45 +1,71 @@
 package model;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import main.Settings;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.*;
+import java.util.*;
 
-public class VendorDAO {
-    private Map<String, Vendor> vendors;
+class VendorDAO implements DAO<Vendor> {
 
-    public VendorDAO() {
-        vendors = new HashMap<>();
+    private final String url;
+    private final Properties properties;
+    private final DAO<Country> countryDAO;
+
+    public VendorDAO(DAO<Country> countryDAO) {
+        url = Settings.getConnectionURL();
+        properties = Settings.getConnectionProperties();
+        this.countryDAO = countryDAO;
     }
 
-    public void generateVendors() {
-        add(new Vendor("Cartier", new Country(1, "Italy")));
-        add(new Vendor("Bell & Ross", new Country(2, "France")));
-        add(new Vendor("Bremont", new Country(3, "UK")));
+    @Override
+    public Vendor create(Vendor model) {
+        return null;
     }
 
-    public void add(Vendor vendor) {
-        if (vendor == null
-                || vendor.getVendorName() == null
-                || vendor.getVendorName().trim().length() == 0
-        ) {
-            return;
+    @Override
+    public List<Vendor> getAll() {
+        final String sql = "select id, vendorname, countryid from public.\"Vendor\";";
+
+        final List<Country> countryList = countryDAO.getAll();
+        countryList.sort(Comparator.comparingInt(Country::getId));
+
+        List<Vendor> vendors = new ArrayList<>();
+        try (final Connection conn = DriverManager.getConnection(url, properties)) {
+            final PreparedStatement st = conn.prepareStatement(sql);
+            final ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String vendorName = rs.getString("vendorName");
+                int countryId = rs.getInt("countryId");
+                Country country = findCountry(countryList, countryId);
+                if (country != null) {
+                    vendors.add(new Vendor(id, vendorName, country));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(System.err);
         }
 
-        vendors.putIfAbsent(vendor.getVendorName().toLowerCase().trim(), vendor);
+        return vendors;
     }
 
-    public List<Vendor> getAll() {
-        return new ArrayList<>(vendors.values());
+    public Vendor getById(int id) {
+        return null;
     }
 
-    public void load(CountryDAO dao) {
-        throw new NotImplementedException();
+    @Override
+    public boolean update(Vendor model) {
+        return false;
     }
 
-    public void save() {
-        throw new NotImplementedException();
+    @Override
+    public boolean delete(int id) {
+        return false;
+    }
+
+    private Country findCountry(List<Country> countries, int countryId) {
+        final int index = Collections.binarySearch(countries, new Country(countryId, null),
+                Comparator.comparingInt(Country::getId));
+        return index >= 0 ? countries.get(index) : null;
     }
 }
