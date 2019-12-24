@@ -7,6 +7,8 @@
     <JAVADOC>
       <root url="jar://$MAVEN_REPOSITORY$/org/postgresql/postgresql/42.0.0.jre7/postgresql-42.0.0.jre7-javadoc.jar!/" />
     </JAVADOC>
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/postgresql/postgresql/42.0.0.jre7/postgresql-42.0.0.jre7-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>
