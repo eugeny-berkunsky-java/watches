@@ -1,7 +1,7 @@
 drop database if exists watches;
 drop role if exists watches;
 
-create role watches login with password 'watches';
+create role watches with login password 'watches';
 
 create database watches
     with
