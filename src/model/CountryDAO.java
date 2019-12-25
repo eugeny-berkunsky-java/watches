@@ -19,12 +19,6 @@ class CountryDAO implements DAO<Country> {
     @Override
     public Country create(Country country) {
 
-        if (country == null
-                || country.getName() == null
-                || country.getName().trim().length() == 0) {
-            return null;
-        }
-
         final String sql = "insert into public.\"Country\" (name) values (?) returning *";
 
         try (Connection connection = DriverManager.getConnection(url, properties)) {
@@ -84,10 +78,6 @@ class CountryDAO implements DAO<Country> {
 
     @Override
     public boolean update(Country country) {
-
-        if (country == null || country.getName().trim().length() == 0) {
-            return false;
-        }
 
         final String query = "update public.\"Country\" set name = ? where id = ?;";
         try (Connection connection = DriverManager.getConnection(url, properties)) {
