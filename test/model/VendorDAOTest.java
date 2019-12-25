@@ -10,7 +10,7 @@ class VendorDAOTest {
     private VendorDAO dao;
 
     public VendorDAOTest() {
-        dao = new VendorDAO(null);
+        dao = new VendorDAO();
     }
 
     @Test

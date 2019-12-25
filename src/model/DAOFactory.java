@@ -17,7 +17,7 @@ public abstract class DAOFactory {
 
     public static DAO<Vendor> getVendorsDAO() {
         if (vendorDAO == null) {
-            vendorDAO = new VendorDAO(getCountriesDAO());
+            vendorDAO = new VendorDAO();
         }
         return vendorDAO;
     }
