@@ -1,10 +1,5 @@
 package ui;
 
-import manage.CustomerManager;
-import manage.OrderManager;
-import manage.VendorManager;
-import manage.WatchManager;
-
 import java.util.Scanner;
 
 public class MainMenu {
@@ -15,11 +10,7 @@ public class MainMenu {
     public static final int ORDERS = 5;
 
     private CountriesMenu countriesMenu = new CountriesMenu();
-
-    private CustomerManager customerManager = new CustomerManager();
-    private VendorManager vendorManager = new VendorManager();
-    private WatchManager watchManager = new WatchManager();
-    private OrderManager orderManager = new OrderManager();
+    private VendorsMenu vendorsMenu = new VendorsMenu();
 
     private void printMenu() {
         System.out.println("------------ Main menu -----------");
@@ -45,22 +36,22 @@ public class MainMenu {
                 }
 
                 case VENDORS: {
-                    vendorManager.showVendors();
+                    vendorsMenu.show(scanner);
                     break;
                 }
 
                 case CUSTOMERS: {
-                    customerManager.showCustomers();
+                    // todo: add customers menu
                     break;
                 }
 
                 case WATCHES: {
-                    watchManager.showWatches();
+                    // todo: add watches menu
                     break;
                 }
 
                 case ORDERS: {
-                    orderManager.showOrders();
+                    //todo: add orders menu
                     break;
                 }
             }

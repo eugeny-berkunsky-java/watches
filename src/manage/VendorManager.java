@@ -19,15 +19,21 @@ public class VendorManager {
     }
 
     public Vendor addVendor(String vendorName, int countryId) {
+        if (vendorName == null || vendorName.trim().length() == 0) {
+            return null;
+        }
+
         return dao.create(new Vendor(-1, vendorName, new Country(countryId, null)));
     }
 
-    public Vendor updateVendor(Vendor vendor) {
-        if (dao.update(vendor)) {
-            return vendor;
+    public boolean updateVendor(Vendor vendor) {
+        if (vendor == null
+                || vendor.getVendorName() == null
+                || vendor.getVendorName().trim().length() == 0
+                || vendor.getCountry() == null) {
+            return false;
         }
-
-        return null;
+        return dao.update(vendor);
     }
 
     public boolean deleteVendor(int vendorId) {

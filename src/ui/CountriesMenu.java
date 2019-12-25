@@ -71,7 +71,7 @@ public class CountriesMenu {
         String countryName = scanner.next();
         Country country = countriesManager.addCountry(countryName);
         if (country != null) {
-            System.out.format("added successfully: %s%n", country.getName());
+            System.out.println("added successfully");
         } else {
             System.out.println("operation failed");
         }
@@ -86,7 +86,7 @@ public class CountriesMenu {
         String countryName = scanner.next();
 
         if (countriesManager.updateCountry(countryId, countryName)) {
-            System.out.format("updated successfully: %s%n", countryName);
+            System.out.println("updated successfully");
         } else {
             System.out.println("operation failed");
         }
