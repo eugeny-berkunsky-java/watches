@@ -1,10 +1,11 @@
 package model;
 
+import manage.DBException;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 
 import static main.Settings.getConnection;
@@ -41,17 +42,7 @@ class VendorDAO implements DAO<Vendor> {
                         "    inner join \"Country\" as country on vendor.countryid = country.id";
 
         try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
-            final ResultSet rs = st.executeQuery();
-
-            List<Vendor> vendors = new ArrayList<>();
-            while (rs.next()) {
-                int vendorId = rs.getInt("vendor_id");
-                String vendorName = rs.getString("vendor_vendorname");
-                int countryId = rs.getInt("country_id");
-                String countryName = rs.getString("country_name");
-                vendors.add(new Vendor(vendorId, vendorName, new Country(countryId, countryName)));
-            }
-            return vendors;
+            return executeAndReturnCollection(st, this::createVendorFromResultSet);
         }
     }
 
@@ -69,14 +60,7 @@ class VendorDAO implements DAO<Vendor> {
 
         try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
             st.setInt(1, id);
-
-            final ResultSet rs = st.executeQuery();
-            final int vendorId = rs.getInt("vendor_id");
-            final String vendorName = rs.getString("vendor_vendorname");
-            final int countryId = rs.getInt("country_id");
-            final String countryName = rs.getString("country_name");
-
-            return new Vendor(vendorId, vendorName, new Country(countryId, countryName));
+            return executeAndReturnObject(st, this::createVendorFromResultSet);
         }
     }
 
@@ -103,6 +87,19 @@ class VendorDAO implements DAO<Vendor> {
         try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
             st.setInt(1, id);
             return st.executeUpdate() > 0;
+        }
+    }
+
+    private Vendor createVendorFromResultSet(ResultSet rs) {
+        try {
+            final int vendorId = rs.getInt("vendor_id");
+            final String vendorName = rs.getString("vendor_vendorname");
+            final int countryId = rs.getInt("country_id");
+            final String countryName = rs.getString("country_name");
+
+            return new Vendor(vendorId, vendorName, new Country(countryId, countryName));
+        } catch (SQLException e) {
+            throw new DBException(e);
         }
     }
 }

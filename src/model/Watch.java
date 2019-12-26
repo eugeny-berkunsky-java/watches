@@ -4,18 +4,28 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 public class Watch {
+    private int id;
     private String brand;
     private WatchType type;
     private BigDecimal price;
-    private int quantity;
+    private int qty;
     private Vendor vendor;
 
-    public Watch(String brand, WatchType type, BigDecimal price, int quantity, Vendor vendor) {
+    public Watch(int id, String brand, WatchType type, BigDecimal price, int qty, Vendor vendor) {
+        this.id = id;
         this.brand = brand;
         this.type = type;
         this.price = price;
-        this.quantity = quantity;
+        this.qty = qty;
         this.vendor = vendor;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getBrand() {
@@ -42,12 +52,12 @@ public class Watch {
         this.price = price;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public int getQty() {
+        return qty;
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public void setQty(int qty) {
+        this.qty = qty;
     }
 
     public Vendor getVendor() {
@@ -67,14 +77,12 @@ public class Watch {
             return false;
         }
         Watch watch = (Watch) o;
-        return brand.equals(watch.brand) &&
-                type == watch.type &&
-                vendor.equals(watch.vendor);
+        return id == watch.id;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(brand, type, vendor);
+        return Objects.hash(id);
     }
 
     @Override
@@ -83,7 +91,7 @@ public class Watch {
                 "brand='" + brand + '\'' +
                 ", type=" + type +
                 ", price=" + price +
-                ", quantity=" + quantity +
+                ", quantity=" + qty +
                 ", vendor=" + vendor +
                 '}';
     }

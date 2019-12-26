@@ -1,16 +1,18 @@
 package model;
 
+import manage.DBException;
+
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 
 import static main.Settings.getConnection;
 
 class DiscountCardDAO implements DAO<DiscountCard> {
+
 
     @Override
     public DiscountCard create(DiscountCard model) throws SQLException {
@@ -24,7 +26,7 @@ class DiscountCardDAO implements DAO<DiscountCard> {
             st.setBigDecimal(2, model.getPercent());
             st.execute();
             final ResultSet rs = st.getGeneratedKeys();
-
+            rs.next();
             return getById(rs.getInt("id"));
         }
     }
@@ -33,17 +35,8 @@ class DiscountCardDAO implements DAO<DiscountCard> {
     public List<DiscountCard> getAll() throws SQLException {
         final String sql = "select id, number, percent from public.\"DiscountCard\";";
 
-        try (Statement st = getConnection().createStatement()) {
-            ResultSet rs = st.executeQuery(sql);
-
-            List<DiscountCard> result = new ArrayList<>();
-            while (rs.next()) {
-                int id = rs.getInt("id");
-                String number = rs.getString("number");
-                final BigDecimal percent = rs.getBigDecimal("percent");
-                result.add(new DiscountCard(id, number, percent));
-            }
-            return result;
+        try (PreparedStatement st = getConnection().prepareStatement(sql)) {
+            return executeAndReturnCollection(st, this::createDiscountCardFromResultSet);
         }
     }
 
@@ -53,11 +46,7 @@ class DiscountCardDAO implements DAO<DiscountCard> {
 
         try (PreparedStatement st = getConnection().prepareStatement(sql)) {
             st.setInt(1, id);
-            ResultSet rs = st.executeQuery(sql);
-            final String number = rs.getString("number");
-            final BigDecimal percent = rs.getBigDecimal("percent");
-
-            return new DiscountCard(id, number, percent);
+            return executeAndReturnObject(st, this::createDiscountCardFromResultSet);
         }
     }
 
@@ -82,6 +71,17 @@ class DiscountCardDAO implements DAO<DiscountCard> {
         try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
             st.setInt(1, id);
             return st.executeUpdate() > 0;
+        }
+    }
+
+    private DiscountCard createDiscountCardFromResultSet(ResultSet rs) {
+        try {
+            int id = rs.getInt("id");
+            String number = rs.getString("number");
+            final BigDecimal percent = rs.getBigDecimal("percent");
+            return new DiscountCard(id, number, percent);
+        } catch (SQLException e) {
+            throw new DBException(e);
         }
     }
 }
