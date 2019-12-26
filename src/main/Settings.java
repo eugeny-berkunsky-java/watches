@@ -17,15 +17,6 @@ public class Settings {
 
     }
 
-
-   /* public static String getConnectionURL() {
-        return "jdbc:postgresql://localhost:5432/watches";
-    }
-
-    public static Properties getConnectionProperties() {
-        return properties;
-    }*/
-
     public static Connection getConnection() {
         try {
             if (connection == null) {
