@@ -7,18 +7,15 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class WatchManager {
     private DAO<Watch> dao;
-    private Watch emptyWatch;
 
     public WatchManager() {
         dao = DAOFactory.getWatchDAO();
-        emptyWatch = new Watch(-1, "<empty>", Watch.WatchType.ANALOGUE, BigDecimal.ZERO, 0,
-                new Vendor(-1, "<empty>",
-                        new Country(-1, "<empty>")));
     }
 
     public List<Watch> getAll() {
@@ -30,19 +27,19 @@ public class WatchManager {
         }
     }
 
-    public Watch addWatch(String brand, Watch.WatchType type, BigDecimal price, int qty,
-                          int vendorId) {
+    public Optional<Watch> addWatch(String brand, Watch.WatchType type, BigDecimal price, int qty,
+                                    int vendorId) {
         if (brand == null || type == null || price == null) {
-            return emptyWatch;
+            return Optional.empty();
         }
 
         try {
             Watch newWatch = new Watch(-1, brand, type, price, qty,
                     new Vendor(vendorId, null, null));
-            return dao.create(newWatch);
+            return Optional.of(dao.create(newWatch));
         } catch (SQLException | DBException e) {
             e.printStackTrace(System.err);
-            return emptyWatch;
+            return Optional.empty();
         }
     }
 
@@ -69,7 +66,9 @@ public class WatchManager {
     }
 
     public List<Watch> getByType(Watch.WatchType type) {
-        return type == null ? Collections.emptyList() : getAll().stream()
+        return type == null
+                ? Collections.emptyList()
+                : getAll().stream()
                 .filter(t -> t.getType() == type)
                 .collect(Collectors.toList());
     }
@@ -108,20 +107,4 @@ public class WatchManager {
 
         return result;
     }
-
- /*   public void showWatches() {
-        System.out.println("------------------------Watches-----------------------");
-        watchDAO.getAll().stream().map(this::watchView).forEach(System.out::println);
-        System.out.println("------------------------------------------------------");
-    }*/
-
-
-   /* private String watchView(Watch watch) {
-        return String.format("%s - %s [%s]",
-                watch.getBrand(),
-                watch.getVendor().getVendorName(),
-                watch.getVendor().getCountry().getName()
-        );
-    }*/
-
 }

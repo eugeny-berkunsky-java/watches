@@ -8,14 +8,13 @@ import model.Vendor;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class VendorManager {
     private DAO<Vendor> dao;
-    private Vendor emptyVendor;
 
     public VendorManager() {
         dao = DAOFactory.getVendorsDAO();
-        emptyVendor = new Vendor(-1, "<empty>", new Country(-1, "<empty>"));
     }
 
     public List<Vendor> getAll() {
@@ -28,18 +27,18 @@ public class VendorManager {
         return Collections.emptyList();
     }
 
-    public Vendor addVendor(String vendorName, int countryId) {
+    public Optional<Vendor> addVendor(String vendorName, int countryId) {
         if (vendorName == null || vendorName.trim().length() == 0) {
-            return emptyVendor;
+            return Optional.empty();
         }
 
         try {
-            return dao.create(new Vendor(-1, vendorName, new Country(countryId, null)));
+            return Optional.of(dao.create(new Vendor(-1, vendorName, new Country(countryId, null))));
         } catch (SQLException e) {
             e.printStackTrace(System.err);
         }
 
-        return emptyVendor;
+        return Optional.empty();
     }
 
     public boolean updateVendor(Vendor vendor) {

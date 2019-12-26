@@ -3,12 +3,13 @@ package ui;
 import manage.CountriesManager;
 import model.Country;
 
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.function.Function;
 
 public class CountriesMenu {
 
-    private final static int SNOW_ALL_COUNTRIES = 1;
+    private final static int SHOW_ALL_COUNTRIES = 1;
     private final static int ADD_COUNTRY = 2;
     private final static int UPDATE_COUNTRY = 3;
     private final static int DELETE_COUNTRY = 4;
@@ -33,7 +34,7 @@ public class CountriesMenu {
             answer = scanner.nextInt();
 
             switch (answer) {
-                case SNOW_ALL_COUNTRIES: {
+                case SHOW_ALL_COUNTRIES: {
                     showCountries();
                     break;
                 }
@@ -67,10 +68,10 @@ public class CountriesMenu {
     }
 
     private void addCountry(Scanner scanner) {
-        System.out.print("write new country name: ");
+        System.out.print("new country name: ");
         String countryName = scanner.next();
-        Country country = countriesManager.addCountry(countryName);
-        if (country != null) {
+        Optional<Country> country = countriesManager.addCountry(countryName);
+        if (country.isPresent()) {
             System.out.println("added successfully");
         } else {
             System.out.println("operation failed");
@@ -78,7 +79,7 @@ public class CountriesMenu {
     }
 
     private void updateCountry(Scanner scanner) {
-        System.out.println("which country do you want to update?");
+        System.out.println("what country do you want to update?");
         System.out.print("id: ");
         int countryId = scanner.nextInt();
 
@@ -93,7 +94,7 @@ public class CountriesMenu {
     }
 
     private void deleteCountry(Scanner scanner) {
-        System.out.println("which country do you want to delete?");
+        System.out.println("what country do you want to delete?");
         System.out.print("id: ");
         int countryId = scanner.nextInt();
         if (countriesManager.deleteCountry(countryId)) {

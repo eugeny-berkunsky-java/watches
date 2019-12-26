@@ -4,6 +4,7 @@ import manage.VendorManager;
 import model.Country;
 import model.Vendor;
 
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.function.Function;
 
@@ -75,8 +76,8 @@ public class VendorsMenu {
         System.out.print("write country ID: ");
         final int countryId = scanner.nextInt();
 
-        final Vendor vendor = vendorManager.addVendor(vendorName, countryId);
-        if (vendor != null) {
+        final Optional<Vendor> vendor = vendorManager.addVendor(vendorName, countryId);
+        if (vendor.isPresent()) {
             System.out.println("added successfully");
         } else {
             System.out.println("operation failed");
@@ -84,7 +85,7 @@ public class VendorsMenu {
     }
 
     private void updateVendor(Scanner scanner) {
-        System.out.println("which vendor do you want to update?");
+        System.out.println("what vendor do you want to update?");
         System.out.print("id: ");
         int vendorId = scanner.nextInt();
 
@@ -103,7 +104,7 @@ public class VendorsMenu {
     }
 
     private void deleteVendor(Scanner scanner) {
-        System.out.println("which vendor do you want to delete?");
+        System.out.println("what vendor do you want to delete?");
         System.out.print("id: ");
         int vendorId = scanner.nextInt();
         if (vendorManager.deleteVendor(vendorId)) {

@@ -7,15 +7,13 @@ import model.DAOFactory;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class CountriesManager {
     private DAO<Country> countryDAO;
 
-    private Country emptyCountry;
-
     public CountriesManager() {
         countryDAO = DAOFactory.getCountriesDAO();
-        emptyCountry = new Country(-1, "<empty>");
     }
 
     public List<Country> getAll() {
@@ -28,18 +26,18 @@ public class CountriesManager {
         return Collections.emptyList();
     }
 
-    public Country addCountry(String countryName) {
+    public Optional<Country> addCountry(String countryName) {
         if (countryName == null || countryName.trim().length() == 0) {
-            return null;
+            return Optional.empty();
         }
 
         try {
-            return countryDAO.create(new Country(-1, countryName));
+            return Optional.of(countryDAO.create(new Country(-1, countryName)));
         } catch (SQLException e) {
             e.printStackTrace(System.err);
         }
 
-        return emptyCountry;
+        return Optional.empty();
     }
 
     public boolean updateCountry(int countryId, String countryName) {
