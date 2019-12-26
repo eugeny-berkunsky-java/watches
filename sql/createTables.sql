@@ -30,3 +30,21 @@ create table public."DiscountCard"
 );
 alter table public."DiscountCard"
     owner to watches;
+
+---
+drop table if exists public."Watch";
+drop type if exists public.watch_type;
+
+create type watch_type as enum ('ANALOGUE', 'DIGITAL');
+
+create table public."Watch"
+(
+    id        serial         not null primary key,
+    brand     varchar        not null,
+    type      watch_type     not null,
+    price     decimal(15, 2) not null default 0.00,
+    qty       integer        not null default 1,
+    vendor_id integer        not null references public."Vendor" (id)
+);
+alter table public."Watch"
+    owner to watches;

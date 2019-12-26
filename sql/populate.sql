@@ -28,3 +28,15 @@ VALUES (0, '630463531361029455', 0.00),
        (3, '503800880461066051', 10.00),
        (4, '560223775511216332', 15.00);
 alter sequence public."DiscountCard_id_seq" restart with 7;
+
+--
+truncate public."Watch";
+insert into public."Watch" (id, brand, type, price, qty, vendor_id)
+values (1, 'Model 1', 'ANALOGUE', 10.00, 1, 1),
+       (2, 'Model 2', 'DIGITAL', 200.00, 10, 1),
+       (3, 'Model 3', 'ANALOGUE', 50.00, 10, 2),
+       (4, 'Model 4', 'DIGITAL', 200.00, 10, 2),
+       (5, 'Model 5', 'ANALOGUE', 500.00, 10, 3),
+       (6, 'Model 6', 'DIGITAL', 100.00, 10, 3),
+       (7, 'Model 7', 'DIGITAL', 100.00, 10, 3);
+alter sequence public."Watch_id_seq" restart with 8;
