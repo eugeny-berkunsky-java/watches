@@ -5,6 +5,7 @@ public abstract class DAOFactory {
     private static DAO<Vendor> vendorDAO;
     private static DAO<Country> countryDAO;
     private static DAO<DiscountCard> discountCardDAO;
+    private static DAO<Watch> watchDAO;
 
     private DAOFactory() {
     }
@@ -29,5 +30,12 @@ public abstract class DAOFactory {
         }
 
         return discountCardDAO;
+    }
+
+    public static DAO<Watch> getWatchDAO() {
+        if (watchDAO == null) {
+            watchDAO = new WatchDAO();
+        }
+        return watchDAO;
     }
 }
