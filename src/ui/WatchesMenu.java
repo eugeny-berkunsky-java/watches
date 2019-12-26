@@ -13,8 +13,10 @@ public class WatchesMenu {
     private final static int ADD_WATCH = 2;
     private final static int UPDATE_WATCH = 3;
     private final static int DELETE_WATCH = 4;
+    private final static int REPORTS = 5;
 
     private WatchManager watchManager = new WatchManager();
+    private WatchesReportsMenu watchesReportsMenu = new WatchesReportsMenu();
 
     private void printMenu() {
         System.out.println("---------- Watches menu ----------");
@@ -22,6 +24,7 @@ public class WatchesMenu {
         System.out.println("2. Add watch");
         System.out.println("3. Update watch");
         System.out.println("4. Delete watch");
+        System.out.println("5. Reports");
         System.out.println("0. return to main menu");
     }
 
@@ -50,6 +53,11 @@ public class WatchesMenu {
 
                 case DELETE_WATCH: {
                     deleteWatch(scanner);
+                    break;
+                }
+
+                case REPORTS: {
+                    watchesReportsMenu.show(scanner);
                     break;
                 }
             }

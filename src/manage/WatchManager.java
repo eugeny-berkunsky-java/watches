@@ -79,10 +79,11 @@ public class WatchManager {
                 .collect(Collectors.toList());
     }
 
-    public List<Watch> getByCountry(Country country) {
-        return country == null ? Collections.emptyList()
+    public List<Watch> getByCountry(String countryName) {
+        return countryName == null || countryName.trim().length() == 0
+                ? Collections.emptyList()
                 : getAll().stream()
-                .filter(w -> w.getVendor().getCountry().equals(country))
+                .filter(w -> w.getVendor().getCountry().getName().trim().equalsIgnoreCase(countryName))
                 .collect(Collectors.toList());
     }
 
