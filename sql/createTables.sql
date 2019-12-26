@@ -20,3 +20,13 @@ create table public."Vendor"
 );
 alter table public."Vendor"
     owner to watches;
+---
+drop table if exists public."DiscountCard";
+create table public."DiscountCard"
+(
+    id      serial         not null primary key,
+    number  varchar        not null unique,
+    percent decimal(15, 2) not null default 0.00
+);
+alter table public."DiscountCard"
+    owner to watches;
