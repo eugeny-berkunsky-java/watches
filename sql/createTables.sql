@@ -48,3 +48,18 @@ create table public."Watch"
 );
 alter table public."Watch"
     owner to watches;
+
+---
+
+---
+drop table if exists public."Customer";
+
+create table public."Customer"
+(
+    id              serial         not null primary key,
+    name            varchar        not null,
+    sumOfOrders     decimal(15, 2) not null                                       default 0.00,
+    discountCard_id integer        not null references public."DiscountCard" (id) default 0
+);
+alter table public."DiscountCard"
+    owner to watches;
