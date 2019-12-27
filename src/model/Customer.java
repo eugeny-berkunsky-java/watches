@@ -1,21 +1,23 @@
 package model;
 
+import java.math.BigDecimal;
+import java.util.Objects;
+
 public class Customer {
-    int cardNumber;
-    String name;
-    Double sumOfOrders;
+    private int id;
+    private String name;
+    private BigDecimal sumOfOrders;
+    private DiscountCard discountCard;
 
-    public Customer(int cardNumber, String name) {
-        this.cardNumber = cardNumber;
+    public Customer(int id, String name, BigDecimal sumOfOrders, DiscountCard discountCard) {
+        this.id = id;
         this.name = name;
+        this.sumOfOrders = sumOfOrders;
+        this.discountCard = discountCard;
     }
 
-    public int getCardNumber() {
-        return cardNumber;
-    }
-
-    public void setCardNumber(int cardNumber) {
-        this.cardNumber = cardNumber;
+    public int getId() {
+        return id;
     }
 
     public String getName() {
@@ -26,11 +28,46 @@ public class Customer {
         this.name = name;
     }
 
-    public Double getSumOfOrders() {
+    public BigDecimal getSumOfOrders() {
         return sumOfOrders;
     }
 
-    public void setSumOfOrders(Double sumOfOrders) {
+    public void setSumOfOrders(BigDecimal sumOfOrders) {
         this.sumOfOrders = sumOfOrders;
+    }
+
+    public DiscountCard getDiscountCard() {
+        return discountCard;
+    }
+
+    public void setDiscountCard(DiscountCard discountCard) {
+        this.discountCard = discountCard;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Customer customer = (Customer) o;
+        return id == customer.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", sumOfOrders=" + sumOfOrders +
+                ", discountCard=" + discountCard +
+                '}';
     }
 }
