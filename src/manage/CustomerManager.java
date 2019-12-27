@@ -57,4 +57,13 @@ public class CustomerManager {
             return false;
         }
     }
+
+    public boolean deleteCustomer(int id) {
+        try {
+            return dao.delete(id);
+        } catch (SQLException e) {
+            e.printStackTrace(System.err);
+            return false;
+        }
+    }
 }

@@ -11,6 +11,7 @@ public class MainMenu {
 
     private CountriesMenu countriesMenu = new CountriesMenu();
     private VendorsMenu vendorsMenu = new VendorsMenu();
+    private CustomersMenu customersMenu = new CustomersMenu();
     private WatchesMenu watchesMenu = new WatchesMenu();
 
     private void printMenu() {
@@ -42,7 +43,7 @@ public class MainMenu {
                 }
 
                 case CUSTOMERS: {
-                    // todo: add customers menu
+                    customersMenu.show(scanner);
                     break;
                 }
 
