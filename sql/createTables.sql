@@ -63,3 +63,28 @@ create table public."Customer"
 );
 alter table public."DiscountCard"
     owner to watches;
+
+---
+drop table if exists public."Order";
+create table public."Order"
+(
+    id          serial                      not null primary key,
+    date        timestamp without time zone not null default now(),
+    customer_id int                         not null references public."Customer" (id),
+    totalPrice  decimal(15, 2)              not null default 0.00
+);
+alter table public."Order"
+    owner to watches;
+
+---
+drop index if exists item_order_watch_unique;
+drop table if exists public."Item";
+create table public."Item"
+(
+    id       serial         not null primary key,
+    order_id integer        not null references public."Order" (id),
+    watch_id integer        not null references public."Watch" (id),
+    qty      integer        not null default 1,
+    price    decimal(15, 2) not null default 0.00
+);
+create unique index item_order_watch_unique on public."Item" (order_id, watch_id);
