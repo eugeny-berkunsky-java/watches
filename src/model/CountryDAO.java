@@ -15,7 +15,7 @@ class CountryDAO implements DAO<Country> {
     @Override
     public Country create(Country country) throws SQLException {
 
-        final String sql = "insert into public.\"Country\" (name) values (?) returning *;";
+        final String sql = "insert into public.\"CountryModel\" (c_name) values (?) returning *;";
 
         try (final PreparedStatement st
                      = getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -23,12 +23,14 @@ class CountryDAO implements DAO<Country> {
             st.execute();
             ResultSet rs = st.getGeneratedKeys();
             rs.next();
-            return new Country(rs.getInt("id"), rs.getString("name"));
+            return createCountryFromResultSet(rs);
         }
+
+
     }
 
     public List<Country> getAll() throws SQLException {
-        final String sql = "select id, name from public.\"Country\";";
+        final String sql = "select c_id, c_name from public.\"CountryModel\";";
 
         try (PreparedStatement st = getConnection().prepareStatement(sql)) {
             return executeAndReturnCollection(st, this::createCountryFromResultSet);
@@ -36,9 +38,10 @@ class CountryDAO implements DAO<Country> {
     }
 
     public Country getById(int id) throws SQLException {
-        final String sql = "select id, name from public.\"Country\" where id = ?;";
+        final String sql = "select c_id, c_name from public.\"CountryModel\" where c_id = ?;";
 
         try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
+            st.setInt(1, id);
             return executeAndReturnObject(st, this::createCountryFromResultSet);
         }
     }
@@ -46,7 +49,7 @@ class CountryDAO implements DAO<Country> {
     @Override
     public boolean update(Country country) throws SQLException {
 
-        final String sql = "update public.\"Country\" set name = ? where id = ?;";
+        final String sql = "update public.\"CountryModel\" set c_name = ? where c_id = ?;";
 
         try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
             st.setString(1, country.getName());
@@ -57,7 +60,7 @@ class CountryDAO implements DAO<Country> {
 
 
     public boolean delete(int id) throws SQLException {
-        final String sql = "delete from public.\"Country\" where id = ?;";
+        final String sql = "delete from public.\"CountryModel\" where c_id = ?;";
         try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
             st.setInt(1, id);
             return st.executeUpdate() > 0;
@@ -66,7 +69,7 @@ class CountryDAO implements DAO<Country> {
 
     private Country createCountryFromResultSet(ResultSet rs) {
         try {
-            return new Country(rs.getInt("id"), rs.getString("name"));
+            return new Country(rs.getInt("c_id"), rs.getString("c_name"));
         } catch (SQLException e) {
             throw new DBException(e);
         }
