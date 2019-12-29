@@ -13,10 +13,20 @@ import static main.Settings.getConnection;
 
 class DiscountCardDAO implements DAO<DiscountCard> {
 
+    static DiscountCard createFromResultSet(ResultSet rs) {
+        try {
+            int id = rs.getInt("dcard_id");
+            String number = rs.getString("dcard_number");
+            final BigDecimal percent = rs.getBigDecimal("dcard_percent");
+            return new DiscountCard(id, number, percent);
+        } catch (SQLException e) {
+            throw new DBException(e);
+        }
+    }
 
     @Override
     public DiscountCard create(DiscountCard model) throws SQLException {
-        final String sql = "insert into public.\"DiscountCard\" (number, percent) " +
+        final String sql = "insert into public.\"DiscountCardModel\" (dcard_number, dcard_percent) " +
                 "values (? ,  ?) returning *;";
 
         try (final PreparedStatement st
@@ -27,33 +37,33 @@ class DiscountCardDAO implements DAO<DiscountCard> {
             st.execute();
             final ResultSet rs = st.getGeneratedKeys();
             rs.next();
-            return getById(rs.getInt("id"));
+            return createFromResultSet(rs);
         }
     }
 
     @Override
     public List<DiscountCard> getAll() throws SQLException {
-        final String sql = "select id, number, percent from public.\"DiscountCard\";";
+        final String sql = "select * from public.\"DiscountCardModel\";";
 
         try (PreparedStatement st = getConnection().prepareStatement(sql)) {
-            return executeAndReturnCollection(st, this::createDiscountCardFromResultSet);
+            return executeAndReturnCollection(st, DiscountCardDAO::createFromResultSet);
         }
     }
 
     @Override
     public DiscountCard getById(int id) throws SQLException {
-        final String sql = "select number, percent from public.\"DiscountCard\" where id = ?;";
+        final String sql = "select * from public.\"DiscountCardModel\" where dcard_id = ?;";
 
         try (PreparedStatement st = getConnection().prepareStatement(sql)) {
             st.setInt(1, id);
-            return executeAndReturnObject(st, this::createDiscountCardFromResultSet);
+            return executeAndReturnObject(st, DiscountCardDAO::createFromResultSet);
         }
     }
 
     @Override
     public boolean update(DiscountCard model) throws SQLException {
-        final String sql = "update public.\"DiscountCard\" set number = ?, percent = ? " +
-                "where id = ?;";
+        final String sql = "update public.\"DiscountCardModel\" set dcard_number = ?, dcard_percent = ? " +
+                "where dcard_id = ?;";
 
         try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
             st.setString(1, model.getNumber());
@@ -66,22 +76,11 @@ class DiscountCardDAO implements DAO<DiscountCard> {
 
     @Override
     public boolean delete(int id) throws SQLException {
-        final String sql = "delete from public.\"DiscountCard\" where id = ?;";
+        final String sql = "delete from public.\"DiscountCardModel\" where dcard_id = ?;";
 
         try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
             st.setInt(1, id);
             return st.executeUpdate() > 0;
-        }
-    }
-
-    private DiscountCard createDiscountCardFromResultSet(ResultSet rs) {
-        try {
-            int id = rs.getInt("id");
-            String number = rs.getString("number");
-            final BigDecimal percent = rs.getBigDecimal("percent");
-            return new DiscountCard(id, number, percent);
-        } catch (SQLException e) {
-            throw new DBException(e);
         }
     }
 }
