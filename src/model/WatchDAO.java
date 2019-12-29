@@ -13,9 +13,25 @@ import static main.Settings.getConnection;
 
 public class WatchDAO implements DAO<Watch> {
 
+    static Watch createFromResultSet(ResultSet rs) {
+        try {
+            int watchId = rs.getInt("watch_id");
+            String watchBrand = rs.getString("watch_brand");
+            Watch.WatchType watchType = Watch.WatchType.valueOf(rs.getString("watch_type"));
+            BigDecimal watchPrice = rs.getBigDecimal("watch_price");
+            int watchQty = rs.getInt("watch_qty");
+
+            return new Watch(watchId, watchBrand, watchType, watchPrice, watchQty,
+                    VendorDAO.createFromResultSet(rs));
+        } catch (SQLException e) {
+            throw new DBException(e);
+        }
+    }
+
     @Override
     public Watch create(Watch model) throws SQLException {
-        final String sql = "insert into public.\"Watch\" (brand, type, price, qty, vendor_id) " +
+        final String sql = "insert into public.\"WatchModel\" (watch_brand, watch_type, watch_price, " +
+                "watch_qty, vendor_id) " +
                 "values (?, ?::watch_type, ?, ?, ?) returning *;";
 
         try (final PreparedStatement st = getConnection().prepareStatement(sql,
@@ -29,52 +45,26 @@ public class WatchDAO implements DAO<Watch> {
             st.execute();
             final ResultSet rs = st.getGeneratedKeys();
             rs.next();
-            return getById(rs.getInt("id"));
+            return WatchDAO.createFromResultSet(rs);
         }
     }
 
     @Override
     public List<Watch> getAll() throws SQLException {
-        final String sql = "" +
-                "select watch.id          as watch_id," +
-                "       watch.brand       as watch_brand, " +
-                "       watch.type        as watch_type, " +
-                "       watch.price       as watch_price, " +
-                "       watch.qty         as watch_qty, " +
-                "       vendor.id         as watch_vendor_id, " +
-                "       vendor.vendorname as watch_vendor_vendorName, " +
-                "       country.id        as watch_vendor_country_id, " +
-                "       country.name      as watch_vendor_country_name " +
-                "from public.\"Watch\" as watch " +
-                "         inner join public.\"Vendor\" as vendor on watch.vendor_id = vendor.id " +
-                "         inner join public.\"Country\" as country on vendor.countryid= country.id";
-
+        final String sql = "select * from public.\"WatchModel\";";
 
         try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
-            return executeAndReturnCollection(st, this::createWatchFromResultSet);
+            return executeAndReturnCollection(st, WatchDAO::createFromResultSet);
         }
     }
 
     @Override
     public Watch getById(int id) throws SQLException {
-        final String sql = "" +
-                "select watch.id          as watch_id," +
-                "       watch.brand       as watch_brand, " +
-                "       watch.type        as watch_type, " +
-                "       watch.price       as watch_price, " +
-                "       watch.qty         as watch_qty, " +
-                "       vendor.id         as watch_vendor_id, " +
-                "       vendor.vendorname as watch_vendor_vendorName, " +
-                "       country.id        as watch_vendor_country_id, " +
-                "       country.name      as watch_vendor_country_name " +
-                "from public.\"Watch\" as watch " +
-                "         inner join public.\"Vendor\" as vendor on watch.vendor_id = vendor.id " +
-                "         inner join public.\"Country\" as country on vendor.countryid = country.id " +
-                "where watch.id = ?;";
+        final String sql = "select * from public.\"WatchModel\" where watch_id = ?;";
 
         try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
             st.setInt(1, id);
-            return executeAndReturnObject(st, this::createWatchFromResultSet);
+            return executeAndReturnObject(st, WatchDAO::createFromResultSet);
         }
     }
 
@@ -101,28 +91,6 @@ public class WatchDAO implements DAO<Watch> {
         try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
             st.setInt(1, id);
             return st.executeUpdate() > 0;
-        }
-    }
-
-    private Watch createWatchFromResultSet(ResultSet rs) {
-        try {
-            int watchId = rs.getInt("watch_id");
-            String watchBrand = rs.getString("watch_brand");
-            Watch.WatchType watchType = Watch.WatchType.valueOf(rs.getString("watch_type"));
-            BigDecimal watchPrice = rs.getBigDecimal("watch_price");
-            int watchQty = rs.getInt("watch_qty");
-
-            int vendorId = rs.getInt("watch_vendor_id");
-            String vendorName = rs.getString("watch_vendor_vendorName");
-
-            int countryId = rs.getInt("watch_vendor_country_id");
-            String countryName = rs.getString("watch_vendor_country_name");
-
-            return new Watch(watchId, watchBrand, watchType, watchPrice, watchQty,
-                    new Vendor(vendorId, vendorName,
-                            new Country(countryId, countryName)));
-        } catch (SQLException e) {
-            throw new DBException(e);
         }
     }
 }

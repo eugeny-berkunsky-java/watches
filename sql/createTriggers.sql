@@ -101,3 +101,59 @@ create trigger trigger_update_vendor_model
     on public."VendorModel"
     for each row
 execute function public.update_vendor_model();
+
+-----------------------------------------------------------
+drop trigger if exists trigger_update_watch_model on public."WatchModel";
+drop function if exists public.update_watch_model;
+
+create or replace function public.update_watch_model() returns trigger as
+$$
+declare
+    result_row record;
+begin
+    if tg_op = 'DELETE' then
+        delete from public."Watch" where id = old.watch_id;
+
+        if not found then
+            return null;
+        else
+            return old;
+        end if;
+
+    elsif tg_op = 'INSERT' then
+        new.watch_price := coalesce(new.watch_price, 0.00);
+        new.watch_qty := coalesce(new.watch_qty, 1);
+
+        insert into public."Watch" (brand, type, price, qty, vendor_id)
+        values (new.watch_brand, new.watch_type, new.watch_price, new.watch_qty, new.vendor_id)
+        returning id into new.watch_id;
+
+        select * into result_row from public."WatchModel" where watch_id = new.watch_id;
+
+        return result_row;
+
+    elsif tg_op = 'UPDATE' then
+
+        update public."Watch"
+        set brand     = new.watch_brand,
+            type      = new.watch_type,
+            price     = new.watch_price,
+            qty= new.watch_qty,
+            vendor_id = new.vendor_id
+        where id = new.watch_id;
+
+        if not found then
+            return null;
+        else
+            return new;
+        end if;
+
+    end if;
+end
+$$ language plpgsql;
+
+create trigger trigger_update_watch_model
+    instead of insert or update or delete
+    on public."WatchModel"
+    for each row
+execute function public.update_watch_model();
