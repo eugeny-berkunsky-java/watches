@@ -174,6 +174,11 @@ begin
         if not found then
             return null;
         else
+            -- subtract order's total price
+            update public."OrderModel" om
+            set order_totalprice = order_totalprice - (old.item_qty * old.item_price)
+            where om.order_id = old.item_order_id;
+
             return old;
         end if;
 
@@ -187,6 +192,11 @@ begin
 
         select * into result_row from public."ItemModel" where item_id = new.item_id;
 
+        -- add to order's total price
+        update public."OrderModel" om
+        set order_totalprice = order_totalprice + (new.item_qty * new.item_price)
+        where om.order_id = new.item_order_id;
+
         return result_row;
 
     elsif tg_op = 'UPDATE' then
@@ -199,6 +209,15 @@ begin
         if not found then
             return null;
         else
+            -- apply diff to order's total price
+            if old.item_qty is distinct from new.item_qty
+                or old.item_price is distinct from new.item_price then
+                update public."OrderModel" om
+                set order_totalprice = order_totalprice +
+                                       (new.item_qty * new.item_price - old.item_qty * old.item_price)
+                where om.order_id = new.item_order_id;
+            end if;
+
             return old;
         end if;
     end if;
