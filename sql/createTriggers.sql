@@ -157,3 +157,56 @@ create trigger trigger_update_watch_model
     on public."WatchModel"
     for each row
 execute function public.update_watch_model();
+
+
+-----------------------------------------------------------
+drop trigger if exists trigger_update_item_model on public."ItemModel";
+drop function if exists public.update_item_model;
+create or replace function public.update_item_model() returns trigger as
+$$
+declare
+    result_row record;
+begin
+
+    if tg_op = 'DELETE' then
+        delete from public."Item" where id = old.item_id;
+
+        if not found then
+            return null;
+        else
+            return old;
+        end if;
+
+    elsif tg_op = 'INSERT' then
+        new.item_qty := coalesce(new.item_qty, 1);
+        new.item_price := coalesce(new.item_price, 0.00);
+
+        insert into public."Item" (order_id, qty, price, watch_id)
+        values (new.item_order_id, new.item_qty, new.item_price, new.watch_id)
+        returning id into new.item_id;
+
+        select * into result_row from public."ItemModel" where item_id = new.item_id;
+
+        return result_row;
+
+    elsif tg_op = 'UPDATE' then
+        update public."Item"
+        set price    = new.item_price,
+            qty      = new.item_qty,
+            order_id = new.item_order_id
+        where id = new.item_id;
+
+        if not found then
+            return null;
+        else
+            return old;
+        end if;
+    end if;
+end
+$$ language plpgsql;
+
+create trigger trigger_update_item_model
+    instead of insert or update or delete
+    on public."ItemModel"
+    for each row
+execute function public.update_item_model();
