@@ -2,7 +2,6 @@ package model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -13,8 +12,12 @@ public class Order {
     private List<Item> items;
     private BigDecimal totalPrice;
 
-    private Order() {
-
+    public Order(int id, LocalDateTime date, Customer customer, List<Item> items, BigDecimal totalPrice) {
+        this.id = id;
+        this.date = date;
+        this.customer = customer;
+        this.items = items;
+        this.totalPrice = totalPrice;
     }
 
     public int getId() {
@@ -35,6 +38,10 @@ public class Order {
 
     public List<Item> getItems() {
         return items;
+    }
+
+    public void setItems(List<Item> items) {
+        this.items = items;
     }
 
     public BigDecimal getTotalPrice() {
@@ -73,57 +80,4 @@ public class Order {
                 '}';
     }
 
-    public static class OrderBuilder {
-
-        private Order order;
-
-        public OrderBuilder newOrder(Customer customer) {
-            order = new Order();
-            order.id = -1;
-            order.customer = customer;
-            order.items = new ArrayList<>();
-            order.totalPrice = BigDecimal.ZERO;
-
-            return this;
-        }
-
-        OrderBuilder addItem(Watch watch) {
-            return addItem(watch, watch.getPrice(), 1);
-        }
-
-        OrderBuilder addItem(Watch watch, BigDecimal price) {
-            return addItem(watch, price, 1);
-        }
-
-        OrderBuilder addItem(Watch watch, BigDecimal price, int qty) {
-
-            Item item = new Item(watch, price, qty);
-            order.totalPrice = order.totalPrice.add(item.price.multiply(new BigDecimal(item.qty)));
-            order.items.add(item);
-
-            return this;
-        }
-
-        public Order build(DiscountCard card) {
-            order.date = LocalDateTime.now();
-            //todo: calculate discount
-
-            Order result = this.order;
-            this.order = null;
-
-            return result;
-        }
-    }
-
-    private static class Item {
-        private Watch watch;
-        private BigDecimal price;
-        private int qty;
-
-        public Item(Watch watch, BigDecimal price, int qty) {
-            this.watch = watch;
-            this.price = price;
-            this.qty = qty;
-        }
-    }
 }

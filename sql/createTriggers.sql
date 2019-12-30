@@ -210,3 +210,55 @@ create trigger trigger_update_item_model
     on public."ItemModel"
     for each row
 execute function public.update_item_model();
+
+
+-----------------------------------------------------------
+drop trigger if exists trigger_update_order_model on public."OrderModel";
+drop function if exists public.update_order_model;
+create or replace function public.update_order_model() returns trigger as
+$$
+declare
+    result_row record;
+begin
+    if tg_op = 'DELETE' then
+        delete from public."Order" where id = old.order_id;
+        if not found then
+            return null;
+        else
+            return old;
+        end if;
+
+    elsif tg_op = 'INSERT' then
+
+        new.order_date := coalesce(new.order_date, localtimestamp);
+        new.order_totalprice := coalesce(new.order_totalprice, 0.00);
+
+        insert into public."Order" (date, customer_id, totalprice)
+        values (new.order_date, new.customer_id, new.order_totalprice)
+        returning id into new.order_id;
+
+        select * into result_row from public."OrderModel" where order_id = new.order_id;
+        return result_row;
+
+    elsif tg_op = 'UPDATE' then
+        update public."Order"
+        set date        = new.order_date,
+            customer_id = new.customer_id,
+            totalprice  = new.order_totalprice
+        where id = old.order_id;
+
+        if not found then
+            return null;
+        else
+            return old;
+        end if;
+
+    end if;
+end
+$$ language plpgsql;
+
+create trigger trigger_update_order_model
+    instead of insert or update or delete
+    on public."OrderModel"
+    for each row
+execute function public.update_order_model();

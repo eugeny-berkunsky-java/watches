@@ -1,33 +1,132 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import manage.DBException;
 
-public class OrderDAO {
-    private Map<Integer, Order> orders;
+import java.math.BigDecimal;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
+import java.time.LocalDateTime;
+import java.util.*;
 
-    private int id;
+import static main.Settings.getConnection;
 
-    public OrderDAO() {
-        orders = new HashMap<>();
-        id = 0;
+public class OrderDAO implements DAO<Order> {
+
+    static Order createOrderFromResultSet(ResultSet rs) {
+        try {
+            int orderId = rs.getInt("order_id");
+            LocalDateTime orderDate = rs.getObject("order_date", LocalDateTime.class);
+            BigDecimal orderTotalPrice = rs.getBigDecimal("order_totalprice");
+            Customer customer = CustomerDAO.createFromResultSet(rs);
+
+            return new Order(orderId, orderDate, customer, null, orderTotalPrice);
+        } catch (SQLException e) {
+            throw new DBException(e);
+        }
     }
 
-    private int getNextId() {
-        return ++id;
+    @Override
+    public Order create(Order model) throws SQLException {
+        final String sql = "insert into public.\"OrderModel\" (order_date, order_totalprice, customer_id) " +
+                "values (?, ?, ?) returning *;";
+
+        try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
+            st.setObject(1, model.getDate(), Types.TIMESTAMP);
+            st.setBigDecimal(2, model.getTotalPrice());
+            st.setInt(3, model.getCustomer().getId());
+
+            st.execute();
+            final ResultSet rs = st.getGeneratedKeys();
+
+            return createOrderFromResultSet(rs);
+        }
     }
 
-    public List<Order> getAll() {
-        return new ArrayList<>(orders.values());
-    }
+    @Override
+    public List<Order> getAll() throws SQLException {
+        final String sql = "select * from public.\"OrderModel\";";
 
-    void add(Order order) {
-        if (order.getId() == -1) {
-            order.setId(getNextId());
+        try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
+            final ResultSet rs = st.executeQuery();
+
+            Map<Integer, Order> orders = new HashMap<>();
+
+            while (rs.next()) {
+                final int orderId = rs.getInt("order_id");
+                orders.putIfAbsent(orderId, createOrderFromResultSet(rs));
+
+                rs.getInt("item_id");
+                final Order order = orders.get(orderId);
+                if (!rs.wasNull()) {
+                    if (order.getItems() == null) {
+                        order.setItems(new ArrayList<>());
+                    }
+
+                    order.getItems().add(ItemDAO.createFromResultSet(rs));
+                } else {
+                    order.setItems(Collections.emptyList());
+                }
+            }
+
+            return new ArrayList<>(orders.values());
         }
 
-        orders.putIfAbsent(order.getId(), order);
+    }
+
+    @Override
+    public Order getById(int id) throws SQLException {
+        final String sql = "select * from public.\"OrderModel\" where order_id = ?;";
+
+        try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
+            st.setInt(1, id);
+            final ResultSet rs = st.executeQuery();
+
+            rs.next();
+            final Order order = createOrderFromResultSet(rs);
+
+            rs.getInt("item_id");
+            if (rs.wasNull()) {
+                order.setItems(Collections.emptyList());
+                return order;
+            }
+
+            List<Item> items = new ArrayList<>();
+            items.add(ItemDAO.createFromResultSet(rs));
+
+            while (rs.next()) {
+                items.add(ItemDAO.createFromResultSet(rs));
+            }
+            order.setItems(items);
+
+            return order;
+        }
+    }
+
+    @Override
+    public boolean update(Order model) throws SQLException {
+        final String sql = "update public.\"OrderModel\"" +
+                " set order_date = ?, order_totalprice = ?, customer_id = ? " +
+                "where order_id = ?;";
+
+        try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
+            st.setObject(1, model.getDate(), Types.TIMESTAMP);
+            st.setBigDecimal(2, model.getTotalPrice());
+            st.setInt(3, model.getCustomer().getId());
+
+            return st.executeUpdate() > 0;
+        }
+    }
+
+    @Override
+    public boolean delete(int id) throws SQLException {
+        final String sql = "delete from public.\"OrderModel\" where order_id = ?;";
+
+        try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
+            st.setInt(1, id);
+
+            return st.executeUpdate() > 0;
+        }
     }
 }

@@ -64,8 +64,12 @@ select
     o.id         as order_id,
     o.date       as order_date,
     o.totalprice as order_totalprice,
+
+    --customer fields
     cm.*,
+
+    -- item fields
     im.*
 from public."Order" o
          inner join public."CustomerModel" cm on o.customer_id = cm.customer_id
-         inner join public."ItemModel" im on o.id = im.item_order_id;
+         left join public."ItemModel" im on o.id = im.item_order_id;

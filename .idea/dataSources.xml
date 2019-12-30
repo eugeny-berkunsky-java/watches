@@ -6,6 +6,7 @@
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
       <jdbc-url>jdbc:postgresql://localhost:5432/watches</jdbc-url>
+      <time-zone>Europe/Kiev</time-zone>
     </data-source>
   </component>
 </project>
