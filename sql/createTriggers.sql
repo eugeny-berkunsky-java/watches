@@ -244,6 +244,12 @@ begin
         if not found then
             return null;
         else
+
+            -- subtract from customer's total price
+            update public."CustomerModel" cm
+            set customer_sumoforders = customer_sumoforders - old.order_totalprice
+            where cm.customer_id = old.customer_id;
+
             return old;
         end if;
 
@@ -257,18 +263,31 @@ begin
         returning id into new.order_id;
 
         select * into result_row from public."OrderModel" where order_id = new.order_id;
+
+        -- add to to customer's total price
+        update public."CustomerModel" cm
+        set customer_sumoforders = new.order_totalprice
+        where cm.customer_id = new.customer_id;
+
         return result_row;
 
     elsif tg_op = 'UPDATE' then
         update public."Order"
-        set date        = new.order_date,
-            customer_id = new.customer_id,
-            totalprice  = new.order_totalprice
+        set date       = new.order_date,
+            totalprice = new.order_totalprice
         where id = old.order_id;
 
         if not found then
             return null;
         else
+
+            -- apply diff to customer's sum of orders
+            if old.order_totalprice is distinct from new.order_totalprice then
+                update public."CustomerModel" cm
+                set customer_sumoforders = customer_sumoforders + (new.order_totalprice - old.order_totalprice)
+                where cm.customer_id = new.customer_id;
+
+            end if;
             return old;
         end if;
 
