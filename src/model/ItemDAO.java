@@ -65,15 +65,13 @@ public class ItemDAO<T> implements DAO<Item> {
 
     @Override
     public boolean update(Item model) throws SQLException {
-        final String sql = "update public.\"ItemModel\" set item_price = ?, item_qty = ?, " +
-                "item_order_id = ?, watch_id = ? where item_id = ?;";
+        final String sql = "update public.\"ItemModel\" set item_price = ?, item_qty = ? " +
+                "where item_id = ?;";
 
         try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
             st.setBigDecimal(1, model.getPrice());
             st.setInt(2, model.getQty());
-            st.setInt(3, model.getOrderId());
-            st.setInt(4, model.getWatch().getId());
-            st.setInt(5, model.getId());
+            st.setInt(3, model.getId());
 
             return st.executeUpdate() > 0;
         }

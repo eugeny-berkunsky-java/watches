@@ -7,6 +7,8 @@ public abstract class DAOFactory {
     private static DAO<DiscountCard> discountCardDAO;
     private static DAO<Watch> watchDAO;
     private static DAO<Customer> customerDAO;
+    private static DAO<Order> orderDAO;
+    private static DAO<Item> itemsDAO;
 
     private DAOFactory() {
     }
@@ -46,5 +48,21 @@ public abstract class DAOFactory {
         }
 
         return customerDAO;
+    }
+
+    public static DAO<Order> getOrdersDAO() {
+        if (orderDAO == null) {
+            orderDAO = new OrderDAO();
+        }
+
+        return orderDAO;
+    }
+
+    public static DAO<Item> getItemsDAO() {
+        if (itemsDAO == null) {
+            itemsDAO = new ItemDAO<>();
+        }
+
+        return itemsDAO;
     }
 }

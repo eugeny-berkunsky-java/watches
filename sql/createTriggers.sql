@@ -202,8 +202,7 @@ begin
     elsif tg_op = 'UPDATE' then
         update public."Item"
         set price    = new.item_price,
-            qty      = new.item_qty,
-            order_id = new.item_order_id
+            qty = new.item_qty
         where id = new.item_id;
 
         if not found then
