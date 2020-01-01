@@ -13,6 +13,7 @@ public class MainMenu {
     private VendorsMenu vendorsMenu = new VendorsMenu();
     private CustomersMenu customersMenu = new CustomersMenu();
     private WatchesMenu watchesMenu = new WatchesMenu();
+    private OrdersMenu ordersMenu = new OrdersMenu();
 
     private void printMenu() {
         System.out.println("------------ Main menu -----------");
@@ -53,7 +54,7 @@ public class MainMenu {
                 }
 
                 case ORDERS: {
-                    //todo: add orders menu
+                    ordersMenu.show(scanner);
                     break;
                 }
             }

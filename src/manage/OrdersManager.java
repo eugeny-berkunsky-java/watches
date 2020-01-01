@@ -28,6 +28,16 @@ public class OrdersManager {
         }
     }
 
+    public Optional<Order> getById(int orderId) {
+        try {
+            return Optional.of(ordersDAO.getById(orderId));
+        } catch (SQLException | DBException e) {
+            e.printStackTrace(System.err);
+        }
+
+        return Optional.empty();
+    }
+
     public Optional<Order> addOrder(LocalDateTime date, int customerId) {
         if (date == null) {
             return Optional.empty();
@@ -43,9 +53,12 @@ public class OrdersManager {
         }
     }
 
-    public boolean updateOrder(int orderId, LocalDateTime date, BigDecimal totalPrice) {
+    public boolean updateOrder(int orderId, int customerId, LocalDateTime date,
+                               BigDecimal totalPrice) {
 
-        final Order order = new Order(orderId, date, null, null, totalPrice);
+        final Customer customer = new Customer(customerId, null, BigDecimal.ZERO, null);
+
+        final Order order = new Order(orderId, date, customer, Collections.emptyList(), totalPrice);
 
         try {
             return ordersDAO.update(order);
@@ -82,8 +95,8 @@ public class OrdersManager {
         return Optional.empty();
     }
 
-    public boolean updateItem(int itemId, BigDecimal price, int qty) {
-        final Item item = new Item(itemId, price, qty, -1, null);
+    public boolean updateItem(Order order, int itemId, BigDecimal price, int qty) {
+        final Item item = new Item(itemId, price, qty, order.getId(), null);
         try {
             return itemsDAO.update(item);
         } catch (SQLException e) {
@@ -93,9 +106,19 @@ public class OrdersManager {
         return false;
     }
 
-    public boolean deleteItem(int itemId) {
+    public boolean deleteItem(Item item) {
+        if (item == null || item.getId() == -1 || item.getOrderId() == -1) {
+            return false;
+        }
+
         try {
-            return itemsDAO.delete(itemId);
+            final Item storedItem = itemsDAO.getById(item.getId());
+
+            if (storedItem == null || storedItem.getOrderId() != item.getOrderId()) {
+                return false;
+            }
+
+            return itemsDAO.delete(item.getId());
         } catch (SQLException | DBException e) {
             e.printStackTrace();
         }

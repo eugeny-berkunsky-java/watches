@@ -60,7 +60,7 @@ public abstract class DAOFactory {
 
     public static DAO<Item> getItemsDAO() {
         if (itemsDAO == null) {
-            itemsDAO = new ItemDAO<>();
+            itemsDAO = new ItemDAO();
         }
 
         return itemsDAO;

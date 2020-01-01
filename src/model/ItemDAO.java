@@ -11,7 +11,7 @@ import java.util.List;
 
 import static main.Settings.getConnection;
 
-public class ItemDAO<T> implements DAO<Item> {
+public class ItemDAO implements DAO<Item> {
 
     static Item createFromResultSet(ResultSet rs) {
         try {
@@ -28,16 +28,19 @@ public class ItemDAO<T> implements DAO<Item> {
 
     @Override
     public Item create(Item model) throws SQLException {
-        final String sql = "insert into public.\"ItemModel\" (item_price, item_qty, item_order_id)" +
-                " VALUES (?, ?, ?) returning *;";
+        final String sql = "insert into public.\"ItemModel\" (item_price, item_qty, " +
+                "item_order_id, watch_id)" +
+                " VALUES (?, ?, ?, ?) returning *;";
 
         try (final PreparedStatement st = getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             st.setBigDecimal(1, model.getPrice());
             st.setInt(2, model.getQty());
             st.setInt(3, model.getOrderId());
+            st.setInt(4, model.getWatch().getId());
 
             st.execute();
             final ResultSet rs = st.getGeneratedKeys();
+            rs.next();
 
             return createFromResultSet(rs);
         }
@@ -66,12 +69,13 @@ public class ItemDAO<T> implements DAO<Item> {
     @Override
     public boolean update(Item model) throws SQLException {
         final String sql = "update public.\"ItemModel\" set item_price = ?, item_qty = ? " +
-                "where item_id = ?;";
+                "where item_id = ? and item_order_id = ?;";
 
         try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
             st.setBigDecimal(1, model.getPrice());
             st.setInt(2, model.getQty());
             st.setInt(3, model.getId());
+            st.setInt(4, model.getOrderId());
 
             return st.executeUpdate() > 0;
         }

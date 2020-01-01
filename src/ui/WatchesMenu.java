@@ -73,7 +73,6 @@ public class WatchesMenu {
         System.out.println("----------------------- Watches ----------------------");
         watchManager.getAll().stream().map(watchView).forEach(System.out::println);
         System.out.println("------------------------------------------------------");
-
     }
 
     private void addWatch(Scanner scanner) {

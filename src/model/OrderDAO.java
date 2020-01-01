@@ -3,10 +3,7 @@ package model;
 import manage.DBException;
 
 import java.math.BigDecimal;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -32,13 +29,14 @@ public class OrderDAO implements DAO<Order> {
         final String sql = "insert into public.\"OrderModel\" (order_date, order_totalprice, customer_id) " +
                 "values (?, ?, ?) returning *;";
 
-        try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
+        try (final PreparedStatement st = getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             st.setObject(1, model.getDate(), Types.TIMESTAMP);
             st.setBigDecimal(2, model.getTotalPrice());
             st.setInt(3, model.getCustomer().getId());
 
             st.execute();
             final ResultSet rs = st.getGeneratedKeys();
+            rs.next();
 
             return createOrderFromResultSet(rs);
         }
@@ -114,6 +112,7 @@ public class OrderDAO implements DAO<Order> {
             st.setObject(1, model.getDate(), Types.TIMESTAMP);
             st.setBigDecimal(2, model.getTotalPrice());
             st.setInt(3, model.getCustomer().getId());
+            st.setInt(4, model.getId());
 
             return st.executeUpdate() > 0;
         }
