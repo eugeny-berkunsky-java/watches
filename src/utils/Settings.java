@@ -10,22 +10,18 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
+import java.util.logging.*;
 
 public class Settings {
     private final static String url = "jdbc:postgresql://localhost:5432/watches";
     private final static Properties properties = new Properties();
 
     private static Connection connection;
-    private static Logger logger;
 
     static {
         properties.setProperty("user", "watches");
         properties.setProperty("password", "watches");
 
-        logger = Logger.getLogger(Settings.class.getName());
 
     }
 
@@ -40,7 +36,6 @@ public class Settings {
 
             return connection;
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "error retrieving connection", e);
             throw new RuntimeException(e);
         }
     }
@@ -50,10 +45,35 @@ public class Settings {
         try (final InputStream inputStream = Files.newInputStream(Paths.get("logging.properties"))) {
             LogManager.getLogManager().readConfiguration(inputStream);
         } catch (IOException e) {
-            e.printStackTrace(System.err);
-            //todo: add default behaviour
+            try {
+                final Logger rootLogger = Logger.getLogger("");
+
+                // remove other console handlers
+                for (Handler handler : rootLogger.getHandlers()) {
+                    if (handler.getClass() == ConsoleHandler.class) {
+                        rootLogger.removeHandler(handler);
+                    }
+                }
+
+                rootLogger.setLevel(Level.ALL);
+
+                // default console handler
+                final ConsoleHandler consoleHandler = new ConsoleHandler();
+                consoleHandler.setLevel(Level.SEVERE);
+                consoleHandler.setFormatter(new ConsoleFormatter());
+                rootLogger.addHandler(consoleHandler);
+
+                // default file handler
+                final FileHandler fileHandler = new FileHandler("watches.log", 500_000, 1, true);
+                fileHandler.setLevel(Level.INFO);
+                fileHandler.setFormatter(new FileFormatter());
+                rootLogger.addHandler(fileHandler);
+
+                rootLogger.log(Level.WARNING, "cant find logger settings file", e);
+            } catch (IOException ex) {
+                ex.printStackTrace(System.err);
+            }
         }
-        logger.log(Level.INFO, "program started");
     }
 
     public static void shutDown() {
@@ -61,7 +81,7 @@ public class Settings {
             try {
                 connection.close();
             } catch (SQLException e) {
-                logger.log(Level.SEVERE, "error closing DB connection", e);
+                e.printStackTrace(System.err);
             }
         }
 
