@@ -1,7 +1,6 @@
 package utils;
 
-import main.Main;
-
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -13,36 +12,16 @@ import java.util.Properties;
 import java.util.logging.*;
 
 public class Settings {
-    private final static String url = "jdbc:postgresql://localhost:5432/watches";
+    private final static String LOGGING_SETTINGS_FILE = "logging.properties";
+    private final static String WATCHES_SETTINGS_FILE = "watches.properties";
+
     private final static Properties properties = new Properties();
 
     private static Connection connection;
 
-    static {
-        properties.setProperty("user", "watches");
-        properties.setProperty("password", "watches");
-
-
-    }
-
-    public static Connection getConnection() {
-        try {
-            if (connection == null) {
-                connection = DriverManager.getConnection(url, properties);
-            } else if (!connection.isValid(60)) {
-                connection.close();
-                connection = DriverManager.getConnection(url, properties);
-            }
-
-            return connection;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public static void init() {
         // init logger
-        try (final InputStream inputStream = Files.newInputStream(Paths.get("logging.properties"))) {
+        try (final InputStream inputStream = Files.newInputStream(Paths.get(LOGGING_SETTINGS_FILE))) {
             LogManager.getLogManager().readConfiguration(inputStream);
         } catch (IOException e) {
             try {
@@ -69,10 +48,37 @@ public class Settings {
                 fileHandler.setFormatter(new FileFormatter());
                 rootLogger.addHandler(fileHandler);
 
-                rootLogger.log(Level.WARNING, "cant find logger settings file", e);
+                rootLogger.log(Level.WARNING, "can't find logger settings file", e);
             } catch (IOException ex) {
                 ex.printStackTrace(System.err);
             }
+        }
+        Thread.setDefaultUncaughtExceptionHandler(
+                (t, e) -> Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, "error", e)
+        );
+
+        // load properties
+        try (final BufferedReader reader = Files.newBufferedReader(Paths.get(WATCHES_SETTINGS_FILE))) {
+            properties.load(reader);
+        } catch (IOException e) {
+            Logger.getLogger("").log(Level.WARNING, "can't find program settings file", e);
+        }
+    }
+
+    public static Connection getConnection() {
+        try {
+            if (connection == null) {
+                connection = DriverManager.getConnection(properties.getProperty("url"),
+                        properties);
+            } else if (!connection.isValid(60)) {
+                connection.close();
+                connection = DriverManager.getConnection(properties.getProperty("url"),
+                        properties);
+            }
+
+            return connection;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -84,7 +90,5 @@ public class Settings {
                 e.printStackTrace(System.err);
             }
         }
-
-        Logger.getLogger(Main.class.getName()).log(Level.INFO, "program stopped");
     }
 }
