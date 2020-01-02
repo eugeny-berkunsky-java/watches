@@ -1,12 +1,17 @@
 package main;
 
 import ui.MainMenu;
+import utils.Settings;
 
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        new MainMenu().show(new Scanner(System.in));
-        Settings.shutDown();
+        try {
+            Settings.init();
+            new MainMenu().show(new Scanner(System.in));
+        } finally {
+            Settings.shutDown();
+        }
     }
 }

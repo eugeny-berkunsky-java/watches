@@ -3,24 +3,30 @@ package manage;
 import model.Country;
 import model.DAO;
 import model.DAOFactory;
+import utils.DBException;
 
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CountriesManager {
+    private Logger logger;
+
     private DAO<Country> countryDAO;
 
     public CountriesManager() {
         countryDAO = DAOFactory.getCountriesDAO();
+        logger = Logger.getLogger(CountriesManager.class.getName());
     }
 
     public List<Country> getAll() {
         try {
             return countryDAO.getAll();
         } catch (SQLException | DBException e) {
-            e.printStackTrace(System.err);
+            logger.log(Level.SEVERE, "get all countries error", e);
         }
 
         return Collections.emptyList();
@@ -34,7 +40,7 @@ public class CountriesManager {
         try {
             return Optional.of(countryDAO.create(new Country(-1, countryName)));
         } catch (SQLException | DBException e) {
-            e.printStackTrace(System.err);
+            logger.log(Level.SEVERE, "add country error", e);
         }
 
         return Optional.empty();
@@ -48,7 +54,7 @@ public class CountriesManager {
         try {
             return countryDAO.update(new Country(countryId, countryName));
         } catch (SQLException | DBException e) {
-            e.printStackTrace(System.err);
+            logger.log(Level.SEVERE, "update country error", e);
         }
 
         return false;
@@ -58,7 +64,7 @@ public class CountriesManager {
         try {
             return countryDAO.delete(countryId);
         } catch (SQLException | DBException e) {
-            e.printStackTrace(System.err);
+            logger.log(Level.SEVERE, "delete country error", e);
         }
 
         return false;

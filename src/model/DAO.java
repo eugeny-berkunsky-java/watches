@@ -1,6 +1,6 @@
 package model;
 
-import manage.DBException;
+import utils.DBException;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

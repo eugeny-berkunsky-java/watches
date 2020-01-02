@@ -1,13 +1,13 @@
 package model;
 
-import manage.DBException;
+import utils.DBException;
 
 import java.math.BigDecimal;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static main.Settings.getConnection;
+import static utils.Settings.getConnection;
 
 public class OrderDAO implements DAO<Order> {
 

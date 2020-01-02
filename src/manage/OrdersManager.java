@@ -1,6 +1,7 @@
 package manage;
 
 import model.*;
+import utils.DBException;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -8,22 +9,27 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class OrdersManager {
 
     private DAO<Order> ordersDAO;
     private DAO<Item> itemsDAO;
 
+    private Logger logger;
+
     public OrdersManager() {
         ordersDAO = DAOFactory.getOrdersDAO();
         itemsDAO = DAOFactory.getItemsDAO();
+        logger = Logger.getLogger(OrdersManager.class.getName());
     }
 
     public List<Order> getAll() {
         try {
             return ordersDAO.getAll();
         } catch (SQLException | DBException e) {
-            e.printStackTrace(System.err);
+            logger.log(Level.SEVERE, "get all orders error", e);
         }
 
         return Collections.emptyList();
@@ -33,7 +39,7 @@ public class OrdersManager {
         try {
             return Optional.of(ordersDAO.getById(orderId));
         } catch (SQLException | DBException e) {
-            e.printStackTrace(System.err);
+            logger.log(Level.SEVERE, "get order by id error", e);
         }
 
         return Optional.empty();
@@ -51,7 +57,7 @@ public class OrdersManager {
         try {
             return Optional.of(ordersDAO.create(order));
         } catch (SQLException | DBException e) {
-            e.printStackTrace(System.err);
+            logger.log(Level.SEVERE, "add new order error", e);
         }
 
         return Optional.empty();
@@ -70,7 +76,7 @@ public class OrdersManager {
         try {
             return ordersDAO.update(order);
         } catch (SQLException | DBException e) {
-            e.printStackTrace(System.err);
+            logger.log(Level.SEVERE, "update order error", e);
         }
 
         return false;
@@ -80,7 +86,7 @@ public class OrdersManager {
         try {
             return ordersDAO.delete(orderId);
         } catch (SQLException | DBException e) {
-            e.printStackTrace(System.err);
+            logger.log(Level.SEVERE, "delete order error", e);
         }
 
         return false;
@@ -96,7 +102,7 @@ public class OrdersManager {
         try {
             return Optional.of(itemsDAO.create(item));
         } catch (SQLException | DBException e) {
-            e.printStackTrace(System.err);
+            logger.log(Level.SEVERE, "add item to order error", e);
         }
 
         return Optional.empty();
@@ -111,7 +117,7 @@ public class OrdersManager {
         try {
             return itemsDAO.update(item);
         } catch (SQLException | DBException e) {
-            e.printStackTrace(System.err);
+            logger.log(Level.SEVERE, "update order's item error", e);
         }
 
         return false;
@@ -131,7 +137,7 @@ public class OrdersManager {
 
             return itemsDAO.delete(item.getId());
         } catch (SQLException | DBException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "delete item error", e);
         }
 
         return false;

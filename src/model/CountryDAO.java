@@ -1,6 +1,6 @@
 package model;
 
-import manage.DBException;
+import utils.DBException;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
-import static main.Settings.getConnection;
+import static utils.Settings.getConnection;
 
 class CountryDAO implements DAO<Country> {
 

@@ -9,19 +9,23 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class VendorManager {
     private DAO<Vendor> dao;
+    private Logger logger;
 
     public VendorManager() {
         dao = DAOFactory.getVendorsDAO();
+        logger = Logger.getLogger(VendorManager.class.getName());
     }
 
     public List<Vendor> getAll() {
         try {
             return dao.getAll();
         } catch (SQLException e) {
-            e.printStackTrace(System.err);
+            logger.log(Level.SEVERE, "get all vendors error", e);
         }
 
         return Collections.emptyList();
@@ -35,7 +39,7 @@ public class VendorManager {
         try {
             return Optional.of(dao.create(new Vendor(-1, vendorName, new Country(countryId, null))));
         } catch (SQLException e) {
-            e.printStackTrace(System.err);
+            logger.log(Level.SEVERE, "add new vendor error", e);
         }
 
         return Optional.empty();
@@ -51,7 +55,7 @@ public class VendorManager {
         try {
             return dao.update(vendor);
         } catch (SQLException e) {
-            e.printStackTrace(System.err);
+            logger.log(Level.SEVERE, "update vendor error", e);
         }
 
         return false;
@@ -61,7 +65,7 @@ public class VendorManager {
         try {
             return dao.delete(vendorId);
         } catch (SQLException e) {
-            e.printStackTrace(System.err);
+            logger.log(Level.SEVERE, "delete vendor error", e);
         }
 
         return false;

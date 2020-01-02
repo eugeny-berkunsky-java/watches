@@ -4,25 +4,30 @@ import model.Customer;
 import model.DAO;
 import model.DAOFactory;
 import model.DiscountCard;
+import utils.DBException;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CustomerManager {
     private DAO<Customer> dao;
+    private Logger logger;
 
     public CustomerManager() {
         this.dao = DAOFactory.getCustomerDAO();
+        logger = Logger.getLogger(CustomerManager.class.getName());
     }
 
     public List<Customer> getAll() {
         try {
             return dao.getAll();
         } catch (SQLException | DBException e) {
-            e.printStackTrace(System.err);
+            logger.log(Level.SEVERE, "getAll error", e);
         }
 
         return Collections.emptyList();
@@ -38,7 +43,7 @@ public class CustomerManager {
                     new DiscountCard(0, null, BigDecimal.ZERO));
             return Optional.of(dao.create(customer));
         } catch (SQLException | DBException e) {
-            e.printStackTrace(System.err);
+            logger.log(Level.SEVERE, "add customer error", e);
         }
 
         return Optional.empty();
@@ -55,7 +60,7 @@ public class CustomerManager {
         try {
             return dao.update(customer);
         } catch (SQLException | DBException e) {
-            e.printStackTrace(System.err);
+            logger.log(Level.SEVERE, "update customer error", e);
         }
 
         return false;
@@ -65,7 +70,7 @@ public class CustomerManager {
         try {
             return dao.delete(id);
         } catch (SQLException | DBException e) {
-            e.printStackTrace(System.err);
+            logger.log(Level.SEVERE, "delete customer error", e);
         }
 
         return false;

@@ -1,6 +1,7 @@
 package manage;
 
 import model.*;
+import utils.DBException;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -9,22 +10,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class WatchManager {
     private DAO<Watch> dao;
+    private Logger logger;
 
     public WatchManager() {
         dao = DAOFactory.getWatchDAO();
+        logger = Logger.getLogger(WatchManager.class.getName());
     }
 
     public List<Watch> getAll() {
         try {
             return dao.getAll();
         } catch (SQLException | DBException e) {
-            e.printStackTrace(System.err);
-            return Collections.emptyList();
+            logger.log(Level.SEVERE, "get all watches error");
         }
+
+        return Collections.emptyList();
     }
 
     public Optional<Watch> addWatch(String brand, Watch.WatchType type, BigDecimal price, int qty,
@@ -38,7 +44,7 @@ public class WatchManager {
                     new Vendor(vendorId, null, null));
             return Optional.of(dao.create(newWatch));
         } catch (SQLException | DBException e) {
-            e.printStackTrace(System.err);
+            logger.log(Level.SEVERE, "add watch error", e);
         }
 
         return Optional.empty();
@@ -58,7 +64,7 @@ public class WatchManager {
                             new Country(-1, null)));
             return dao.update(watch);
         } catch (SQLException | DBException e) {
-            e.printStackTrace(System.err);
+            logger.log(Level.SEVERE, "update watch error", e);
         }
 
         return false;
@@ -68,7 +74,7 @@ public class WatchManager {
         try {
             return dao.delete(watchId);
         } catch (SQLException | DBException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "delete watch error", e);
         }
 
         return false;
