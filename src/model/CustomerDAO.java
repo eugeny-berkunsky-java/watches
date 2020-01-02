@@ -47,8 +47,7 @@ public class CustomerDAO implements DAO<Customer> {
 
     @Override
     public List<Customer> getAll() throws SQLException {
-        final String sql = "" +
-                "select * from public.\"CustomerModel\";";
+        final String sql = "select * from public.\"CustomerModel\";";
 
 
         try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
@@ -68,14 +67,16 @@ public class CustomerDAO implements DAO<Customer> {
 
     @Override
     public boolean update(Customer model) throws SQLException {
-        final String sql = "update public.\"CustomerModel\" set customer_name = ?, customer_sumoforders=?, " +
-                "dcard_id = ? where customer_id = ?;";
+        final String sql = "update public.\"CustomerModel\" " +
+                "set customer_name = ?, customer_sumoforders=?, dcard_id = ? " +
+                "where customer_id = ?;";
 
         try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
             st.setString(1, model.getName());
             st.setBigDecimal(2, model.getSumOfOrders());
             st.setInt(3, model.getDiscountCard().getId());
             st.setInt(4, model.getId());
+
             return st.executeUpdate() > 0;
         }
     }

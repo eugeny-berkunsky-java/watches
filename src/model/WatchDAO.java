@@ -30,8 +30,8 @@ public class WatchDAO implements DAO<Watch> {
 
     @Override
     public Watch create(Watch model) throws SQLException {
-        final String sql = "insert into public.\"WatchModel\" (watch_brand, watch_type, watch_price, " +
-                "watch_qty, vendor_id) " +
+        final String sql = "insert into public.\"WatchModel\" " +
+                "(watch_brand, watch_type, watch_price, watch_qty, vendor_id) " +
                 "values (?, ?::watch_type, ?, ?, ?) returning *;";
 
         try (final PreparedStatement st = getConnection().prepareStatement(sql,
@@ -70,8 +70,9 @@ public class WatchDAO implements DAO<Watch> {
 
     @Override
     public boolean update(Watch model) throws SQLException {
-        final String sql = "update public.\"Watch\" set brand = ?, type=?::watch_type, price=?, qty=?, " +
-                "vendor_id = ? where id = ?;";
+        final String sql = "update public.\"Watch\" " +
+                "set brand = ?, type=?::watch_type, price=?, qty=?, vendor_id = ? " +
+                "where id = ?;";
 
         try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
             st.setString(1, model.getBrand());
@@ -88,6 +89,7 @@ public class WatchDAO implements DAO<Watch> {
     @Override
     public boolean delete(int id) throws SQLException {
         final String sql = "delete from public.\"Watch\" where id = ?;";
+
         try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
             st.setInt(1, id);
             return st.executeUpdate() > 0;

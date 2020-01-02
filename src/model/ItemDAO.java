@@ -28,11 +28,12 @@ public class ItemDAO implements DAO<Item> {
 
     @Override
     public Item create(Item model) throws SQLException {
-        final String sql = "insert into public.\"ItemModel\" (item_price, item_qty, " +
-                "item_order_id, watch_id)" +
-                " VALUES (?, ?, ?, ?) returning *;";
+        final String sql = "insert into public.\"ItemModel\" " +
+                "(item_price, item_qty, item_order_id, watch_id) " +
+                "VALUES (?, ?, ?, ?) returning *;";
 
-        try (final PreparedStatement st = getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (final PreparedStatement st = getConnection().prepareStatement(sql,
+                Statement.RETURN_GENERATED_KEYS)) {
             st.setBigDecimal(1, model.getPrice());
             st.setInt(2, model.getQty());
             st.setInt(3, model.getOrderId());
@@ -68,7 +69,8 @@ public class ItemDAO implements DAO<Item> {
 
     @Override
     public boolean update(Item model) throws SQLException {
-        final String sql = "update public.\"ItemModel\" set item_price = ?, item_qty = ? " +
+        final String sql = "update public.\"ItemModel\" " +
+                "set item_price = ?, item_qty = ? " +
                 "where item_id = ? and item_order_id = ?;";
 
         try (final PreparedStatement st = getConnection().prepareStatement(sql)) {

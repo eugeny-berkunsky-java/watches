@@ -24,8 +24,9 @@ public class OrdersManager {
             return ordersDAO.getAll();
         } catch (SQLException | DBException e) {
             e.printStackTrace(System.err);
-            return Collections.emptyList();
         }
+
+        return Collections.emptyList();
     }
 
     public Optional<Order> getById(int orderId) {
@@ -42,19 +43,25 @@ public class OrdersManager {
         if (date == null) {
             return Optional.empty();
         }
-        final Order order = new Order(-1, date, new Customer(customerId, null, BigDecimal.ZERO, new DiscountCard(0,
-                null, BigDecimal.ZERO)), null, BigDecimal.ZERO);
+
+        final Order order = new Order(-1, date,
+                new Customer(customerId, null, BigDecimal.ZERO,
+                        new DiscountCard(0, null, BigDecimal.ZERO)), null, BigDecimal.ZERO);
 
         try {
             return Optional.of(ordersDAO.create(order));
         } catch (SQLException | DBException e) {
             e.printStackTrace(System.err);
-            return Optional.empty();
         }
+
+        return Optional.empty();
     }
 
     public boolean updateOrder(int orderId, int customerId, LocalDateTime date,
                                BigDecimal totalPrice) {
+        if (date == null || totalPrice == null) {
+            return false;
+        }
 
         final Customer customer = new Customer(customerId, null, BigDecimal.ZERO, null);
 
@@ -96,10 +103,14 @@ public class OrdersManager {
     }
 
     public boolean updateItem(Order order, int itemId, BigDecimal price, int qty) {
+        if (order == null || price == null) {
+            return false;
+        }
+
         final Item item = new Item(itemId, price, qty, order.getId(), null);
         try {
             return itemsDAO.update(item);
-        } catch (SQLException e) {
+        } catch (SQLException | DBException e) {
             e.printStackTrace(System.err);
         }
 

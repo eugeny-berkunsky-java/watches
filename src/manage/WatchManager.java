@@ -39,21 +39,29 @@ public class WatchManager {
             return Optional.of(dao.create(newWatch));
         } catch (SQLException | DBException e) {
             e.printStackTrace(System.err);
-            return Optional.empty();
         }
+
+        return Optional.empty();
     }
 
     public boolean updateWatch(int watchId, String brand, Watch.WatchType type, BigDecimal price,
                                int qty,
                                int vendorId) {
+
+        if (brand == null || type == null || price == null) {
+            return false;
+        }
+
         try {
-            Watch watch = new Watch(watchId, brand, type, price, qty, new Vendor(vendorId, null,
-                    new Country(-1, null)));
+            Watch watch = new Watch(watchId, brand, type, price, qty,
+                    new Vendor(vendorId, null,
+                            new Country(-1, null)));
             return dao.update(watch);
         } catch (SQLException | DBException e) {
             e.printStackTrace(System.err);
-            return false;
         }
+
+        return false;
     }
 
     public boolean deleteWatch(int watchId) {
@@ -61,8 +69,9 @@ public class WatchManager {
             return dao.delete(watchId);
         } catch (SQLException | DBException e) {
             e.printStackTrace();
-            return false;
         }
+
+        return false;
     }
 
     public List<Watch> getByType(Watch.WatchType type) {
@@ -74,7 +83,8 @@ public class WatchManager {
     }
 
     public List<Watch> getAnalogueWatchNotGreaterByPriceThan(BigDecimal upperLimit) {
-        return getByType(Watch.WatchType.ANALOGUE).stream()
+        return upperLimit == null ? Collections.emptyList()
+                : getByType(Watch.WatchType.ANALOGUE).stream()
                 .filter(w -> w.getPrice().compareTo(upperLimit) < 0)
                 .collect(Collectors.toList());
     }
@@ -88,6 +98,10 @@ public class WatchManager {
     }
 
     public List<Vendor> getVendorByTotalSumNotGreaterThan(BigDecimal upperLimit) {
+        if (upperLimit == null) {
+            return Collections.emptyList();
+        }
+
         Predicate<List<Watch>> predicate = l -> totalSum(l).compareTo(upperLimit) <= 0;
 
         Map<Vendor, List<Watch>> collect = getAll().stream()

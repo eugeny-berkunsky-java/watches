@@ -62,7 +62,8 @@ class DiscountCardDAO implements DAO<DiscountCard> {
 
     @Override
     public boolean update(DiscountCard model) throws SQLException {
-        final String sql = "update public.\"DiscountCardModel\" set dcard_number = ?, dcard_percent = ? " +
+        final String sql = "update public.\"DiscountCardModel\"" +
+                " set dcard_number = ?, dcard_percent = ? " +
                 "where dcard_id = ?;";
 
         try (final PreparedStatement st = getConnection().prepareStatement(sql)) {

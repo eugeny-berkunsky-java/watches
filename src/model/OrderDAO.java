@@ -29,7 +29,8 @@ public class OrderDAO implements DAO<Order> {
         final String sql = "insert into public.\"OrderModel\" (order_date, order_totalprice, customer_id) " +
                 "values (?, ?, ?) returning *;";
 
-        try (final PreparedStatement st = getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (final PreparedStatement st = getConnection().prepareStatement(sql,
+                Statement.RETURN_GENERATED_KEYS)) {
             st.setObject(1, model.getDate(), Types.TIMESTAMP);
             st.setBigDecimal(2, model.getTotalPrice());
             st.setInt(3, model.getCustomer().getId());
@@ -104,8 +105,8 @@ public class OrderDAO implements DAO<Order> {
 
     @Override
     public boolean update(Order model) throws SQLException {
-        final String sql = "update public.\"OrderModel\"" +
-                " set order_date = ?, order_totalprice = ?, customer_id = ? " +
+        final String sql = "update public.\"OrderModel\" " +
+                "set order_date = ?, order_totalprice = ?, customer_id = ? " +
                 "where order_id = ?;";
 
         try (final PreparedStatement st = getConnection().prepareStatement(sql)) {

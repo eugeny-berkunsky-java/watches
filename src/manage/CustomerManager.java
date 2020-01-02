@@ -23,8 +23,9 @@ public class CustomerManager {
             return dao.getAll();
         } catch (SQLException | DBException e) {
             e.printStackTrace(System.err);
-            return Collections.emptyList();
         }
+
+        return Collections.emptyList();
     }
 
     public Optional<Customer> addCustomer(String name) {
@@ -38,8 +39,9 @@ public class CustomerManager {
             return Optional.of(dao.create(customer));
         } catch (SQLException | DBException e) {
             e.printStackTrace(System.err);
-            return Optional.empty();
         }
+
+        return Optional.empty();
     }
 
     public boolean updateCustomer(int id, String name, BigDecimal sum, int cardId) {
@@ -52,18 +54,20 @@ public class CustomerManager {
 
         try {
             return dao.update(customer);
-        } catch (SQLException e) {
+        } catch (SQLException | DBException e) {
             e.printStackTrace(System.err);
-            return false;
         }
+
+        return false;
     }
 
     public boolean deleteCustomer(int id) {
         try {
             return dao.delete(id);
-        } catch (SQLException e) {
+        } catch (SQLException | DBException e) {
             e.printStackTrace(System.err);
-            return false;
         }
+
+        return false;
     }
 }

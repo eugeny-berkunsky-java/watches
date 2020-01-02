@@ -25,7 +25,6 @@ class VendorDAO implements DAO<Vendor> {
 
     @Override
     public Vendor create(Vendor model) throws SQLException {
-
         final String sql = "insert into public.\"VendorModel\" (vendor_name, country_id) " +
                 "VALUES (?, ?) returning *;";
 

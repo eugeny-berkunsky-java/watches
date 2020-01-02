@@ -19,7 +19,7 @@ public class CountriesManager {
     public List<Country> getAll() {
         try {
             return countryDAO.getAll();
-        } catch (SQLException e) {
+        } catch (SQLException | DBException e) {
             e.printStackTrace(System.err);
         }
 
@@ -33,7 +33,7 @@ public class CountriesManager {
 
         try {
             return Optional.of(countryDAO.create(new Country(-1, countryName)));
-        } catch (SQLException e) {
+        } catch (SQLException | DBException e) {
             e.printStackTrace(System.err);
         }
 
@@ -47,7 +47,7 @@ public class CountriesManager {
 
         try {
             return countryDAO.update(new Country(countryId, countryName));
-        } catch (SQLException e) {
+        } catch (SQLException | DBException e) {
             e.printStackTrace(System.err);
         }
 
@@ -57,7 +57,7 @@ public class CountriesManager {
     public boolean deleteCountry(int countryId) {
         try {
             return countryDAO.delete(countryId);
-        } catch (SQLException e) {
+        } catch (SQLException | DBException e) {
             e.printStackTrace(System.err);
         }
 

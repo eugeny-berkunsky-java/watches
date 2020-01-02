@@ -22,7 +22,6 @@ class CountryDAO implements DAO<Country> {
 
     @Override
     public Country create(Country country) throws SQLException {
-
         final String sql = "insert into public.\"CountryModel\" (country_name) values (?) returning *;";
 
         try (final PreparedStatement st
@@ -56,7 +55,6 @@ class CountryDAO implements DAO<Country> {
 
     @Override
     public boolean update(Country country) throws SQLException {
-
         final String sql = "update public.\"CountryModel\" set country_name = ? where country_id = ?;";
 
         try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
