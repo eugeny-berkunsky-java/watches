@@ -2,10 +2,10 @@ package ui;
 
 import manage.CustomerManager;
 import model.Customer;
+import utils.UserInput;
 
 import java.math.BigDecimal;
 import java.util.Optional;
-import java.util.Scanner;
 import java.util.function.Function;
 
 public class CustomersMenu {
@@ -13,24 +13,25 @@ public class CustomersMenu {
     private final static int ADD_CUSTOMER = 2;
     private final static int UPDATE_CUSTOMER = 3;
     private final static int DELETE_CUSTOMER = 4;
+    private final static int PREVIOUS_MENU = 0;
 
     private CustomerManager customerManager = new CustomerManager();
 
     private void printMenu() {
         System.out.println("---------- Customers menu ----------");
-        System.out.println("1. Show all customers");
-        System.out.println("2. Add customer");
-        System.out.println("3. Update customer");
-        System.out.println("4. Delete customer");
-        System.out.println("0. return to main menu");
+        System.out.format("%d. Show all customers%n", SHOW_ALL_CUSTOMERS);
+        System.out.format("%d. Add customer%n", ADD_CUSTOMER);
+        System.out.format("%d. Update customer%n", UPDATE_CUSTOMER);
+        System.out.format("%d. Delete customer%n", DELETE_CUSTOMER);
+        System.out.format("%d. return to main menu%n", PREVIOUS_MENU);
     }
 
-    public void show(Scanner scanner) {
+    public void show(UserInput userInput) {
         int answer;
 
         do {
             printMenu();
-            answer = scanner.nextInt();
+            answer = userInput.getNumber("your choice", -1);
 
             switch (answer) {
                 case SHOW_ALL_CUSTOMERS: {
@@ -38,19 +39,19 @@ public class CustomersMenu {
                     break;
                 }
                 case ADD_CUSTOMER: {
-                    addCustomer(scanner);
+                    addCustomer(userInput);
                     break;
                 }
                 case UPDATE_CUSTOMER: {
-                    updateCustomer(scanner);
+                    updateCustomer(userInput);
                     break;
                 }
                 case DELETE_CUSTOMER: {
-                    deleteCustomer(scanner);
+                    deleteCustomer(userInput);
                     break;
                 }
             }
-        } while (answer != 0);
+        } while (answer != PREVIOUS_MENU);
     }
 
     private void showCustomers() {
@@ -64,9 +65,8 @@ public class CustomersMenu {
 
     }
 
-    private void addCustomer(Scanner scanner) {
-        System.out.print("customer name: ");
-        String customerName = scanner.next();
+    private void addCustomer(UserInput userInput) {
+        String customerName = userInput.getString("customer name");
 
         final Optional<Customer> customer = customerManager.addCustomer(customerName);
         if (customer.isPresent()) {
@@ -77,20 +77,16 @@ public class CustomersMenu {
 
     }
 
-    private void updateCustomer(Scanner scanner) {
+    private void updateCustomer(UserInput userInput) {
         System.out.println("what customer do you want to update?");
 
-        System.out.print("customer ID: ");
-        int id = scanner.nextInt();
+        int id = userInput.getNumber("customer ID", -1);
 
-        System.out.print("customer name: ");
-        String name = scanner.next();
+        String name = userInput.getString("customer name");
 
-        System.out.print("total sum: ");
-        BigDecimal totalSum = new BigDecimal(scanner.next().trim());
+        BigDecimal totalSum = new BigDecimal(userInput.getString("total sum"));
 
-        System.out.print("card number ID: ");
-        int cardId = scanner.nextInt();
+        int cardId = userInput.getNumber("card number ID", -1);
 
         if (customerManager.updateCustomer(id, name, totalSum, cardId)) {
             System.out.println("updated successfully");
@@ -99,10 +95,9 @@ public class CustomersMenu {
         }
     }
 
-    private void deleteCustomer(Scanner scanner) {
+    private void deleteCustomer(UserInput userInput) {
         System.out.println("what customer do you want to delete?");
-        System.out.print("id: ");
-        int id = scanner.nextInt();
+        int id = userInput.getNumber("id", -1);
 
         if (customerManager.deleteCustomer(id)) {
             System.out.println("deleted successfully");

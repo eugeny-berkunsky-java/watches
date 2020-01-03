@@ -3,12 +3,12 @@ package ui;
 import manage.OrdersManager;
 import model.Item;
 import model.Order;
+import utils.UserInput;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.Scanner;
 import java.util.function.Function;
 
 public class NewOrderMenu {
@@ -18,7 +18,7 @@ public class NewOrderMenu {
     private final static int UPDATE_ITEM = 3;
     private final static int REMOVE_ITEM = 4;
     private final static int COMMIT_ORDER = 5;
-    private final static int RETURN_BACK = 0;
+    private final static int PREVIOUS_MENU = 0;
 
     private final OrdersManager ordersManager;
 
@@ -28,20 +28,18 @@ public class NewOrderMenu {
 
     private void printMenu() {
         System.out.println("---------- Create new order ----------");
-        System.out.println("1. view items");
-        System.out.println("2. add item to order");
-        System.out.println("3. update item");
-        System.out.println("4. remove item from order");
-        System.out.println("5. complete order and return to previous menu");
-        System.out.println("0. cancel order and return to previous menu");
+        System.out.format("%d. view items%n", VIEW_ITEMS);
+        System.out.format("%d. add item to order%n", ADD_ITEM_TO_ORDER);
+        System.out.format("%d. update item%n", UPDATE_ITEM);
+        System.out.format("%d. remove item from order%n", REMOVE_ITEM);
+        System.out.format("%d. complete order and return to previous menu%n", COMMIT_ORDER);
+        System.out.format("%d. cancel order and return to previous menu%n", PREVIOUS_MENU);
     }
 
-    public void show(Scanner scanner) {
+    public void show(UserInput userInput) {
         int answer;
 
-
-        System.out.print("set user ID: ");
-        int userId = scanner.nextInt();
+        int userId = userInput.getNumber("set user ID", -1);
         Optional<Order> order = ordersManager.addOrder(LocalDateTime.now(), userId);
 
         if (!order.isPresent()) {
@@ -51,7 +49,7 @@ public class NewOrderMenu {
 
         do {
             printMenu();
-            answer = scanner.nextInt();
+            answer = userInput.getNumber("your choice", -1);
 
             switch (answer) {
                 case VIEW_ITEMS: {
@@ -59,21 +57,21 @@ public class NewOrderMenu {
                     break;
                 }
                 case ADD_ITEM_TO_ORDER: {
-                    addItemToOrder(order.get(), scanner);
+                    addItemToOrder(order.get(), userInput);
                     break;
                 }
                 case UPDATE_ITEM: {
-                    updateItem(order.get(), scanner);
+                    updateItem(order.get(), userInput);
                     break;
                 }
 
                 case REMOVE_ITEM: {
-                    removeItem(order.get(), scanner);
+                    removeItem(order.get(), userInput);
                     break;
                 }
             }
 
-        } while (answer != RETURN_BACK && answer != COMMIT_ORDER);
+        } while (answer != PREVIOUS_MENU && answer != COMMIT_ORDER);
 
         if (answer == COMMIT_ORDER) {
             commitOrder(order.get());
@@ -96,15 +94,12 @@ public class NewOrderMenu {
         });
     }
 
-    private void addItemToOrder(Order order, Scanner scanner) {
-        System.out.print("watch ID: ");
-        final int watchId = scanner.nextInt();
+    private void addItemToOrder(Order order, UserInput userInput) {
+        final int watchId = userInput.getNumber("watch ID", -1);
 
-        System.out.print("watch qty: ");
-        final int qty = scanner.nextInt();
+        final int qty = userInput.getNumber("watch qty", -1);
 
-        System.out.print("watch price: ");
-        final BigDecimal price = new BigDecimal(scanner.next().trim());
+        final BigDecimal price = new BigDecimal(userInput.getString("watch price"));
 
         final Optional<Item> item = ordersManager.addItem(order, watchId, qty, price);
 
@@ -115,15 +110,12 @@ public class NewOrderMenu {
         }
     }
 
-    private void updateItem(Order order, Scanner scanner) {
-        System.out.print("item ID: ");
-        final int itemId = scanner.nextInt();
+    private void updateItem(Order order, UserInput userInput) {
+        final int itemId = userInput.getNumber("item ID", -1);
 
-        System.out.print("item qty: ");
-        final int itemQty = scanner.nextInt();
+        final int itemQty = userInput.getNumber("item qty", -1);
 
-        System.out.print("item price: ");
-        final BigDecimal itemPrice = new BigDecimal(scanner.next().trim());
+        final BigDecimal itemPrice = new BigDecimal(userInput.getString("item price"));
 
         if (ordersManager.updateItem(order, itemId, itemPrice, itemQty)) {
             System.out.println("updated successfully");
@@ -132,9 +124,8 @@ public class NewOrderMenu {
         }
     }
 
-    private void removeItem(Order order, Scanner scanner) {
-        System.out.print("item ID: ");
-        final int itemId = scanner.nextInt();
+    private void removeItem(Order order, UserInput userInput) {
+        final int itemId = userInput.getNumber("item ID", -1);
 
         final Item item = new Item(itemId, BigDecimal.ZERO, 1, order.getId(), null);
         if (ordersManager.deleteItem(item)) {

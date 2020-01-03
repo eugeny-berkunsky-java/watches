@@ -3,10 +3,10 @@ package ui;
 import manage.OrdersManager;
 import model.Item;
 import model.Order;
+import utils.UserInput;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
-import java.util.Scanner;
 import java.util.function.Function;
 
 public class OrdersMenu {
@@ -15,6 +15,7 @@ public class OrdersMenu {
     private final static int SHOW_ORDER_DETAILS = 2;
     private final static int ADD_NEW_ORDER = 3;
     private final static int DELETE_ORDER = 4;
+    private final static int PREVIOUS_MENU = 0;
 
     private final OrdersManager ordersManager;
     private final NewOrderMenu addNewOrderMenu;
@@ -28,19 +29,19 @@ public class OrdersMenu {
 
     private void printMenu() {
         System.out.println("---------- Orders menu ----------");
-        System.out.println("1. Show all orders");
-        System.out.println("2. Show order details");
-        System.out.println("3. Add new order");
-        System.out.println("4. Delete order");
-        System.out.println("0. return to main menu");
+        System.out.format("%d. Show all orders%n", SHOW_ALL_ORDERS);
+        System.out.format("%d. Show order details%n", SHOW_ORDER_DETAILS);
+        System.out.format("%d. Add new order%n", ADD_NEW_ORDER);
+        System.out.format("%d. Delete order%n", DELETE_ORDER);
+        System.out.format("%d. return to main menu%n", PREVIOUS_MENU);
     }
 
-    public void show(Scanner scanner) {
+    public void show(UserInput userInput) {
         int answer;
 
         do {
             printMenu();
-            answer = scanner.nextInt();
+            answer = userInput.getNumber("your choice", -1);
 
             switch (answer) {
                 case SHOW_ALL_ORDERS: {
@@ -49,22 +50,22 @@ public class OrdersMenu {
                 }
 
                 case SHOW_ORDER_DETAILS: {
-                    showOrderDetails(scanner);
+                    showOrderDetails(userInput);
                     break;
                 }
 
                 case ADD_NEW_ORDER: {
-                    addNewOrderMenu.show(scanner);
+                    addNewOrderMenu.show(userInput);
                     break;
                 }
 
                 case DELETE_ORDER: {
-                    deleteOrder(scanner);
+                    deleteOrder(userInput);
                     break;
                 }
             }
 
-        } while (answer != 0);
+        } while (answer != PREVIOUS_MENU);
     }
 
     private void showAllOrders() {
@@ -77,9 +78,8 @@ public class OrdersMenu {
         System.out.println("-----------------------------------------------------");
     }
 
-    private void showOrderDetails(Scanner scanner) {
-        System.out.print("order ID: ");
-        int orderId = scanner.nextInt();
+    private void showOrderDetails(UserInput userInput) {
+        int orderId = userInput.getNumber("order ID", -1);
 
         Optional<Order> order = ordersManager.getById(orderId);
 
@@ -94,9 +94,8 @@ public class OrdersMenu {
         });
     }
 
-    private void deleteOrder(Scanner scanner) {
-        System.out.print("order ID: ");
-        int orderId = scanner.nextInt();
+    private void deleteOrder(UserInput userInput) {
+        int orderId = userInput.getNumber("order ID", -1);
 
         if (ordersManager.deleteOrder(orderId)) {
             System.out.println("deleted successfully");

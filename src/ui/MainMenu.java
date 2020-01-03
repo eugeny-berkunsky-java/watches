@@ -1,6 +1,6 @@
 package ui;
 
-import java.util.Scanner;
+import utils.UserInput;
 
 public class MainMenu {
     public static final int COUNTRIES = 1;
@@ -8,6 +8,7 @@ public class MainMenu {
     public static final int CUSTOMERS = 3;
     public static final int WATCHES = 4;
     public static final int ORDERS = 5;
+    public static final int EXIT = 0;
 
     private CountriesMenu countriesMenu = new CountriesMenu();
     private VendorsMenu vendorsMenu = new VendorsMenu();
@@ -17,48 +18,48 @@ public class MainMenu {
 
     private void printMenu() {
         System.out.println("------------ Main menu -----------");
-        System.out.println("1. Countries");
-        System.out.println("2. Vendors");
-        System.out.println("3. Customers");
-        System.out.println("4. Watches");
-        System.out.println("5. Orders");
-        System.out.println("0. Exit");
+        System.out.format("%d. Countries%n", COUNTRIES);
+        System.out.format("%d. Vendors%n", VENDORS);
+        System.out.format("%d. Customers%n", CUSTOMERS);
+        System.out.format("%d. Watches%n", WATCHES);
+        System.out.format("%d. Orders%n", ORDERS);
+        System.out.format("%d. Exit%n", EXIT);
     }
 
-    public void show(Scanner scanner) {
+    public void show(UserInput userInput) {
 
         int selection;
         do {
             printMenu();
-            selection = scanner.nextInt();
+            selection = userInput.getNumber("your choice", -1);
 
             switch (selection) {
                 case COUNTRIES: {
-                    countriesMenu.show(scanner);
+                    countriesMenu.show(userInput);
                     break;
                 }
 
                 case VENDORS: {
-                    vendorsMenu.show(scanner);
+                    vendorsMenu.show(userInput);
                     break;
                 }
 
                 case CUSTOMERS: {
-                    customersMenu.show(scanner);
+                    customersMenu.show(userInput);
                     break;
                 }
 
                 case WATCHES: {
-                    watchesMenu.show(scanner);
+                    watchesMenu.show(userInput);
                     break;
                 }
 
                 case ORDERS: {
-                    ordersMenu.show(scanner);
+                    ordersMenu.show(userInput);
                     break;
                 }
             }
-        } while (selection != 0);
+        } while (selection != EXIT);
 
     }
 }

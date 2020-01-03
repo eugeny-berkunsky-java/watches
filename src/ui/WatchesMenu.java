@@ -2,10 +2,10 @@ package ui;
 
 import manage.WatchManager;
 import model.Watch;
+import utils.UserInput;
 
 import java.math.BigDecimal;
 import java.util.Optional;
-import java.util.Scanner;
 import java.util.function.Function;
 
 public class WatchesMenu {
@@ -14,26 +14,27 @@ public class WatchesMenu {
     private final static int UPDATE_WATCH = 3;
     private final static int DELETE_WATCH = 4;
     private final static int REPORTS = 5;
+    private final static int PREVIOUS_MENU = 0;
 
     private WatchManager watchManager = new WatchManager();
     private WatchesReportsMenu watchesReportsMenu = new WatchesReportsMenu();
 
     private void printMenu() {
         System.out.println("---------- Watches menu ----------");
-        System.out.println("1. Show all watches");
-        System.out.println("2. Add watch");
-        System.out.println("3. Update watch");
-        System.out.println("4. Delete watch");
-        System.out.println("5. Reports");
-        System.out.println("0. return to main menu");
+        System.out.format("%d. Show all watches%n", SHOW_ALL_WATCHES);
+        System.out.format("%d. Add watch%n", ADD_WATCH);
+        System.out.format("%d. Update watch%n", UPDATE_WATCH);
+        System.out.format("%d. Delete watch%n", DELETE_WATCH);
+        System.out.format("%d. Reports%n", REPORTS);
+        System.out.format("%d. return to main menu%n", PREVIOUS_MENU);
     }
 
-    public void show(Scanner scanner) {
+    public void show(UserInput userInput) {
         int answer;
 
         do {
             printMenu();
-            answer = scanner.nextInt();
+            answer = userInput.getNumber("your choice", -1);
 
             switch (answer) {
                 case SHOW_ALL_WATCHES: {
@@ -42,26 +43,26 @@ public class WatchesMenu {
                 }
 
                 case ADD_WATCH: {
-                    addWatch(scanner);
+                    addWatch(userInput);
                     break;
                 }
 
                 case UPDATE_WATCH: {
-                    updateWatch(scanner);
+                    updateWatch(userInput);
                     break;
                 }
 
                 case DELETE_WATCH: {
-                    deleteWatch(scanner);
+                    deleteWatch(userInput);
                     break;
                 }
 
                 case REPORTS: {
-                    watchesReportsMenu.show(scanner);
+                    watchesReportsMenu.show(userInput);
                     break;
                 }
             }
-        } while (answer != 0);
+        } while (answer != PREVIOUS_MENU);
     }
 
     private void showWatches() {
@@ -75,21 +76,17 @@ public class WatchesMenu {
         System.out.println("------------------------------------------------------");
     }
 
-    private void addWatch(Scanner scanner) {
-        System.out.print("brand name: ");
-        String brandName = scanner.next();
+    private void addWatch(UserInput userInput) {
+        String brandName = userInput.getString("brand name");
 
-        System.out.print("watch type (analogue, digital): ");
-        Watch.WatchType watchType = Watch.WatchType.valueOf(scanner.next().trim().toUpperCase());
+        String watchTypeString = userInput.getString("watch type (analogue, digital)").toUpperCase();
+        Watch.WatchType watchType = Watch.WatchType.valueOf(watchTypeString);
 
-        System.out.print("price: ");
-        BigDecimal price = new BigDecimal(scanner.next().trim());
+        BigDecimal price = new BigDecimal(userInput.getString("price"));
 
-        System.out.print("quantity: ");
-        int qty = scanner.nextInt();
+        int qty = userInput.getNumber("quantity", -1);
 
-        System.out.print("vendor ID: ");
-        int vendorId = scanner.nextInt();
+        int vendorId = userInput.getNumber("vendor ID", -1);
 
         final Optional<Watch> watch = watchManager.addWatch(brandName, watchType, price, qty, vendorId);
         if (watch.isPresent()) {
@@ -99,25 +96,20 @@ public class WatchesMenu {
         }
     }
 
-    private void updateWatch(Scanner scanner) {
+    private void updateWatch(UserInput userInput) {
         System.out.println("what watch do you want to update?");
-        System.out.print("id: ");
-        int watchId = scanner.nextInt();
+        int watchId = userInput.getNumber("id", -1);
 
-        System.out.print("NEW brand name: ");
-        String brandName = scanner.next();
+        String brandName = userInput.getString("NEW brand name");
 
-        System.out.print("NEW watch type (analogue, digital): ");
-        Watch.WatchType watchType = Watch.WatchType.valueOf(scanner.next().trim().toUpperCase());
+        String watchTypeString = userInput.getString("watch type (analogue, digital)").toUpperCase();
+        Watch.WatchType watchType = Watch.WatchType.valueOf(watchTypeString);
 
-        System.out.print("NEW price: ");
-        BigDecimal price = new BigDecimal(scanner.next().trim());
+        BigDecimal price = new BigDecimal(userInput.getString("NEW price"));
 
-        System.out.print("NEW quantity: ");
-        int qty = scanner.nextInt();
+        int qty = userInput.getNumber("NEW quantity", -1);
 
-        System.out.print("NEW vendor ID: ");
-        int vendorId = scanner.nextInt();
+        int vendorId = userInput.getNumber("NEW vendor ID", -1);
 
         if (watchManager.updateWatch(watchId, brandName, watchType, price, qty, vendorId)) {
             System.out.println("updated successfully");
@@ -126,10 +118,10 @@ public class WatchesMenu {
         }
     }
 
-    private void deleteWatch(Scanner scanner) {
+    private void deleteWatch(UserInput userInput) {
         System.out.println("what watch do you want to delete?");
-        System.out.print("id: ");
-        int watchId = scanner.nextInt();
+        int watchId = userInput.getNumber("id", -1);
+
         if (watchManager.deleteWatch(watchId)) {
             System.out.println("deleted successfully");
         } else {
