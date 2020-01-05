@@ -15,17 +15,18 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class CustomerManager {
-    private DAO<Customer> dao;
-    private Logger logger;
+    private static Logger logger = Logger.getLogger(CustomerManager.class.getName());
 
-    public CustomerManager() {
-        this.dao = DAOFactory.getCustomerDAO();
-        logger = Logger.getLogger(CustomerManager.class.getName());
+    private DAO<Customer> dao;
+
+    public CustomerManager(DAOFactory factory) {
+        this.dao = factory.getCustomerDAO();
     }
 
     public List<Customer> getAll() {
         try {
-            return dao.getAll();
+            final List<Customer> result = dao.getAll();
+            return result == null ? Collections.emptyList() : result;
         } catch (SQLException | DBException e) {
             logger.log(Level.SEVERE, "getAll error", e);
         }
@@ -34,14 +35,20 @@ public class CustomerManager {
     }
 
     public Optional<Customer> addCustomer(String name) {
-        if (name == null) {
+        if (name == null || name.trim().length() == 0) {
             return Optional.empty();
         }
 
         try {
-            final Customer customer = new Customer(-1, name, BigDecimal.ZERO,
+            final Customer customer = new Customer(-1, name.trim(), BigDecimal.ZERO,
                     new DiscountCard(0, null, BigDecimal.ZERO));
-            return Optional.of(dao.create(customer));
+            final Customer result = dao.create(customer);
+            return result == null
+                    || result.getId() == -1
+                    || result.getDiscountCard() == null
+                    || result.getDiscountCard().getId() == -1 ?
+                    Optional.empty() :
+                    Optional.of(result);
         } catch (SQLException | DBException e) {
             logger.log(Level.SEVERE, "add customer error", e);
         }
@@ -50,7 +57,12 @@ public class CustomerManager {
     }
 
     public boolean updateCustomer(int id, String name, BigDecimal sum, int cardId) {
-        if (name == null || sum == null) {
+        if (id == -1
+                || name == null
+                || name.trim().length() == 0
+                || sum == null
+                || cardId == -1
+        ) {
             return false;
         }
 
@@ -58,6 +70,7 @@ public class CustomerManager {
                 new DiscountCard(cardId, null, BigDecimal.ZERO));
 
         try {
+            customer.setName(customer.getName().trim());
             return dao.update(customer);
         } catch (SQLException | DBException e) {
             logger.log(Level.SEVERE, "update customer error", e);
@@ -68,7 +81,7 @@ public class CustomerManager {
 
     public boolean deleteCustomer(int id) {
         try {
-            return dao.delete(id);
+            return id != -1 && dao.delete(id);
         } catch (SQLException | DBException e) {
             logger.log(Level.SEVERE, "delete customer error", e);
         }

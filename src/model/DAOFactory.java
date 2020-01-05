@@ -4,10 +4,10 @@ public class DAOFactory {
 
     private static DAO<DiscountCard> discountCardDAO;
     private static DAO<Watch> watchDAO;
-    private static DAO<Customer> customerDAO;
     private static DAO<Order> orderDAO;
     private static DAO<Item> itemsDAO;
     private static DAOFactory factory;
+    private DAO<Customer> customerDAO;
     private DAO<Vendor> vendorDAO;
     private DAO<Country> countryDAO;
 
@@ -36,14 +36,6 @@ public class DAOFactory {
         return watchDAO;
     }
 
-    public static DAO<Customer> getCustomerDAO() {
-        if (customerDAO == null) {
-            customerDAO = new CustomerDAO();
-        }
-
-        return customerDAO;
-    }
-
     public static DAO<Order> getOrdersDAO() {
         if (orderDAO == null) {
             orderDAO = new OrderDAO();
@@ -58,6 +50,14 @@ public class DAOFactory {
         }
 
         return itemsDAO;
+    }
+
+    public DAO<Customer> getCustomerDAO() {
+        if (customerDAO == null) {
+            customerDAO = new CustomerDAO();
+        }
+
+        return customerDAO;
     }
 
     public DAO<Vendor> getVendorsDAO() {

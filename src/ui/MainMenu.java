@@ -1,6 +1,7 @@
 package ui;
 
 import manage.CountriesManager;
+import manage.CustomerManager;
 import manage.VendorManager;
 import model.DAOFactory;
 import utils.UserInput;
@@ -19,7 +20,10 @@ public class MainMenu {
     private VendorsMenu vendorsMenu = new VendorsMenu(
             new VendorManager(DAOFactory.getInstance()));
 
-    private CustomersMenu customersMenu = new CustomersMenu();
+    private CustomersMenu customersMenu = new CustomersMenu(
+            new CustomerManager(DAOFactory.getInstance())
+    );
+
     private WatchesMenu watchesMenu = new WatchesMenu();
     private OrdersMenu ordersMenu = new OrdersMenu();
 
