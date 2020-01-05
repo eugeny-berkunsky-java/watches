@@ -6,6 +6,6 @@ import java.util.logging.LogRecord;
 public class ConsoleFormatter extends Formatter {
     @Override
     public String format(LogRecord record) {
-        return String.format("[ %s ]%n", record.getMessage());
+        return record == null ? "" : String.format("[ %s ]%n", record.getMessage());
     }
 }
