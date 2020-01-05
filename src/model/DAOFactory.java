@@ -1,23 +1,24 @@
 package model;
 
-public abstract class DAOFactory {
+public class DAOFactory {
 
     private static DAO<Vendor> vendorDAO;
-    private static DAO<Country> countryDAO;
     private static DAO<DiscountCard> discountCardDAO;
     private static DAO<Watch> watchDAO;
     private static DAO<Customer> customerDAO;
     private static DAO<Order> orderDAO;
     private static DAO<Item> itemsDAO;
+    private static DAOFactory factory;
+    private DAO<Country> countryDAO;
 
     private DAOFactory() {
     }
 
-    public static DAO<Country> getCountriesDAO() {
-        if (countryDAO == null) {
-            countryDAO = new CountryDAO();
+    public static DAOFactory getInstance() {
+        if (factory == null) {
+            factory = new DAOFactory();
         }
-        return countryDAO;
+        return factory;
     }
 
     public static DAO<Vendor> getVendorsDAO() {
@@ -64,5 +65,12 @@ public abstract class DAOFactory {
         }
 
         return itemsDAO;
+    }
+
+    public DAO<Country> getCountriesDAO() {
+        if (countryDAO == null) {
+            countryDAO = new CountryDAO();
+        }
+        return countryDAO;
     }
 }

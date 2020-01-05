@@ -16,7 +16,11 @@ public class CountriesMenu {
     private final static int PREVIOUS_MENU = 0;
 
 
-    private CountriesManager countriesManager = new CountriesManager();
+    private CountriesManager countriesManager;
+
+    public CountriesMenu(CountriesManager manager) {
+        countriesManager = manager;
+    }
 
     private void printMenu() {
         System.out.println("--------- Countries menu ---------");
