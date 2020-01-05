@@ -2,13 +2,13 @@ package model;
 
 public class DAOFactory {
 
-    private static DAO<Vendor> vendorDAO;
     private static DAO<DiscountCard> discountCardDAO;
     private static DAO<Watch> watchDAO;
     private static DAO<Customer> customerDAO;
     private static DAO<Order> orderDAO;
     private static DAO<Item> itemsDAO;
     private static DAOFactory factory;
+    private DAO<Vendor> vendorDAO;
     private DAO<Country> countryDAO;
 
     private DAOFactory() {
@@ -19,13 +19,6 @@ public class DAOFactory {
             factory = new DAOFactory();
         }
         return factory;
-    }
-
-    public static DAO<Vendor> getVendorsDAO() {
-        if (vendorDAO == null) {
-            vendorDAO = new VendorDAO();
-        }
-        return vendorDAO;
     }
 
     public static DAO<DiscountCard> getDiscountCardDAO() {
@@ -65,6 +58,13 @@ public class DAOFactory {
         }
 
         return itemsDAO;
+    }
+
+    public DAO<Vendor> getVendorsDAO() {
+        if (vendorDAO == null) {
+            vendorDAO = new VendorDAO();
+        }
+        return vendorDAO;
     }
 
     public DAO<Country> getCountriesDAO() {

@@ -17,8 +17,8 @@ public class VendorsMenu {
 
     private VendorManager vendorManager;
 
-    public VendorsMenu() {
-        this.vendorManager = new VendorManager();
+    public VendorsMenu(VendorManager manager) {
+        this.vendorManager = manager;
     }
 
     private void printMenu() {
