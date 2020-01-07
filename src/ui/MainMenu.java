@@ -1,20 +1,29 @@
 package ui;
 
+import manage.*;
+import model.DAOFactory;
 import utils.UserInput;
 
 public class MainMenu {
-    public static final int COUNTRIES = 1;
-    public static final int VENDORS = 2;
-    public static final int CUSTOMERS = 3;
-    public static final int WATCHES = 4;
-    public static final int ORDERS = 5;
-    public static final int EXIT = 0;
+    private static final int COUNTRIES = 1;
+    private static final int VENDORS = 2;
+    private static final int CUSTOMERS = 3;
+    private static final int WATCHES = 4;
+    private static final int ORDERS = 5;
+    private static final int EXIT = 0;
 
-    private CountriesMenu countriesMenu = new CountriesMenu();
-    private VendorsMenu vendorsMenu = new VendorsMenu();
-    private CustomersMenu customersMenu = new CustomersMenu();
-    private WatchesMenu watchesMenu = new WatchesMenu();
-    private OrdersMenu ordersMenu = new OrdersMenu();
+    private CountriesMenu countriesMenu = new CountriesMenu(
+            new CountriesManager(DAOFactory.getInstance()));
+
+    private VendorsMenu vendorsMenu = new VendorsMenu(
+            new VendorManager(DAOFactory.getInstance()));
+
+    private CustomersMenu customersMenu = new CustomersMenu(
+            new CustomerManager(DAOFactory.getInstance())
+    );
+
+    private WatchesMenu watchesMenu = new WatchesMenu(new WatchManager(DAOFactory.getInstance()));
+    private OrdersMenu ordersMenu = new OrdersMenu(new OrdersManager(DAOFactory.getInstance()));
 
     private void printMenu() {
         System.out.println("------------ Main menu -----------");

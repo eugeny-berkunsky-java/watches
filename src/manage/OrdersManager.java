@@ -14,20 +14,20 @@ import java.util.logging.Logger;
 
 public class OrdersManager {
 
+    private static Logger logger = Logger.getLogger(OrdersManager.class.getName());
+
     private DAO<Order> ordersDAO;
     private DAO<Item> itemsDAO;
 
-    private Logger logger;
-
-    public OrdersManager() {
-        ordersDAO = DAOFactory.getOrdersDAO();
-        itemsDAO = DAOFactory.getItemsDAO();
-        logger = Logger.getLogger(OrdersManager.class.getName());
+    public OrdersManager(DAOFactory factory) {
+        ordersDAO = factory.getOrdersDAO();
+        itemsDAO = factory.getItemsDAO();
     }
 
     public List<Order> getAll() {
         try {
-            return ordersDAO.getAll();
+            final List<Order> result = ordersDAO.getAll();
+            return result == null ? Collections.emptyList() : result;
         } catch (SQLException | DBException e) {
             logger.log(Level.SEVERE, "get all orders error", e);
         }
@@ -36,8 +36,13 @@ public class OrdersManager {
     }
 
     public Optional<Order> getById(int orderId) {
+        if (orderId == -1) {
+            return Optional.empty();
+        }
+
         try {
-            return Optional.of(ordersDAO.getById(orderId));
+            final Order result = ordersDAO.getById(orderId);
+            return result == null ? Optional.empty() : Optional.of(result);
         } catch (SQLException | DBException e) {
             logger.log(Level.SEVERE, "get order by id error", e);
         }
@@ -46,7 +51,7 @@ public class OrdersManager {
     }
 
     public Optional<Order> addOrder(LocalDateTime date, int customerId) {
-        if (date == null) {
+        if (date == null || customerId == -1) {
             return Optional.empty();
         }
 
@@ -55,7 +60,8 @@ public class OrdersManager {
                         new DiscountCard(0, null, BigDecimal.ZERO)), null, BigDecimal.ZERO);
 
         try {
-            return Optional.of(ordersDAO.create(order));
+            final Order result = ordersDAO.create(order);
+            return result == null ? Optional.empty() : Optional.of(result);
         } catch (SQLException | DBException e) {
             logger.log(Level.SEVERE, "add new order error", e);
         }
@@ -65,7 +71,7 @@ public class OrdersManager {
 
     public boolean updateOrder(int orderId, int customerId, LocalDateTime date,
                                BigDecimal totalPrice) {
-        if (date == null || totalPrice == null) {
+        if (date == null || totalPrice == null || orderId == -1 || customerId == -1) {
             return false;
         }
 
@@ -84,7 +90,7 @@ public class OrdersManager {
 
     public boolean deleteOrder(int orderId) {
         try {
-            return ordersDAO.delete(orderId);
+            return orderId != -1 && ordersDAO.delete(orderId);
         } catch (SQLException | DBException e) {
             logger.log(Level.SEVERE, "delete order error", e);
         }
@@ -93,14 +99,15 @@ public class OrdersManager {
     }
 
     public Optional<Item> addItem(Order order, int watchId, int qty, BigDecimal price) {
-        if (order == null || price == null) {
+        if (order == null || watchId == -1 || qty == 0 || price == null) {
             return Optional.empty();
         }
 
-        Watch watch = new Watch(watchId, null, null, BigDecimal.ZERO, 0, null);
+        final Watch watch = new Watch(watchId, null, null, BigDecimal.ZERO, 0, null);
         final Item item = new Item(-1, price, qty, order.getId(), watch);
         try {
-            return Optional.of(itemsDAO.create(item));
+            final Item result = itemsDAO.create(item);
+            return result == null ? Optional.empty() : Optional.of(result);
         } catch (SQLException | DBException e) {
             logger.log(Level.SEVERE, "add item to order error", e);
         }
@@ -109,7 +116,7 @@ public class OrdersManager {
     }
 
     public boolean updateItem(Order order, int itemId, BigDecimal price, int qty) {
-        if (order == null || price == null) {
+        if (order == null || itemId == -1 || price == null || qty < 0) {
             return false;
         }
 

@@ -33,7 +33,6 @@ class CountryDAO implements DAO<Country> {
             return createFromResultSet(rs);
         }
 
-
     }
 
     public List<Country> getAll() throws SQLException {

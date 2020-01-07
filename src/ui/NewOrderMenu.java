@@ -22,8 +22,8 @@ public class NewOrderMenu {
 
     private final OrdersManager ordersManager;
 
-    public NewOrderMenu() {
-        ordersManager = new OrdersManager();
+    public NewOrderMenu(OrdersManager manager) {
+        ordersManager = manager;
     }
 
     private void printMenu() {

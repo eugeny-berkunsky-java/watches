@@ -13,18 +13,18 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class CountriesManager {
-    private Logger logger;
+    private static Logger logger = Logger.getLogger(CountriesManager.class.getName());
 
     private DAO<Country> countryDAO;
 
-    public CountriesManager() {
-        countryDAO = DAOFactory.getCountriesDAO();
-        logger = Logger.getLogger(CountriesManager.class.getName());
+    public CountriesManager(DAOFactory factory) {
+        countryDAO = factory.getCountriesDAO();
     }
 
     public List<Country> getAll() {
         try {
-            return countryDAO.getAll();
+            final List<Country> result = countryDAO.getAll();
+            return result == null ? Collections.emptyList() : result;
         } catch (SQLException | DBException e) {
             logger.log(Level.SEVERE, "get all countries error", e);
         }
@@ -38,7 +38,8 @@ public class CountriesManager {
         }
 
         try {
-            return Optional.of(countryDAO.create(new Country(-1, countryName)));
+            final Country country = countryDAO.create(new Country(-1, countryName.trim()));
+            return country == null ? Optional.empty() : Optional.of(country);
         } catch (SQLException | DBException e) {
             logger.log(Level.SEVERE, "add country error", e);
         }
@@ -47,12 +48,12 @@ public class CountriesManager {
     }
 
     public boolean updateCountry(int countryId, String countryName) {
-        if (countryName == null || countryName.trim().length() == 0) {
+        if (countryId == -1 || countryName == null || countryName.trim().length() == 0) {
             return false;
         }
 
         try {
-            return countryDAO.update(new Country(countryId, countryName));
+            return countryDAO.update(new Country(countryId, countryName.trim()));
         } catch (SQLException | DBException e) {
             logger.log(Level.SEVERE, "update country error", e);
         }
@@ -62,7 +63,7 @@ public class CountriesManager {
 
     public boolean deleteCountry(int countryId) {
         try {
-            return countryDAO.delete(countryId);
+            return countryId != -1 && countryDAO.delete(countryId);
         } catch (SQLException | DBException e) {
             logger.log(Level.SEVERE, "delete country error", e);
         }

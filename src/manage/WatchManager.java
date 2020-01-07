@@ -15,17 +15,17 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class WatchManager {
+    private static Logger logger = Logger.getLogger(WatchManager.class.getName());
     private DAO<Watch> dao;
-    private Logger logger;
 
-    public WatchManager() {
-        dao = DAOFactory.getWatchDAO();
-        logger = Logger.getLogger(WatchManager.class.getName());
+    public WatchManager(DAOFactory factory) {
+        dao = factory.getWatchDAO();
     }
 
     public List<Watch> getAll() {
         try {
-            return dao.getAll();
+            final List<Watch> result = dao.getAll();
+            return result == null ? Collections.emptyList() : result;
         } catch (SQLException | DBException e) {
             logger.log(Level.SEVERE, "get all watches error");
         }
@@ -35,14 +35,26 @@ public class WatchManager {
 
     public Optional<Watch> addWatch(String brand, Watch.WatchType type, BigDecimal price, int qty,
                                     int vendorId) {
-        if (brand == null || type == null || price == null) {
+        if (brand == null
+                || brand.trim().length() == 0
+                || type == null
+                || price == null
+                || qty < 1
+                || vendorId == -1
+        ) {
             return Optional.empty();
         }
 
         try {
-            Watch newWatch = new Watch(-1, brand, type, price, qty,
+            Watch newWatch = new Watch(-1, brand.trim(), type, price, qty,
                     new Vendor(vendorId, null, null));
-            return Optional.of(dao.create(newWatch));
+            final Watch result = dao.create(newWatch);
+            return result == null
+                    || result.getId() == -1
+                    || result.getVendor() == null
+                    || result.getVendor().getId() == -1 ?
+                    Optional.empty() :
+                    Optional.of(result);
         } catch (SQLException | DBException e) {
             logger.log(Level.SEVERE, "add watch error", e);
         }
@@ -54,12 +66,19 @@ public class WatchManager {
                                int qty,
                                int vendorId) {
 
-        if (brand == null || type == null || price == null) {
+        if (watchId == -1
+                || brand == null
+                || brand.trim().length() == 0
+                || type == null
+                || price == null
+                || qty < 1
+                || vendorId == -1
+        ) {
             return false;
         }
 
         try {
-            Watch watch = new Watch(watchId, brand, type, price, qty,
+            Watch watch = new Watch(watchId, brand.trim(), type, price, qty,
                     new Vendor(vendorId, null,
                             new Country(-1, null)));
             return dao.update(watch);
@@ -72,7 +91,7 @@ public class WatchManager {
 
     public boolean deleteWatch(int watchId) {
         try {
-            return dao.delete(watchId);
+            return watchId != -1 && dao.delete(watchId);
         } catch (SQLException | DBException e) {
             logger.log(Level.SEVERE, "delete watch error", e);
         }
@@ -91,7 +110,7 @@ public class WatchManager {
     public List<Watch> getAnalogueWatchNotGreaterByPriceThan(BigDecimal upperLimit) {
         return upperLimit == null ? Collections.emptyList()
                 : getByType(Watch.WatchType.ANALOGUE).stream()
-                .filter(w -> w.getPrice().compareTo(upperLimit) < 0)
+                .filter(w -> w.getPrice().compareTo(upperLimit) <= 0)
                 .collect(Collectors.toList());
     }
 

@@ -15,7 +15,11 @@ public class CustomersMenu {
     private final static int DELETE_CUSTOMER = 4;
     private final static int PREVIOUS_MENU = 0;
 
-    private CustomerManager customerManager = new CustomerManager();
+    private CustomerManager customerManager;
+
+    public CustomersMenu(CustomerManager customerManager) {
+        this.customerManager = customerManager;
+    }
 
     private void printMenu() {
         System.out.println("---------- Customers menu ----------");

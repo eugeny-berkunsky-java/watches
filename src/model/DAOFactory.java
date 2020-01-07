@@ -1,30 +1,24 @@
 package model;
 
-public abstract class DAOFactory {
+public class DAOFactory {
 
-    private static DAO<Vendor> vendorDAO;
-    private static DAO<Country> countryDAO;
     private static DAO<DiscountCard> discountCardDAO;
-    private static DAO<Watch> watchDAO;
-    private static DAO<Customer> customerDAO;
-    private static DAO<Order> orderDAO;
-    private static DAO<Item> itemsDAO;
+    private static DAOFactory factory;
+    private DAO<Order> orderDAO;
+    private DAO<Item> itemsDAO;
+    private DAO<Watch> watchDAO;
+    private DAO<Customer> customerDAO;
+    private DAO<Vendor> vendorDAO;
+    private DAO<Country> countryDAO;
 
     private DAOFactory() {
     }
 
-    public static DAO<Country> getCountriesDAO() {
-        if (countryDAO == null) {
-            countryDAO = new CountryDAO();
+    public static DAOFactory getInstance() {
+        if (factory == null) {
+            factory = new DAOFactory();
         }
-        return countryDAO;
-    }
-
-    public static DAO<Vendor> getVendorsDAO() {
-        if (vendorDAO == null) {
-            vendorDAO = new VendorDAO();
-        }
-        return vendorDAO;
+        return factory;
     }
 
     public static DAO<DiscountCard> getDiscountCardDAO() {
@@ -35,22 +29,7 @@ public abstract class DAOFactory {
         return discountCardDAO;
     }
 
-    public static DAO<Watch> getWatchDAO() {
-        if (watchDAO == null) {
-            watchDAO = new WatchDAO();
-        }
-        return watchDAO;
-    }
-
-    public static DAO<Customer> getCustomerDAO() {
-        if (customerDAO == null) {
-            customerDAO = new CustomerDAO();
-        }
-
-        return customerDAO;
-    }
-
-    public static DAO<Order> getOrdersDAO() {
+    public DAO<Order> getOrdersDAO() {
         if (orderDAO == null) {
             orderDAO = new OrderDAO();
         }
@@ -58,11 +37,40 @@ public abstract class DAOFactory {
         return orderDAO;
     }
 
-    public static DAO<Item> getItemsDAO() {
+    public DAO<Item> getItemsDAO() {
         if (itemsDAO == null) {
             itemsDAO = new ItemDAO();
         }
 
         return itemsDAO;
+    }
+
+    public DAO<Watch> getWatchDAO() {
+        if (watchDAO == null) {
+            watchDAO = new WatchDAO();
+        }
+        return watchDAO;
+    }
+
+    public DAO<Customer> getCustomerDAO() {
+        if (customerDAO == null) {
+            customerDAO = new CustomerDAO();
+        }
+
+        return customerDAO;
+    }
+
+    public DAO<Vendor> getVendorsDAO() {
+        if (vendorDAO == null) {
+            vendorDAO = new VendorDAO();
+        }
+        return vendorDAO;
+    }
+
+    public DAO<Country> getCountriesDAO() {
+        if (countryDAO == null) {
+            countryDAO = new CountryDAO();
+        }
+        return countryDAO;
     }
 }

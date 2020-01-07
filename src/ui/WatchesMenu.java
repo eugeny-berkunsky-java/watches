@@ -16,8 +16,13 @@ public class WatchesMenu {
     private final static int REPORTS = 5;
     private final static int PREVIOUS_MENU = 0;
 
-    private WatchManager watchManager = new WatchManager();
-    private WatchesReportsMenu watchesReportsMenu = new WatchesReportsMenu();
+    private WatchManager watchManager;
+    private WatchesReportsMenu watchesReportsMenu;
+
+    public WatchesMenu(WatchManager watchManager) {
+        this.watchManager = watchManager;
+        watchesReportsMenu = new WatchesReportsMenu(watchManager);
+    }
 
     private void printMenu() {
         System.out.println("---------- Watches menu ----------");

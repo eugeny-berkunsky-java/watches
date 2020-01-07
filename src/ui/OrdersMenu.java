@@ -21,9 +21,9 @@ public class OrdersMenu {
     private final NewOrderMenu addNewOrderMenu;
     private final DateTimeFormatter dateFormatter;
 
-    public OrdersMenu() {
-        ordersManager = new OrdersManager();
-        addNewOrderMenu = new NewOrderMenu();
+    public OrdersMenu(OrdersManager manager) {
+        ordersManager = manager;
+        addNewOrderMenu = new NewOrderMenu(manager);
         dateFormatter = DateTimeFormatter.ofPattern("dd.MM.YYYY HH:mm:ss");
     }
 
