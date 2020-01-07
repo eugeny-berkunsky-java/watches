@@ -3,9 +3,9 @@ package model;
 public class DAOFactory {
 
     private static DAO<DiscountCard> discountCardDAO;
-    private static DAO<Order> orderDAO;
-    private static DAO<Item> itemsDAO;
     private static DAOFactory factory;
+    private DAO<Order> orderDAO;
+    private DAO<Item> itemsDAO;
     private DAO<Watch> watchDAO;
     private DAO<Customer> customerDAO;
     private DAO<Vendor> vendorDAO;
@@ -29,7 +29,7 @@ public class DAOFactory {
         return discountCardDAO;
     }
 
-    public static DAO<Order> getOrdersDAO() {
+    public DAO<Order> getOrdersDAO() {
         if (orderDAO == null) {
             orderDAO = new OrderDAO();
         }
@@ -37,7 +37,7 @@ public class DAOFactory {
         return orderDAO;
     }
 
-    public static DAO<Item> getItemsDAO() {
+    public DAO<Item> getItemsDAO() {
         if (itemsDAO == null) {
             itemsDAO = new ItemDAO();
         }
