@@ -6,7 +6,7 @@ import model.Order;
 import utils.UserInput;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.function.Function;
@@ -172,6 +172,6 @@ public class NewOrderMenu {
         if (value == null || percent == null) {
             return BigDecimal.ZERO;
         }
-        return value.multiply(percent).divide(BigDecimal.valueOf(100), new MathContext(2));
+        return value.multiply(percent).divide(BigDecimal.valueOf(100), 2, RoundingMode.CEILING);
     }
 }
