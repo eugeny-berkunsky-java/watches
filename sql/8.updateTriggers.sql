@@ -291,14 +291,13 @@ begin
         if not FOUND then
             return null;
         else
-
             -- apply diff to customer's sum of orders
-            if old.order_totalprice is distinct from new.order_totalprice then
-                update public."CustomerModel" cm
-                set customer_sumoforders = customer_sumoforders + (new.order_totalprice - old.order_totalprice)
-                where cm.customer_id = new.customer_id;
-
-            end if;
+--             if old.order_totalprice is distinct from new.order_totalprice then
+--                 update public."CustomerModel" cm
+--                 set customer_sumoforders = old.customer_sumoforders + (new.order_totalprice - old.order_totalprice)
+--                 where cm.customer_id = new.customer_id;
+--
+--             end if;
             return old;
         end if;
 

@@ -1,6 +1,8 @@
 package ui;
 
+import manage.CustomerManager;
 import manage.OrdersManager;
+import model.Customer;
 import model.Item;
 import model.Order;
 import utils.UserInput;
@@ -21,9 +23,11 @@ public class NewOrderMenu {
     private final static int PREVIOUS_MENU = 0;
 
     private final OrdersManager ordersManager;
+    private final CustomerManager customerManager;
 
-    public NewOrderMenu(OrdersManager manager) {
-        ordersManager = manager;
+    public NewOrderMenu(OrdersManager ordersManager, CustomerManager customerManager) {
+        this.ordersManager = ordersManager;
+        this.customerManager = customerManager;
     }
 
     private void printMenu() {
@@ -146,10 +150,25 @@ public class NewOrderMenu {
                     .add(calcPercent(totalPrice, tax))
                     .subtract(calcPercent(totalPrice, discount));
 
-            if (ordersManager.updateOrder(updatedOrder.get().getId(),
+            /*if (ordersManager.updateOrder(updatedOrder.get().getId(),
                     updatedOrder.get().getCustomer().getId(),
                     LocalDateTime.now(),
                     finalPrice)) {
+                System.out.println("order completed");
+            } else {
+                System.out.println("operation failed");
+            }*/
+            final Customer customer = order.getCustomer();
+
+            final boolean updateOrderResult = ordersManager.updateOrder(updatedOrder.get().getId(),
+                    customer.getId(),
+                    LocalDateTime.now(), finalPrice);
+
+            final boolean updateCustomerResult = customerManager.updateCustomer(customer.getId(),
+                    customer.getName(),
+                    customer.getSumOfOrders().add(finalPrice), customer.getDiscountCard().getId());
+
+            if (updateOrderResult && updateCustomerResult) {
                 System.out.println("order completed");
             } else {
                 System.out.println("operation failed");

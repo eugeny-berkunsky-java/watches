@@ -23,7 +23,8 @@ public class MainMenu {
     );
 
     private WatchesMenu watchesMenu = new WatchesMenu(new WatchManager(DAOFactory.getInstance()));
-    private OrdersMenu ordersMenu = new OrdersMenu(new OrdersManager(DAOFactory.getInstance()));
+    private OrdersMenu ordersMenu = new OrdersMenu(new OrdersManager(DAOFactory.getInstance()),
+            new CustomerManager(DAOFactory.getInstance()));
 
     private void printMenu() {
         System.out.println("------------ Main menu -----------");
