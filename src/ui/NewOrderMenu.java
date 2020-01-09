@@ -87,8 +87,6 @@ public class NewOrderMenu {
 
         if (answer == COMPLETE_ORDER) {
             completeOrder(order);
-        } else {
-            cancelOrder(order);
         }
     }
 
@@ -154,19 +152,10 @@ public class NewOrderMenu {
     }
 
     private void completeOrder(Order order) {
-        //todo: implement add new order
-
         if (ordersManager.addOrder(order).isPresent()) {
             System.out.println("added successfully");
         } else {
             System.out.println("operation failed");
         }
-
-    }
-
-    private void cancelOrder(Order order) {
-        //todo: clean temp model
-        order.setId(-1);
-        order.setItems(new ArrayList<>());
     }
 }

@@ -6,10 +6,7 @@ import model.Item;
 import model.Order;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.ArgumentCaptor;
 import utils.DBException;
 
 import java.math.BigDecimal;
@@ -233,15 +230,15 @@ class OrdersManagerTest {
     }
 */
     ///
-    @ParameterizedTest
+   /* @ParameterizedTest
     @MethodSource("updateOrderAboveTrashArgsProvider")
     void updateOrderAboveTrashArgs(int orderId, int customerId, LocalDateTime date,
                                    BigDecimal totalPrice) throws SQLException {
         manager.updateOrder(orderId, customerId, date, totalPrice);
         verify(orderDAO, never()).update(any(Order.class));
     }
-
-    @Test
+*/
+   /* @Test
     void updateOrderAboveCorrectArgs() throws SQLException {
         LocalDateTime dateTime = LocalDateTime.now();
         manager.updateOrder(1, 2, dateTime, BigDecimal.ONE);
@@ -275,7 +272,7 @@ class OrdersManagerTest {
 
         assertFalse(manager.updateOrder(1, 1, LocalDateTime.now(), BigDecimal.ONE));
         verify(orderDAO, times(2)).update(any(Order.class));
-    }
+    }*/
 
     ///
     @Test

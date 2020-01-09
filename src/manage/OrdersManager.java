@@ -2,11 +2,11 @@ package manage;
 
 import model.*;
 import utils.DBException;
+import utils.Settings;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -54,6 +54,11 @@ public class OrdersManager {
     }
 
     public Optional<Order> addOrder(Order order) {
+        if (order == null
+                || order.getCustomer() == null || order.getCustomer().getId() == -1
+                || order.getItems() == null || order.getItems().size() == 0) {
+            return Optional.empty();
+        }
         // calculate total order price include taxes and discount
         BigDecimal totalPrice = BigDecimal.ZERO;
         for (Item item : order.getItems()) {
@@ -68,11 +73,20 @@ public class OrdersManager {
                 .subtract(calcPercent(totalPrice, discount));
 
         try {
+            Settings.getConnection().setAutoCommit(false);
             // add new Order to OrderModel
             final Order savedOrder = ordersDAO.create(order);
 
             // add all items to ItemModel
             for (Item item : order.getItems()) {
+                if (item.getPrice() == null
+                        || item.getPrice().compareTo(BigDecimal.ZERO) <= 0
+                        || item.getQty() <= 0
+                ) {
+                    Settings.getConnection().rollback();
+                    return Optional.empty();
+                }
+
                 item.setOrderId(savedOrder.getId());
                 itemsDAO.create(item);
             }
@@ -82,33 +96,29 @@ public class OrdersManager {
             ordersDAO.update(order);
 
             // update customer total sum of orders
+            order.getCustomer().setSumOfOrders(order.getCustomer().getSumOfOrders().add(finalPrice));
             customerDAO.update(order.getCustomer());
 
+            Settings.getConnection().commit();
+
             return Optional.of(order);
+
         } catch (SQLException | DBException e) {
             logger.log(Level.SEVERE, "create order error", e);
+            try {
+                Settings.getConnection().rollback();
+            } catch (SQLException ex) {
+                logger.log(Level.SEVERE, "rollback transaction error", e);
+            }
+        } finally {
+            try {
+                Settings.getConnection().setAutoCommit(true);
+            } catch (SQLException e) {
+                logger.log(Level.SEVERE, "set autocommit mode on error", e);
+            }
         }
 
         return Optional.empty();
-    }
-
-    public boolean updateOrder(int orderId, int customerId, LocalDateTime date,
-                               BigDecimal totalPrice) {
-        if (date == null || totalPrice == null || orderId == -1 || customerId == -1) {
-            return false;
-        }
-
-        final Customer customer = new Customer(customerId, null, BigDecimal.ZERO, null);
-
-        final Order order = new Order(orderId, date, customer, Collections.emptyList(), totalPrice);
-
-        try {
-            return ordersDAO.update(order);
-        } catch (SQLException | DBException e) {
-            logger.log(Level.SEVERE, "update order error", e);
-        }
-
-        return false;
     }
 
     public boolean deleteOrder(int orderId) {
