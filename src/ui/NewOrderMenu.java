@@ -127,7 +127,11 @@ public class NewOrderMenu {
     }
 
     private void updateItem(Order order, UserInput userInput) {
-        final int itemNumber = userInput.getNumber("item number", -1);
+        final int itemNumber = userInput.getNumber("item number", -1) - 1;
+        if (itemNumber < 0 || itemNumber >= order.getItems().size()) {
+            System.out.println("operation failed");
+            return;
+        }
 
         final int itemQty = userInput.getNumber("item qty", -1);
 
@@ -137,13 +141,15 @@ public class NewOrderMenu {
         item.setQty(itemQty);
         item.setPrice(itemPrice);
 
-        order.getItems().set(itemNumber, item);
-
         System.out.println("updated successfully");
     }
 
     private void deleteItem(Order order, UserInput userInput) {
-        final int itemNumber = userInput.getNumber("item number", -1);
+        final int itemNumber = userInput.getNumber("item number", -1) - 1;
+        if (itemNumber < 0 || itemNumber >= order.getItems().size()) {
+            System.out.println("operation failed");
+            return;
+        }
 
         order.getItems().remove(itemNumber);
 

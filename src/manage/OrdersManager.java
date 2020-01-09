@@ -59,22 +59,14 @@ public class OrdersManager {
                 || order.getItems() == null || order.getItems().size() == 0) {
             return Optional.empty();
         }
-        // calculate total order price include taxes and discount
-        BigDecimal totalPrice = BigDecimal.ZERO;
-        for (Item item : order.getItems()) {
-            totalPrice =
-                    totalPrice.add(item.getPrice().multiply(BigDecimal.valueOf(item.getQty())));
-        }
-        final BigDecimal taxes = BigDecimal.valueOf(16);
 
-        final BigDecimal discount = order.getCustomer().getDiscountCard().getPercent();
-        final BigDecimal finalPrice = totalPrice
-                .add(calcPercent(totalPrice, taxes))
-                .subtract(calcPercent(totalPrice, discount));
+        BigDecimal finalPrice = calcFinalPrice(order);
 
         try {
             Settings.getConnection().setAutoCommit(false);
+
             // add new Order to OrderModel
+            order.setTotalPrice(finalPrice);
             final Order savedOrder = ordersDAO.create(order);
 
             // add all items to ItemModel
@@ -90,10 +82,6 @@ public class OrdersManager {
                 item.setOrderId(savedOrder.getId());
                 itemsDAO.create(item);
             }
-
-            //update order total price
-            order.setTotalPrice(finalPrice);
-            ordersDAO.update(order);
 
             // update customer total sum of orders
             order.getCustomer().setSumOfOrders(order.getCustomer().getSumOfOrders().add(finalPrice));
@@ -131,6 +119,20 @@ public class OrdersManager {
         return false;
     }
 
+    private BigDecimal calcFinalPrice(Order order) {
+        // calculate total order price include taxes and discount
+        BigDecimal totalPrice = BigDecimal.ZERO;
+        for (Item item : order.getItems()) {
+            totalPrice =
+                    totalPrice.add(item.getPrice().multiply(BigDecimal.valueOf(item.getQty())));
+        }
+        final BigDecimal taxes = BigDecimal.valueOf(16);
+
+        final BigDecimal discount = order.getCustomer().getDiscountCard().getPercent();
+        return totalPrice
+                .add(calcPercent(totalPrice, taxes))
+                .subtract(calcPercent(totalPrice, discount));
+    }
 
     private BigDecimal calcPercent(BigDecimal value, BigDecimal percent) {
         if (value == null || percent == null) {
