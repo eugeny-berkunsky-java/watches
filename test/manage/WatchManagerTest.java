@@ -148,10 +148,10 @@ class WatchManagerTest {
     @BeforeEach
     void setUp() {
         dao = mock(DAO.class);
-        final DAOFactory factory = mock(DAOFactory.class);
-        when(factory.getWatchDAO()).thenReturn(dao);
+        final DAOContainer container = mock(DAOContainer.class);
+        when(container.getWatchDAO()).thenReturn(dao);
 
-        manager = new WatchManager(factory);
+        manager = new WatchManager(container);
     }
 
     @Test

@@ -18,8 +18,8 @@ public class WatchManager {
     private static Logger logger = Logger.getLogger(WatchManager.class.getName());
     private DAO<Watch> dao;
 
-    public WatchManager(DAOFactory factory) {
-        dao = factory.getWatchDAO();
+    public WatchManager(DAOContainer container) {
+        dao = container.getWatchDAO();
     }
 
     public List<Watch> getAll() {
@@ -146,5 +146,19 @@ public class WatchManager {
         }
 
         return result;
+    }
+
+    public Optional<Watch> getById(int watchId) {
+        if (watchId == -1) {
+            return Optional.empty();
+        }
+
+        try {
+            final Watch result = dao.getById(watchId);
+            return result == null ? Optional.empty() : Optional.of(result);
+        } catch (SQLException | DBException e) {
+            logger.log(Level.SEVERE, "getById error", e);
+        }
+        return Optional.empty();
     }
 }

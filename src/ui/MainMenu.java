@@ -1,7 +1,6 @@
 package ui;
 
-import manage.*;
-import model.DAOFactory;
+import manage.ManagersContainer;
 import utils.UserInput;
 
 public class MainMenu {
@@ -12,19 +11,19 @@ public class MainMenu {
     private static final int ORDERS = 5;
     private static final int EXIT = 0;
 
-    private CountriesMenu countriesMenu = new CountriesMenu(
-            new CountriesManager(DAOFactory.getInstance()));
+    private CountriesMenu countriesMenu;
+    private VendorsMenu vendorsMenu;
+    private CustomersMenu customersMenu;
+    private WatchesMenu watchesMenu;
+    private OrdersMenu ordersMenu;
 
-    private VendorsMenu vendorsMenu = new VendorsMenu(
-            new VendorManager(DAOFactory.getInstance()));
-
-    private CustomersMenu customersMenu = new CustomersMenu(
-            new CustomerManager(DAOFactory.getInstance())
-    );
-
-    private WatchesMenu watchesMenu = new WatchesMenu(new WatchManager(DAOFactory.getInstance()));
-    private OrdersMenu ordersMenu = new OrdersMenu(new OrdersManager(DAOFactory.getInstance()),
-            new CustomerManager(DAOFactory.getInstance()));
+    public MainMenu(ManagersContainer managersContainer) {
+        countriesMenu = new CountriesMenu(managersContainer);
+        vendorsMenu = new VendorsMenu(managersContainer);
+        customersMenu = new CustomersMenu(managersContainer);
+        watchesMenu = new WatchesMenu(managersContainer);
+        ordersMenu = new OrdersMenu(managersContainer);
+    }
 
     private void printMenu() {
         System.out.println("------------ Main menu -----------");

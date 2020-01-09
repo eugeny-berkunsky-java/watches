@@ -1,59 +1,59 @@
 package manage;
 
-import model.DAOFactory;
+import model.DAOContainer;
 
-public class ManagerFactory {
+public class ManagersContainer {
 
-    private static ManagerFactory instance;
-    private DAOFactory daoFactory;
+    private static ManagersContainer instance;
+    private DAOContainer container;
     private CountriesManager countriesManager;
     private CustomerManager customerManager;
     private OrdersManager ordersManager;
     private VendorManager vendorManager;
     private WatchManager watchManager;
 
-    private ManagerFactory() {
-        daoFactory = DAOFactory.getInstance();
+    private ManagersContainer(DAOContainer container) {
+        this.container = container;
     }
 
-    public static ManagerFactory getInstance() {
+    public static ManagersContainer getInstance(DAOContainer container) {
         if (instance == null) {
-            instance = new ManagerFactory();
+            instance = new ManagersContainer(container);
         }
         return instance;
     }
 
     public CountriesManager getCountriesManager() {
         if (countriesManager == null) {
-            countriesManager = new CountriesManager(daoFactory);
+            countriesManager = new CountriesManager(container);
         }
         return countriesManager;
     }
 
     public CustomerManager getCustomerManager() {
         if (customerManager == null) {
-            customerManager = new CustomerManager(daoFactory);
+            customerManager = new CustomerManager(container);
         }
         return customerManager;
     }
 
     public OrdersManager getOrdersManager() {
         if (ordersManager == null) {
-            ordersManager = new OrdersManager(daoFactory);
+            ordersManager = new OrdersManager(container);
         }
         return ordersManager;
     }
 
     public VendorManager getVendorManager() {
         if (vendorManager == null) {
-            vendorManager = new VendorManager(daoFactory);
+            vendorManager = new VendorManager(container);
         }
         return vendorManager;
     }
 
     public WatchManager getWatchManager() {
         if (watchManager == null) {
-            watchManager = new WatchManager(daoFactory);
+            watchManager = new WatchManager(container);
         }
         return watchManager;
     }

@@ -1,5 +1,6 @@
 package ui;
 
+import manage.ManagersContainer;
 import manage.VendorManager;
 import model.Country;
 import model.Vendor;
@@ -17,8 +18,8 @@ public class VendorsMenu {
 
     private VendorManager vendorManager;
 
-    public VendorsMenu(VendorManager manager) {
-        this.vendorManager = manager;
+    public VendorsMenu(ManagersContainer managersContainer) {
+        this.vendorManager = managersContainer.getVendorManager();
     }
 
     private void printMenu() {

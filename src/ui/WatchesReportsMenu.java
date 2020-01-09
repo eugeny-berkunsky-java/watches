@@ -1,5 +1,6 @@
 package ui;
 
+import manage.ManagersContainer;
 import manage.WatchManager;
 import model.Vendor;
 import model.Watch;
@@ -18,8 +19,8 @@ public class WatchesReportsMenu {
 
     private WatchManager watchManager;
 
-    public WatchesReportsMenu(WatchManager watchManager) {
-        this.watchManager = watchManager;
+    public WatchesReportsMenu(ManagersContainer managersContainer) {
+        this.watchManager = managersContainer.getWatchManager();
     }
 
     private void printMenu() {

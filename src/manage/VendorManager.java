@@ -2,7 +2,7 @@ package manage;
 
 import model.Country;
 import model.DAO;
-import model.DAOFactory;
+import model.DAOContainer;
 import model.Vendor;
 import utils.DBException;
 
@@ -18,8 +18,8 @@ public class VendorManager {
 
     private DAO<Vendor> dao;
 
-    public VendorManager(DAOFactory factory) {
-        dao = factory.getVendorsDAO();
+    public VendorManager(DAOContainer container) {
+        dao = container.getVendorsDAO();
     }
 
     public List<Vendor> getAll() {

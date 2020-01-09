@@ -11,6 +11,12 @@ public class Watch {
     private int qty;
     private Vendor vendor;
 
+    public Watch() {
+        id = -1;
+        price = BigDecimal.ZERO;
+        qty = 1;
+    }
+
     public Watch(int id, String brand, WatchType type, BigDecimal price, int qty, Vendor vendor) {
         this.id = id;
         this.brand = brand;

@@ -4,6 +4,7 @@ import model.*;
 import utils.DBException;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -18,10 +19,12 @@ public class OrdersManager {
 
     private DAO<Order> ordersDAO;
     private DAO<Item> itemsDAO;
+    private DAO<Customer> customerDAO;
 
-    public OrdersManager(DAOFactory factory) {
-        ordersDAO = factory.getOrdersDAO();
-        itemsDAO = factory.getItemsDAO();
+    public OrdersManager(DAOContainer container) {
+        ordersDAO = container.getOrdersDAO();
+        itemsDAO = container.getItemsDAO();
+        customerDAO = container.getCustomerDAO();
     }
 
     public List<Order> getAll() {
@@ -50,20 +53,40 @@ public class OrdersManager {
         return Optional.empty();
     }
 
-    public Optional<Order> addOrder(LocalDateTime date, int customerId) {
-        if (date == null || customerId == -1) {
-            return Optional.empty();
+    public Optional<Order> addOrder(Order order) {
+        // calculate total order price include taxes and discount
+        BigDecimal totalPrice = BigDecimal.ZERO;
+        for (Item item : order.getItems()) {
+            totalPrice =
+                    totalPrice.add(item.getPrice().multiply(BigDecimal.valueOf(item.getQty())));
         }
+        final BigDecimal taxes = BigDecimal.valueOf(16);
 
-        final Order order = new Order(-1, date,
-                new Customer(customerId, null, BigDecimal.ZERO,
-                        new DiscountCard(0, null, BigDecimal.ZERO)), null, BigDecimal.ZERO);
+        final BigDecimal discount = order.getCustomer().getDiscountCard().getPercent();
+        final BigDecimal finalPrice = totalPrice
+                .add(calcPercent(totalPrice, taxes))
+                .subtract(calcPercent(totalPrice, discount));
 
         try {
-            final Order result = ordersDAO.create(order);
-            return result == null ? Optional.empty() : Optional.of(result);
+            // add new Order to OrderModel
+            final Order savedOrder = ordersDAO.create(order);
+
+            // add all items to ItemModel
+            for (Item item : order.getItems()) {
+                item.setOrderId(savedOrder.getId());
+                itemsDAO.create(item);
+            }
+
+            //update order total price
+            order.setTotalPrice(finalPrice);
+            ordersDAO.update(order);
+
+            // update customer total sum of orders
+            customerDAO.update(order.getCustomer());
+
+            return Optional.of(order);
         } catch (SQLException | DBException e) {
-            logger.log(Level.SEVERE, "add new order error", e);
+            logger.log(Level.SEVERE, "create order error", e);
         }
 
         return Optional.empty();
@@ -98,55 +121,11 @@ public class OrdersManager {
         return false;
     }
 
-    public Optional<Item> addItem(Order order, int watchId, int qty, BigDecimal price) {
-        if (order == null || watchId == -1 || qty == 0 || price == null) {
-            return Optional.empty();
+
+    private BigDecimal calcPercent(BigDecimal value, BigDecimal percent) {
+        if (value == null || percent == null) {
+            return BigDecimal.ZERO;
         }
-
-        final Watch watch = new Watch(watchId, null, null, BigDecimal.ZERO, 0, null);
-        final Item item = new Item(-1, price, qty, order.getId(), watch);
-        try {
-            final Item result = itemsDAO.create(item);
-            return result == null ? Optional.empty() : Optional.of(result);
-        } catch (SQLException | DBException e) {
-            logger.log(Level.SEVERE, "add item to order error", e);
-        }
-
-        return Optional.empty();
-    }
-
-    public boolean updateItem(Order order, int itemId, BigDecimal price, int qty) {
-        if (order == null || itemId == -1 || price == null || qty < 0) {
-            return false;
-        }
-
-        final Item item = new Item(itemId, price, qty, order.getId(), null);
-        try {
-            return itemsDAO.update(item);
-        } catch (SQLException | DBException e) {
-            logger.log(Level.SEVERE, "update order's item error", e);
-        }
-
-        return false;
-    }
-
-    public boolean deleteItem(Item item) {
-        if (item == null || item.getId() == -1 || item.getOrderId() == -1) {
-            return false;
-        }
-
-        try {
-            final Item storedItem = itemsDAO.getById(item.getId());
-
-            if (storedItem == null || storedItem.getOrderId() != item.getOrderId()) {
-                return false;
-            }
-
-            return itemsDAO.delete(item.getId());
-        } catch (SQLException | DBException e) {
-            logger.log(Level.SEVERE, "delete item error", e);
-        }
-
-        return false;
+        return value.multiply(percent).divide(BigDecimal.valueOf(100), 2, RoundingMode.CEILING);
     }
 }

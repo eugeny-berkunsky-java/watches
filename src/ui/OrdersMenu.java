@@ -1,6 +1,6 @@
 package ui;
 
-import manage.CustomerManager;
+import manage.ManagersContainer;
 import manage.OrdersManager;
 import model.Item;
 import model.Order;
@@ -22,9 +22,10 @@ public class OrdersMenu {
     private final NewOrderMenu addNewOrderMenu;
     private final DateTimeFormatter dateFormatter;
 
-    public OrdersMenu(OrdersManager ordersManager, CustomerManager customerManager) {
-        this.ordersManager = ordersManager;
-        addNewOrderMenu = new NewOrderMenu(ordersManager, customerManager);
+    public OrdersMenu(ManagersContainer managersContainer) {
+        this.ordersManager = managersContainer.getOrdersManager();
+        addNewOrderMenu = new NewOrderMenu(managersContainer);
+
         dateFormatter = DateTimeFormatter.ofPattern("dd.MM.YYYY HH:mm:ss");
     }
 

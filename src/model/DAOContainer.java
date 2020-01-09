@@ -1,9 +1,9 @@
 package model;
 
-public class DAOFactory {
+public class DAOContainer {
 
     private static DAO<DiscountCard> discountCardDAO;
-    private static DAOFactory factory;
+    private static DAOContainer container;
     private DAO<Order> orderDAO;
     private DAO<Item> itemsDAO;
     private DAO<Watch> watchDAO;
@@ -11,14 +11,14 @@ public class DAOFactory {
     private DAO<Vendor> vendorDAO;
     private DAO<Country> countryDAO;
 
-    private DAOFactory() {
+    private DAOContainer() {
     }
 
-    public static DAOFactory getInstance() {
-        if (factory == null) {
-            factory = new DAOFactory();
+    public static DAOContainer getInstance() {
+        if (container == null) {
+            container = new DAOContainer();
         }
-        return factory;
+        return container;
     }
 
     public static DAO<DiscountCard> getDiscountCardDAO() {
