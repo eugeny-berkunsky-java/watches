@@ -2,7 +2,7 @@ package manage;
 
 import model.Customer;
 import model.DAO;
-import model.DAOFactory;
+import model.DAOContainer;
 import model.DiscountCard;
 import utils.DBException;
 
@@ -19,8 +19,8 @@ public class CustomerManager {
 
     private DAO<Customer> dao;
 
-    public CustomerManager(DAOFactory factory) {
-        this.dao = factory.getCustomerDAO();
+    public CustomerManager(DAOContainer container) {
+        this.dao = container.getCustomerDAO();
     }
 
     public List<Customer> getAll() {
@@ -87,5 +87,20 @@ public class CustomerManager {
         }
 
         return false;
+    }
+
+    public Optional<Customer> getById(int customerId) {
+        if (customerId == -1) {
+            return Optional.empty();
+        }
+
+        try {
+            final Customer customer = dao.getById(customerId);
+            return customer == null ? Optional.empty() : Optional.of(customer);
+        } catch (SQLException | DBException e) {
+            logger.log(Level.SEVERE, "getById error", e);
+        }
+
+        return Optional.empty();
     }
 }

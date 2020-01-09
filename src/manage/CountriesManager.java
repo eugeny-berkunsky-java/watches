@@ -2,7 +2,7 @@ package manage;
 
 import model.Country;
 import model.DAO;
-import model.DAOFactory;
+import model.DAOContainer;
 import utils.DBException;
 
 import java.sql.SQLException;
@@ -17,8 +17,8 @@ public class CountriesManager {
 
     private DAO<Country> countryDAO;
 
-    public CountriesManager(DAOFactory factory) {
-        countryDAO = factory.getCountriesDAO();
+    public CountriesManager(DAOContainer container) {
+        countryDAO = container.getCountriesDAO();
     }
 
     public List<Country> getAll() {

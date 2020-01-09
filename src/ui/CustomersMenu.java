@@ -1,6 +1,7 @@
 package ui;
 
 import manage.CustomerManager;
+import manage.ManagersContainer;
 import model.Customer;
 import utils.UserInput;
 
@@ -17,8 +18,8 @@ public class CustomersMenu {
 
     private CustomerManager customerManager;
 
-    public CustomersMenu(CustomerManager customerManager) {
-        this.customerManager = customerManager;
+    public CustomersMenu(ManagersContainer managersContainer) {
+        this.customerManager = managersContainer.getCustomerManager();
     }
 
     private void printMenu() {

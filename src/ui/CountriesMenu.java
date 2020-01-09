@@ -1,6 +1,7 @@
 package ui;
 
 import manage.CountriesManager;
+import manage.ManagersContainer;
 import model.Country;
 import utils.UserInput;
 
@@ -18,8 +19,8 @@ public class CountriesMenu {
 
     private CountriesManager countriesManager;
 
-    public CountriesMenu(CountriesManager manager) {
-        countriesManager = manager;
+    public CountriesMenu(ManagersContainer managersContainer) {
+        countriesManager = managersContainer.getCountriesManager();
     }
 
     private void printMenu() {

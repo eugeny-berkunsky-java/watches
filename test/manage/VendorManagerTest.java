@@ -2,7 +2,7 @@ package manage;
 
 import model.Country;
 import model.DAO;
-import model.DAOFactory;
+import model.DAOContainer;
 import model.Vendor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,10 +25,10 @@ class VendorManagerTest {
 
         dao = mock(DAO.class);
 
-        DAOFactory factory = mock(DAOFactory.class);
-        when(factory.getVendorsDAO()).thenReturn(dao);
+        DAOContainer container = mock(DAOContainer.class);
+        when(container.getVendorsDAO()).thenReturn(dao);
 
-        manager = new VendorManager(factory);
+        manager = new VendorManager(container);
     }
 
     @Test

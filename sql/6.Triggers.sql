@@ -1,6 +1,5 @@
 drop trigger if exists trigger_update_customer_model on public."CustomerModel";
 drop function if exists public.update_customer_model;
-
 create or replace function public.update_customer_model() returns trigger as
 $$
 declare
@@ -52,6 +51,9 @@ begin
 end;
 $$ language plpgsql;
 
+alter function update_customer_model() owner to watches;
+
+
 create trigger trigger_update_customer_model
     instead of insert or update or delete
     on public."CustomerModel"
@@ -100,6 +102,8 @@ begin
     end if;
 end
 $$ language plpgsql;
+
+alter function update_vendor_model() owner to watches;
 
 create trigger trigger_update_vendor_model
     instead of insert or update or delete
@@ -159,6 +163,8 @@ begin
 end
 $$ language plpgsql;
 
+alter function update_watch_model() owner to watches;
+
 create trigger trigger_update_watch_model
     instead of insert or update or delete
     on public."WatchModel"
@@ -183,11 +189,6 @@ begin
         if not FOUND then
             return null;
         else
-            -- subtract order's total price
-            update public."OrderModel" om
-            set order_totalprice = order_totalprice - (old.item_qty * old.item_price)
-            where om.order_id = old.item_order_id;
-
             return old;
         end if;
 
@@ -201,11 +202,6 @@ begin
 
         select * into result_row from public."ItemModel" where item_id = new.item_id;
 
-        -- add to order's total price
-        update public."OrderModel" om
-        set order_totalprice = order_totalprice + (new.item_qty * new.item_price)
-        where om.order_id = new.item_order_id;
-
         return result_row;
 
     elsif tg_op = 'UPDATE' then
@@ -217,20 +213,13 @@ begin
         if not FOUND then
             return null;
         else
-            -- apply diff to order's total price
-            if old.item_qty is distinct from new.item_qty
-                or old.item_price is distinct from new.item_price then
-                update public."OrderModel" om
-                set order_totalprice = order_totalprice +
-                                       (new.item_qty * new.item_price - old.item_qty * old.item_price)
-                where om.order_id = new.item_order_id;
-            end if;
-
             return old;
         end if;
     end if;
 end
 $$ language plpgsql;
+
+alter function update_item_model() owner to watches;
 
 create trigger trigger_update_item_model
     instead of insert or update or delete
@@ -255,12 +244,6 @@ begin
         if not FOUND then
             return null;
         else
-
-            -- subtract from customer's total price
-            update public."CustomerModel" cm
-            set customer_sumoforders = customer_sumoforders - old.order_totalprice
-            where cm.customer_id = old.customer_id;
-
             return old;
         end if;
 
@@ -275,11 +258,6 @@ begin
 
         select * into result_row from public."OrderModel" where order_id = new.order_id;
 
-        -- add to to customer's total price
-        update public."CustomerModel" cm
-        set customer_sumoforders = new.order_totalprice
-        where cm.customer_id = new.customer_id;
-
         return result_row;
 
     elsif tg_op = 'UPDATE' then
@@ -291,20 +269,14 @@ begin
         if not FOUND then
             return null;
         else
-
-            -- apply diff to customer's sum of orders
-            if old.order_totalprice is distinct from new.order_totalprice then
-                update public."CustomerModel" cm
-                set customer_sumoforders = customer_sumoforders + (new.order_totalprice - old.order_totalprice)
-                where cm.customer_id = new.customer_id;
-
-            end if;
             return old;
         end if;
 
     end if;
 end
 $$ language plpgsql;
+
+alter function update_order_model() owner to watches;
 
 create trigger trigger_update_order_model
     instead of insert or update or delete
@@ -329,6 +301,9 @@ begin
     end if;
 end
 $$ language plpgsql;
+
+alter function update_country_model() owner to watches;
+
 create trigger trigger_update_country_model
     instead of delete
     on public."CountryModel"
@@ -352,6 +327,9 @@ begin
     end if;
 end
 $$ language plpgsql;
+
+alter function update_dcard_model() owner to watches;
+
 create trigger trigger_update_dcard_model
     instead of delete
     on public."DiscountCardModel"

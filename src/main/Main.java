@@ -1,5 +1,7 @@
 package main;
 
+import manage.ManagersContainer;
+import model.DAOContainer;
 import ui.MainMenu;
 import utils.Settings;
 import utils.UserInput;
@@ -17,7 +19,10 @@ public class Main {
             Settings.init();
             logger.info("program started");
 
-            new MainMenu().show(new UserInput(reader));
+            new MainMenu(
+                    ManagersContainer.getInstance(DAOContainer.getInstance())
+            ).show(new UserInput(reader));
+
         } catch (Exception e) {
             logger.log(Level.SEVERE, "buffered reader error", e);
         } finally {

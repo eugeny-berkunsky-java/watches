@@ -1,5 +1,6 @@
 package ui;
 
+import manage.ManagersContainer;
 import manage.WatchManager;
 import model.Watch;
 import utils.UserInput;
@@ -19,9 +20,9 @@ public class WatchesMenu {
     private WatchManager watchManager;
     private WatchesReportsMenu watchesReportsMenu;
 
-    public WatchesMenu(WatchManager watchManager) {
-        this.watchManager = watchManager;
-        watchesReportsMenu = new WatchesReportsMenu(watchManager);
+    public WatchesMenu(ManagersContainer managersContainer) {
+        this.watchManager = managersContainer.getWatchManager();
+        watchesReportsMenu = new WatchesReportsMenu(managersContainer);
     }
 
     private void printMenu() {

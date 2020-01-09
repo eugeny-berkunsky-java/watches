@@ -2,7 +2,7 @@ package manage;
 
 import model.Customer;
 import model.DAO;
-import model.DAOFactory;
+import model.DAOContainer;
 import model.DiscountCard;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,10 +54,10 @@ class CustomerManagerTest {
     @BeforeEach
     void setUp() {
         dao = mock(DAO.class);
-        final DAOFactory factory = mock(DAOFactory.class);
-        when(factory.getCustomerDAO()).thenReturn(dao);
+        final DAOContainer container = mock(DAOContainer.class);
+        when(container.getCustomerDAO()).thenReturn(dao);
 
-        manager = new CustomerManager(factory);
+        manager = new CustomerManager(container);
     }
 
     @Test

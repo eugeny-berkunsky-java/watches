@@ -2,7 +2,7 @@ package manage;
 
 import model.Country;
 import model.DAO;
-import model.DAOFactory;
+import model.DAOContainer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -24,9 +24,9 @@ class CountriesManagerTest {
     @BeforeEach
     void setUp() {
         countryDAO = Mockito.mock(DAO.class);
-        DAOFactory factory = Mockito.mock(DAOFactory.class);
-        when(factory.getCountriesDAO()).thenReturn(countryDAO);
-        manager = new CountriesManager(factory);
+        DAOContainer container = Mockito.mock(DAOContainer.class);
+        when(container.getCountriesDAO()).thenReturn(countryDAO);
+        manager = new CountriesManager(container);
 
     }
 

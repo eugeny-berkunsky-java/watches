@@ -11,6 +11,13 @@ public class Item {
     private int orderId;
 
 
+    public Item() {
+        id = -1;
+        price = BigDecimal.ZERO;
+        qty = 1;
+        orderId = -1;
+    }
+
     public Item(int id, BigDecimal price, int qty, int orderId, Watch watch) {
         this.id = id;
         this.watch = watch;

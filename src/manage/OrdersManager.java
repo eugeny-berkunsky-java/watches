@@ -2,10 +2,11 @@ package manage;
 
 import model.*;
 import utils.DBException;
+import utils.Settings;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -18,10 +19,12 @@ public class OrdersManager {
 
     private DAO<Order> ordersDAO;
     private DAO<Item> itemsDAO;
+    private DAO<Customer> customerDAO;
 
-    public OrdersManager(DAOFactory factory) {
-        ordersDAO = factory.getOrdersDAO();
-        itemsDAO = factory.getItemsDAO();
+    public OrdersManager(DAOContainer container) {
+        ordersDAO = container.getOrdersDAO();
+        itemsDAO = container.getItemsDAO();
+        customerDAO = container.getCustomerDAO();
     }
 
     public List<Order> getAll() {
@@ -50,42 +53,60 @@ public class OrdersManager {
         return Optional.empty();
     }
 
-    public Optional<Order> addOrder(LocalDateTime date, int customerId) {
-        if (date == null || customerId == -1) {
+    public Optional<Order> addOrder(Order order) {
+        if (order == null
+                || order.getCustomer() == null || order.getCustomer().getId() == -1
+                || order.getItems() == null || order.getItems().size() == 0) {
             return Optional.empty();
         }
 
-        final Order order = new Order(-1, date,
-                new Customer(customerId, null, BigDecimal.ZERO,
-                        new DiscountCard(0, null, BigDecimal.ZERO)), null, BigDecimal.ZERO);
+        BigDecimal finalPrice = calcFinalPrice(order);
 
         try {
-            final Order result = ordersDAO.create(order);
-            return result == null ? Optional.empty() : Optional.of(result);
+            Settings.getConnection().setAutoCommit(false);
+
+            // add new Order to OrderModel
+            order.setTotalPrice(finalPrice);
+            final Order savedOrder = ordersDAO.create(order);
+
+            // add all items to ItemModel
+            for (Item item : order.getItems()) {
+                if (item.getPrice() == null
+                        || item.getPrice().compareTo(BigDecimal.ZERO) <= 0
+                        || item.getQty() <= 0
+                ) {
+                    Settings.getConnection().rollback();
+                    return Optional.empty();
+                }
+
+                item.setOrderId(savedOrder.getId());
+                itemsDAO.create(item);
+            }
+
+            // update customer total sum of orders
+            order.getCustomer().setSumOfOrders(order.getCustomer().getSumOfOrders().add(finalPrice));
+            customerDAO.update(order.getCustomer());
+
+            Settings.getConnection().commit();
+
+            return Optional.of(order);
+
         } catch (SQLException | DBException e) {
-            logger.log(Level.SEVERE, "add new order error", e);
+            logger.log(Level.SEVERE, "create order error", e);
+            try {
+                Settings.getConnection().rollback();
+            } catch (SQLException ex) {
+                logger.log(Level.SEVERE, "rollback transaction error", e);
+            }
+        } finally {
+            try {
+                Settings.getConnection().setAutoCommit(true);
+            } catch (SQLException e) {
+                logger.log(Level.SEVERE, "set autocommit mode on error", e);
+            }
         }
 
         return Optional.empty();
-    }
-
-    public boolean updateOrder(int orderId, int customerId, LocalDateTime date,
-                               BigDecimal totalPrice) {
-        if (date == null || totalPrice == null || orderId == -1 || customerId == -1) {
-            return false;
-        }
-
-        final Customer customer = new Customer(customerId, null, BigDecimal.ZERO, null);
-
-        final Order order = new Order(orderId, date, customer, Collections.emptyList(), totalPrice);
-
-        try {
-            return ordersDAO.update(order);
-        } catch (SQLException | DBException e) {
-            logger.log(Level.SEVERE, "update order error", e);
-        }
-
-        return false;
     }
 
     public boolean deleteOrder(int orderId) {
@@ -98,55 +119,25 @@ public class OrdersManager {
         return false;
     }
 
-    public Optional<Item> addItem(Order order, int watchId, int qty, BigDecimal price) {
-        if (order == null || watchId == -1 || qty == 0 || price == null) {
-            return Optional.empty();
+    private BigDecimal calcFinalPrice(Order order) {
+        // calculate total order price include taxes and discount
+        BigDecimal totalPrice = BigDecimal.ZERO;
+        for (Item item : order.getItems()) {
+            totalPrice =
+                    totalPrice.add(item.getPrice().multiply(BigDecimal.valueOf(item.getQty())));
         }
+        final BigDecimal taxes = BigDecimal.valueOf(16);
 
-        final Watch watch = new Watch(watchId, null, null, BigDecimal.ZERO, 0, null);
-        final Item item = new Item(-1, price, qty, order.getId(), watch);
-        try {
-            final Item result = itemsDAO.create(item);
-            return result == null ? Optional.empty() : Optional.of(result);
-        } catch (SQLException | DBException e) {
-            logger.log(Level.SEVERE, "add item to order error", e);
-        }
-
-        return Optional.empty();
+        final BigDecimal discount = order.getCustomer().getDiscountCard().getPercent();
+        return totalPrice
+                .add(calcPercent(totalPrice, taxes))
+                .subtract(calcPercent(totalPrice, discount));
     }
 
-    public boolean updateItem(Order order, int itemId, BigDecimal price, int qty) {
-        if (order == null || itemId == -1 || price == null || qty < 0) {
-            return false;
+    private BigDecimal calcPercent(BigDecimal value, BigDecimal percent) {
+        if (value == null || percent == null) {
+            return BigDecimal.ZERO;
         }
-
-        final Item item = new Item(itemId, price, qty, order.getId(), null);
-        try {
-            return itemsDAO.update(item);
-        } catch (SQLException | DBException e) {
-            logger.log(Level.SEVERE, "update order's item error", e);
-        }
-
-        return false;
-    }
-
-    public boolean deleteItem(Item item) {
-        if (item == null || item.getId() == -1 || item.getOrderId() == -1) {
-            return false;
-        }
-
-        try {
-            final Item storedItem = itemsDAO.getById(item.getId());
-
-            if (storedItem == null || storedItem.getOrderId() != item.getOrderId()) {
-                return false;
-            }
-
-            return itemsDAO.delete(item.getId());
-        } catch (SQLException | DBException e) {
-            logger.log(Level.SEVERE, "delete item error", e);
-        }
-
-        return false;
+        return value.multiply(percent).divide(BigDecimal.valueOf(100), 2, RoundingMode.CEILING);
     }
 }

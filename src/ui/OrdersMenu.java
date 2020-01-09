@@ -1,5 +1,6 @@
 package ui;
 
+import manage.ManagersContainer;
 import manage.OrdersManager;
 import model.Item;
 import model.Order;
@@ -21,9 +22,10 @@ public class OrdersMenu {
     private final NewOrderMenu addNewOrderMenu;
     private final DateTimeFormatter dateFormatter;
 
-    public OrdersMenu(OrdersManager manager) {
-        ordersManager = manager;
-        addNewOrderMenu = new NewOrderMenu(manager);
+    public OrdersMenu(ManagersContainer managersContainer) {
+        this.ordersManager = managersContainer.getOrdersManager();
+        addNewOrderMenu = new NewOrderMenu(managersContainer);
+
         dateFormatter = DateTimeFormatter.ofPattern("dd.MM.YYYY HH:mm:ss");
     }
 
