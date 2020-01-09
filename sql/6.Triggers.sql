@@ -1,6 +1,5 @@
 drop trigger if exists trigger_update_customer_model on public."CustomerModel";
 drop function if exists public.update_customer_model;
-
 create or replace function public.update_customer_model() returns trigger as
 $$
 declare
@@ -52,6 +51,9 @@ begin
 end;
 $$ language plpgsql;
 
+alter function update_customer_model() owner to watches;
+
+
 create trigger trigger_update_customer_model
     instead of insert or update or delete
     on public."CustomerModel"
@@ -100,6 +102,8 @@ begin
     end if;
 end
 $$ language plpgsql;
+
+alter function update_vendor_model() owner to watches;
 
 create trigger trigger_update_vendor_model
     instead of insert or update or delete
@@ -159,6 +163,8 @@ begin
 end
 $$ language plpgsql;
 
+alter function update_watch_model() owner to watches;
+
 create trigger trigger_update_watch_model
     instead of insert or update or delete
     on public."WatchModel"
@@ -212,6 +218,8 @@ begin
     end if;
 end
 $$ language plpgsql;
+
+alter function update_item_model() owner to watches;
 
 create trigger trigger_update_item_model
     instead of insert or update or delete
@@ -268,6 +276,8 @@ begin
 end
 $$ language plpgsql;
 
+alter function update_order_model() owner to watches;
+
 create trigger trigger_update_order_model
     instead of insert or update or delete
     on public."OrderModel"
@@ -291,6 +301,9 @@ begin
     end if;
 end
 $$ language plpgsql;
+
+alter function update_country_model() owner to watches;
+
 create trigger trigger_update_country_model
     instead of delete
     on public."CountryModel"
@@ -314,6 +327,9 @@ begin
     end if;
 end
 $$ language plpgsql;
+
+alter function update_dcard_model() owner to watches;
+
 create trigger trigger_update_dcard_model
     instead of delete
     on public."DiscountCardModel"
