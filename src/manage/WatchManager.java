@@ -149,16 +149,12 @@ public class WatchManager {
     }
 
     public Optional<Watch> getById(int watchId) {
-        if (watchId == -1) {
-            return Optional.empty();
-        }
-
         try {
-            final Watch result = dao.getById(watchId);
-            return result == null ? Optional.empty() : Optional.of(result);
+            return watchId == -1 ? Optional.empty() : dao.getById(watchId);
         } catch (SQLException | DBException e) {
             logger.log(Level.SEVERE, "getById error", e);
         }
+
         return Optional.empty();
     }
 }

@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 public interface DAO<T> {
@@ -26,11 +27,17 @@ public interface DAO<T> {
         }
     }
 
-    default T executeAndReturnObject(PreparedStatement st, Function<ResultSet, T> toObject) {
+    default Optional<T> executeAndReturnObject(PreparedStatement st, Function<ResultSet, T> toObject) {
         try {
             final ResultSet resultSet = st.executeQuery();
-            resultSet.next();
-            return toObject.apply(resultSet);
+            if (resultSet.next()) {
+                final T result = toObject.apply(resultSet);
+                return result == null ? Optional.empty() : Optional.of(result);
+
+            }
+
+            return Optional.empty();
+
         } catch (SQLException e) {
             throw new DBException(e);
         }
@@ -40,7 +47,7 @@ public interface DAO<T> {
 
     List<T> getAll() throws SQLException;
 
-    T getById(int id) throws SQLException;
+    Optional<T> getById(int id) throws SQLException;
 
     boolean update(T model) throws SQLException;
 

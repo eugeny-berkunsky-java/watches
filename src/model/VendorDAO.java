@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Optional;
 
 import static utils.Settings.getConnection;
 
@@ -50,7 +51,7 @@ class VendorDAO implements DAO<Vendor> {
     }
 
     @Override
-    public Vendor getById(int id) throws SQLException {
+    public Optional<Vendor> getById(int id) throws SQLException {
         final String sql = "select * from public.\"VendorModel\" where vendor_id = ?;";
 
         try (final PreparedStatement st = getConnection().prepareStatement(sql)) {

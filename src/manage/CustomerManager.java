@@ -90,13 +90,8 @@ public class CustomerManager {
     }
 
     public Optional<Customer> getById(int customerId) {
-        if (customerId == -1) {
-            return Optional.empty();
-        }
-
         try {
-            final Customer customer = dao.getById(customerId);
-            return customer == null ? Optional.empty() : Optional.of(customer);
+            return customerId == -1 ? Optional.empty() : dao.getById(customerId);
         } catch (SQLException | DBException e) {
             logger.log(Level.SEVERE, "getById error", e);
         }
