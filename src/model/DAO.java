@@ -33,7 +33,6 @@ public interface DAO<T> {
             if (resultSet.next()) {
                 final T result = toObject.apply(resultSet);
                 return result == null ? Optional.empty() : Optional.of(result);
-
             }
 
             return Optional.empty();
@@ -43,7 +42,7 @@ public interface DAO<T> {
         }
     }
 
-    T create(T model) throws SQLException;
+    Optional<T> create(T model) throws SQLException;
 
     List<T> getAll() throws SQLException;
 

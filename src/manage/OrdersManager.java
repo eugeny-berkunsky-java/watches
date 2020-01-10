@@ -63,7 +63,12 @@ public class OrdersManager {
 
             // add new Order to OrderModel
             order.setTotalPrice(finalPrice);
-            final Order savedOrder = ordersDAO.create(order);
+            final Optional<Order> savedOrder = ordersDAO.create(order);
+
+            if (!savedOrder.isPresent()) {
+                Settings.getConnection().rollback();
+                return Optional.empty();
+            }
 
             // add all items to ItemModel
             for (Item item : order.getItems()) {
@@ -75,13 +80,13 @@ public class OrdersManager {
                     return Optional.empty();
                 }
 
-                item.setOrderId(savedOrder.getId());
+                item.setOrderId(savedOrder.get().getId());
                 itemsDAO.create(item);
             }
 
             // update customer total sum of orders
-            order.getCustomer().setSumOfOrders(order.getCustomer().getSumOfOrders().add(finalPrice));
-            customerDAO.update(order.getCustomer());
+            savedOrder.get().getCustomer().setSumOfOrders(order.getCustomer().getSumOfOrders().add(finalPrice));
+            customerDAO.update(savedOrder.get().getCustomer());
 
             Settings.getConnection().commit();
 

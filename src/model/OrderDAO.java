@@ -25,7 +25,7 @@ public class OrderDAO implements DAO<Order> {
     }
 
     @Override
-    public Order create(Order model) throws SQLException {
+    public Optional<Order> create(Order model) throws SQLException {
         final String sql = "insert into public.\"OrderModel\" (order_date, order_totalprice, customer_id) " +
                 "values (?, ?, ?) returning *;";
 
@@ -37,9 +37,8 @@ public class OrderDAO implements DAO<Order> {
 
             st.execute();
             final ResultSet rs = st.getGeneratedKeys();
-            rs.next();
 
-            return createOrderFromResultSet(rs);
+            return rs.next() ? Optional.of(createOrderFromResultSet(rs)) : Optional.empty();
         }
     }
 

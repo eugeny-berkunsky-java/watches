@@ -38,8 +38,7 @@ public class CountriesManager {
         }
 
         try {
-            final Country country = countryDAO.create(new Country(-1, countryName.trim()));
-            return country == null ? Optional.empty() : Optional.of(country);
+            return countryDAO.create(new Country(-1, countryName.trim()));
         } catch (SQLException | DBException e) {
             logger.log(Level.SEVERE, "add country error", e);
         }

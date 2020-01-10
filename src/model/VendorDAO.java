@@ -25,7 +25,7 @@ class VendorDAO implements DAO<Vendor> {
     }
 
     @Override
-    public Vendor create(Vendor model) throws SQLException {
+    public Optional<Vendor> create(Vendor model) throws SQLException {
         final String sql = "insert into public.\"VendorModel\" (vendor_name, country_id) " +
                 "VALUES (?, ?) returning *;";
 
@@ -36,8 +36,8 @@ class VendorDAO implements DAO<Vendor> {
             st.execute();
 
             final ResultSet rs = st.getGeneratedKeys();
-            rs.next();
-            return createFromResultSet(rs);
+
+            return rs.next() ? Optional.of(createFromResultSet(rs)) : Optional.empty();
         }
     }
 

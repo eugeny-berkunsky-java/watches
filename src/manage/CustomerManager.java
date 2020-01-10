@@ -42,13 +42,8 @@ public class CustomerManager {
         try {
             final Customer customer = new Customer(-1, name.trim(), BigDecimal.ZERO,
                     new DiscountCard(0, null, BigDecimal.ZERO));
-            final Customer result = dao.create(customer);
-            return result == null
-                    || result.getId() == -1
-                    || result.getDiscountCard() == null
-                    || result.getDiscountCard().getId() == -1 ?
-                    Optional.empty() :
-                    Optional.of(result);
+
+            return dao.create(customer);
         } catch (SQLException | DBException e) {
             logger.log(Level.SEVERE, "add customer error", e);
         }

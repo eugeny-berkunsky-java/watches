@@ -28,7 +28,7 @@ public class CustomerDAO implements DAO<Customer> {
     }
 
     @Override
-    public Customer create(Customer model) throws SQLException {
+    public Optional<Customer> create(Customer model) throws SQLException {
         final String sql = "insert into public.\"CustomerModel\" " +
                 "(customer_name, customer_sumoforders, dcard_id) " +
                 " values (?, ?, ?) returning *;";
@@ -40,9 +40,8 @@ public class CustomerDAO implements DAO<Customer> {
 
             st.execute();
             final ResultSet rs = st.getGeneratedKeys();
-            rs.next();
 
-            return createFromResultSet(rs);
+            return rs.next() ? Optional.of(createFromResultSet(rs)) : Optional.empty();
         }
     }
 

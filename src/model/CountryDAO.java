@@ -22,7 +22,7 @@ class CountryDAO implements DAO<Country> {
     }
 
     @Override
-    public Country create(Country country) throws SQLException {
+    public Optional<Country> create(Country country) throws SQLException {
         final String sql = "insert into public.\"CountryModel\" (country_name) values (?) returning *;";
 
         try (final PreparedStatement st
@@ -30,8 +30,8 @@ class CountryDAO implements DAO<Country> {
             st.setString(1, country.getName());
             st.execute();
             ResultSet rs = st.getGeneratedKeys();
-            rs.next();
-            return createFromResultSet(rs);
+
+            return rs.next() ? Optional.of(createFromResultSet(rs)) : Optional.empty();
         }
 
     }

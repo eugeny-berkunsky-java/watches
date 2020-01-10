@@ -46,15 +46,11 @@ public class WatchManager {
         }
 
         try {
-            Watch newWatch = new Watch(-1, brand.trim(), type, price, qty,
+            Watch watch = new Watch(-1, brand.trim(), type, price, qty,
                     new Vendor(vendorId, null, null));
-            final Watch result = dao.create(newWatch);
-            return result == null
-                    || result.getId() == -1
-                    || result.getVendor() == null
-                    || result.getVendor().getId() == -1 ?
-                    Optional.empty() :
-                    Optional.of(result);
+
+            return dao.create(watch);
+
         } catch (SQLException | DBException e) {
             logger.log(Level.SEVERE, "add watch error", e);
         }

@@ -30,7 +30,7 @@ public class WatchDAO implements DAO<Watch> {
     }
 
     @Override
-    public Watch create(Watch model) throws SQLException {
+    public Optional<Watch> create(Watch model) throws SQLException {
         final String sql = "insert into public.\"WatchModel\" " +
                 "(watch_brand, watch_type, watch_price, watch_qty, vendor_id) " +
                 "values (?, ?::watch_type, ?, ?, ?) returning *;";
@@ -45,8 +45,8 @@ public class WatchDAO implements DAO<Watch> {
 
             st.execute();
             final ResultSet rs = st.getGeneratedKeys();
-            rs.next();
-            return WatchDAO.createFromResultSet(rs);
+
+            return rs.next() ? Optional.of(WatchDAO.createFromResultSet(rs)) : Optional.empty();
         }
     }
 

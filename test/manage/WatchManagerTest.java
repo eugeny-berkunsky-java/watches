@@ -1,6 +1,9 @@
 package manage;
 
-import model.*;
+import model.DAO;
+import model.DAOContainer;
+import model.Vendor;
+import model.Watch;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -209,35 +212,37 @@ class WatchManagerTest {
         assertEquals(3, value.getVendor().getId());
     }
 
-    @Test
-    void addWatchBelowTrashArgs() throws SQLException {
+    /*
+        @Test
+        void addWatchBelowTrashArgs() throws SQLException {
 
-        when(dao.create(any(Watch.class))).thenReturn(null);
-        assertFalse(manager.addWatch("brand", ANALOGUE, BigDecimal.ONE, 1, 2).isPresent());
+            when(dao.create(any(Watch.class))).thenReturn(null);
+            assertFalse(manager.addWatch("brand", ANALOGUE, BigDecimal.ONE, 1, 2).isPresent());
 
-        //
-        final Watch watch1 = mock(Watch.class);
-        when(watch1.getId()).thenReturn(-1);
-        when(dao.create(any(Watch.class))).thenReturn(watch1);
-        assertFalse(manager.addWatch("brand", ANALOGUE, BigDecimal.ONE, 1, 2).isPresent());
+            //
+            final Watch watch1 = mock(Watch.class);
+            when(watch1.getId()).thenReturn(-1);
+            when(dao.create(any(Watch.class))).thenReturn(watch1);
+            assertFalse(manager.addWatch("brand", ANALOGUE, BigDecimal.ONE, 1, 2).isPresent());
 
-        //
-        final Watch watch2 = mock(Watch.class);
-        when(watch2.getId()).thenReturn(1);
-        when(watch2.getVendor()).thenReturn(null);
+            //
+            final Watch watch2 = mock(Watch.class);
+            when(watch2.getId()).thenReturn(1);
+            when(watch2.getVendor()).thenReturn(null);
 
-        when(dao.create(any(Watch.class))).thenReturn(watch2);
-        assertFalse(manager.addWatch("brand", ANALOGUE, BigDecimal.ONE, 1, 2).isPresent());
+            when(dao.create(any(Watch.class))).thenReturn(watch2);
+            assertFalse(manager.addWatch("brand", ANALOGUE, BigDecimal.ONE, 1, 2).isPresent());
 
-        //
-        final Watch watch3 = mock(Watch.class, RETURNS_DEEP_STUBS);
-        when(watch3.getId()).thenReturn(1);
-        when(watch3.getVendor().getId()).thenReturn(-1);
+            //
+            final Watch watch3 = mock(Watch.class, RETURNS_DEEP_STUBS);
+            when(watch3.getId()).thenReturn(1);
+            when(watch3.getVendor().getId()).thenReturn(-1);
 
-        when(dao.create(any(Watch.class))).thenReturn(watch3);
-        assertFalse(manager.addWatch("brand", ANALOGUE, BigDecimal.ONE, 1, 2).isPresent());
-    }
-
+            when(dao.create(any(Watch.class))).thenReturn(watch3);
+            assertFalse(manager.addWatch("brand", ANALOGUE, BigDecimal.ONE, 1, 2).isPresent());
+        }
+    */
+/*
     @Test
     void addWatchBelowCorrectArgs() throws SQLException {
         final Watch watch = new Watch(1, "brand", ANALOGUE, BigDecimal.ONE, 1,
@@ -248,7 +253,7 @@ class WatchManagerTest {
 
         assertTrue(manager.addWatch("brand", ANALOGUE, BigDecimal.ONE, 1, 2).isPresent());
     }
-
+*/
     @Test
     void addWatchCatchExceptions() throws SQLException {
         when(dao.create(any(Watch.class))).thenThrow(new SQLException(),

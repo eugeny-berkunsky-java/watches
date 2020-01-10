@@ -94,6 +94,7 @@ class VendorManagerTest {
         verify(dao, times(1)).create(any());
     }
 
+    /*
     @Test
     void addVendorBelowCorrectArgs() throws SQLException {
         final Vendor vendor = new Vendor(1, "abc", new Country(1, "abc"));
@@ -101,7 +102,7 @@ class VendorManagerTest {
 
         assertTrue(manager.addVendor("abc", 1).isPresent());
     }
-
+*/
     @Test
     void addVendorCatchSQLException() throws SQLException {
         when(dao.create(any())).thenThrow(new SQLException());

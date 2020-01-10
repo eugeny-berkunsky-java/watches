@@ -28,7 +28,7 @@ public class ItemDAO implements DAO<Item> {
     }
 
     @Override
-    public Item create(Item model) throws SQLException {
+    public Optional<Item> create(Item model) throws SQLException {
         final String sql = "insert into public.\"ItemModel\" " +
                 "(item_price, item_qty, item_order_id, watch_id) " +
                 "VALUES (?, ?, ?, ?) returning *;";
@@ -42,9 +42,8 @@ public class ItemDAO implements DAO<Item> {
 
             st.execute();
             final ResultSet rs = st.getGeneratedKeys();
-            rs.next();
 
-            return createFromResultSet(rs);
+            return rs.next() ? Optional.of(createFromResultSet(rs)) : Optional.empty();
         }
     }
 

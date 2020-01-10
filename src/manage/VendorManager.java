@@ -39,9 +39,9 @@ public class VendorManager {
         }
 
         try {
-            final Vendor result = dao.create(new Vendor(-1, vendorName.trim(),
+            return dao.create(new Vendor(-1, vendorName.trim(),
                     new Country(countryId, null)));
-            return result == null ? Optional.empty() : Optional.of(result);
+
         } catch (SQLException | DBException e) {
             logger.log(Level.SEVERE, "add new vendor error", e);
         }

@@ -113,6 +113,7 @@ class CustomerManagerTest {
         assertEquals(0, value.getDiscountCard().getId());
     }
 
+    /*
     @Test
     void addCustomerBelowTrashArgs() throws SQLException {
         when(dao.create(any(Customer.class))).thenReturn(null);
@@ -143,7 +144,7 @@ class CustomerManagerTest {
         when(dao.create(any(Customer.class))).thenReturn(customer);
         assertTrue(manager.addCustomer("abc").isPresent());
     }
-
+*/
     @Test
     void addCustomerCatchException() throws SQLException {
         when(dao.create(any(Customer.class))).thenThrow(new SQLException(),
