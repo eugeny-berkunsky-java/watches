@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Optional;
 
 import static utils.Settings.getConnection;
 
@@ -59,7 +60,7 @@ public class WatchDAO implements DAO<Watch> {
     }
 
     @Override
-    public Watch getById(int id) throws SQLException {
+    public Optional<Watch> getById(int id) throws SQLException {
         final String sql = "select * from public.\"WatchModel\" where watch_id = ?;";
 
         try (final PreparedStatement st = getConnection().prepareStatement(sql)) {

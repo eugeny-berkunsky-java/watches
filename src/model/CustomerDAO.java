@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Optional;
 
 import static utils.Settings.getConnection;
 
@@ -56,7 +57,7 @@ public class CustomerDAO implements DAO<Customer> {
     }
 
     @Override
-    public Customer getById(int id) throws SQLException {
+    public Optional<Customer> getById(int id) throws SQLException {
         final String sql = "select * from public.\"CustomerModel\" where customer_id = ?;";
 
         try (final PreparedStatement st = getConnection().prepareStatement(sql)) {

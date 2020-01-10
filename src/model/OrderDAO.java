@@ -75,21 +75,18 @@ public class OrderDAO implements DAO<Order> {
     }
 
     @Override
-    public Order getById(int id) throws SQLException {
+    public Optional<Order> getById(int id) throws SQLException {
         final String sql = "select * from public.\"OrderModel\" where order_id = ?;";
 
         try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
             st.setInt(1, id);
             final ResultSet rs = st.executeQuery();
 
-            rs.next();
-            final Order order = createOrderFromResultSet(rs);
-
-            rs.getInt("item_id");
-            if (rs.wasNull()) {
-                order.setItems(Collections.emptyList());
-                return order;
+            if (!rs.next()) {
+                return Optional.empty();
             }
+
+            final Order order = createOrderFromResultSet(rs);
 
             List<Item> items = new ArrayList<>();
             items.add(ItemDAO.createFromResultSet(rs));
@@ -99,7 +96,7 @@ public class OrderDAO implements DAO<Order> {
             }
             order.setItems(items);
 
-            return order;
+            return Optional.of(order);
         }
     }
 

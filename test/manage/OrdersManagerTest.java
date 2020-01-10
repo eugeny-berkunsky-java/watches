@@ -156,11 +156,11 @@ class OrdersManagerTest {
         assertFalse(manager.getById(10).isPresent());
     }
 
-    @Test
+    /*@Test
     void getByIdBelowCorrectArgs() throws SQLException {
         when(orderDAO.getById(anyInt())).thenReturn(mock(Order.class));
         assertTrue(manager.getById(10).isPresent());
-    }
+    }*/
 
     @Test
     void getByIdCatchExceptions() throws SQLException {

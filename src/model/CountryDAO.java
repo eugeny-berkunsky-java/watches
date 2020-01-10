@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Optional;
 
 import static utils.Settings.getConnection;
 
@@ -43,7 +44,7 @@ class CountryDAO implements DAO<Country> {
         }
     }
 
-    public Country getById(int id) throws SQLException {
+    public Optional<Country> getById(int id) throws SQLException {
         final String sql = "select * from public.\"CountryModel\" where country_id = ?;";
 
         try (final PreparedStatement st = getConnection().prepareStatement(sql)) {

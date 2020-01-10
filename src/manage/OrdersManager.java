@@ -39,13 +39,9 @@ public class OrdersManager {
     }
 
     public Optional<Order> getById(int orderId) {
-        if (orderId == -1) {
-            return Optional.empty();
-        }
 
         try {
-            final Order result = ordersDAO.getById(orderId);
-            return result == null ? Optional.empty() : Optional.of(result);
+            return orderId == -1 ? Optional.empty() : ordersDAO.getById(orderId);
         } catch (SQLException | DBException e) {
             logger.log(Level.SEVERE, "get order by id error", e);
         }

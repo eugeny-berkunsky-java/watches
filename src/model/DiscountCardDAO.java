@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Optional;
 
 import static utils.Settings.getConnection;
 
@@ -51,7 +52,7 @@ class DiscountCardDAO implements DAO<DiscountCard> {
     }
 
     @Override
-    public DiscountCard getById(int id) throws SQLException {
+    public Optional<DiscountCard> getById(int id) throws SQLException {
         final String sql = "select * from public.\"DiscountCardModel\" where dcard_id = ?;";
 
         try (PreparedStatement st = getConnection().prepareStatement(sql)) {
