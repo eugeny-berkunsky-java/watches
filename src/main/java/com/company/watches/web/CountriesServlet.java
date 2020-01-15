@@ -7,6 +7,7 @@ import com.company.watches.manage.ManagersContainer;
 import com.company.watches.model.Country;
 import com.company.watches.model.DAOContainer;
 
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,6 +17,7 @@ import java.util.Optional;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
+@WebServlet(name = "countriesServlet", urlPatterns = "/country/*")
 public class CountriesServlet extends HttpServlet {
 
     private CountriesManager countriesManager;

@@ -19,6 +19,8 @@ public class Settings {
 
     private final static Properties properties = new Properties();
 
+    private static InitialContext context;
+
     public static void init() {
         // init logger
         try (final InputStream inputStream = Files.newInputStream(Paths.get(LOGGING_SETTINGS_FILE))) {
@@ -67,7 +69,11 @@ public class Settings {
 
     public static Connection getConnection() {
         try {
-            return ((DataSource) new InitialContext().lookup("java:/comp/env/jdbc/watchesDB")).getConnection();
+            if (context == null) {
+                context = new InitialContext();
+            }
+
+            return ((DataSource) context.lookup("java:/comp/env/jdbc/watches")).getConnection();
         } catch (SQLException | NamingException e) {
             throw new RuntimeException(e);
         }
