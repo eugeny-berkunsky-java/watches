@@ -4,10 +4,7 @@ import com.company.watches.model.Watch;
 import com.company.watches.utils.DBException;
 
 import java.math.BigDecimal;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,8 +33,9 @@ public class WatchDAO implements DAO<Watch> {
                 "(watch_brand, watch_type, watch_price, watch_qty, vendor_id) " +
                 "values (?, ?::watch_type, ?, ?, ?) returning *;";
 
-        try (final PreparedStatement st = getConnection().prepareStatement(sql,
-                Statement.RETURN_GENERATED_KEYS)) {
+        try (final Connection conn = getConnection()) {
+            final PreparedStatement st = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
             st.setString(1, model.getBrand());
             st.setString(2, model.getType().toString());
             st.setBigDecimal(3, model.getPrice());
@@ -55,7 +53,9 @@ public class WatchDAO implements DAO<Watch> {
     public List<Watch> getAll() throws SQLException {
         final String sql = "select * from public.\"WatchModel\";";
 
-        try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
+        try (final Connection conn = getConnection()) {
+            final PreparedStatement st = conn.prepareStatement(sql);
+
             return executeAndReturnCollection(st, WatchDAO::createFromResultSet);
         }
     }
@@ -64,7 +64,9 @@ public class WatchDAO implements DAO<Watch> {
     public Optional<Watch> getById(int id) throws SQLException {
         final String sql = "select * from public.\"WatchModel\" where watch_id = ?;";
 
-        try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
+        try (final Connection conn = getConnection()) {
+            final PreparedStatement st = conn.prepareStatement(sql);
+
             st.setInt(1, id);
             return executeAndReturnObject(st, WatchDAO::createFromResultSet);
         }
@@ -77,7 +79,9 @@ public class WatchDAO implements DAO<Watch> {
                 " vendor_id = ? " +
                 "where watch_id = ?;";
 
-        try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
+        try (final Connection conn = getConnection()) {
+            final PreparedStatement st = conn.prepareStatement(sql);
+
             st.setString(1, model.getBrand());
             st.setString(2, model.getType().toString());
             st.setBigDecimal(3, model.getPrice());
@@ -93,7 +97,9 @@ public class WatchDAO implements DAO<Watch> {
     public boolean delete(int id) throws SQLException {
         final String sql = "delete from public.\"WatchModel\" where watch_id = ?;";
 
-        try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
+        try (final Connection conn = getConnection()) {
+            final PreparedStatement st = conn.prepareStatement(sql);
+
             st.setInt(1, id);
             return st.executeUpdate() > 0;
         }

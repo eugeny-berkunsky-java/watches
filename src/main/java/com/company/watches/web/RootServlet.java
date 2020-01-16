@@ -27,6 +27,7 @@ public class RootServlet extends HttpServlet {
         registerController("country/", new CountryController(managers));
         registerController("customer/", new CustomerController(managers));
         registerController("vendor/", new VendorController(managers));
+        registerController("watch/", new WatchController(managers));
     }
 
     @Override
