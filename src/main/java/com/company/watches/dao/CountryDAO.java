@@ -32,7 +32,6 @@ class CountryDAO implements DAO<Country> {
 
             return rs.next() ? Optional.of(createFromResultSet(rs)) : Optional.empty();
         }
-
     }
 
     public List<Country> getAll() throws SQLException {

@@ -8,7 +8,10 @@ import java.util.stream.Collectors;
 public interface WebUtils {
 
     static String getPayload(HttpServletRequest request) {
-        if (request == null) {
+        if (request == null
+                || request.getMethod().equals("GET")
+                || request.getMethod().equals("DELETE")
+        ) {
             return "";
         }
 

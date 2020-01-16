@@ -4,10 +4,7 @@ import com.company.watches.model.DiscountCard;
 import com.company.watches.utils.DBException;
 
 import java.math.BigDecimal;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,9 +28,9 @@ class DiscountCardDAO implements DAO<DiscountCard> {
         final String sql = "insert into public.\"DiscountCardModel\" (dcard_number, dcard_percent) " +
                 "values (? ,  ?) returning *;";
 
-        try (final PreparedStatement st
-                     = getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)
-        ) {
+        try (final Connection conn = getConnection()) {
+            final PreparedStatement st
+                    = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             st.setString(1, model.getNumber());
             st.setBigDecimal(2, model.getPercent());
             st.execute();
@@ -47,7 +44,8 @@ class DiscountCardDAO implements DAO<DiscountCard> {
     public List<DiscountCard> getAll() throws SQLException {
         final String sql = "select * from public.\"DiscountCardModel\";";
 
-        try (PreparedStatement st = getConnection().prepareStatement(sql)) {
+        try (final Connection conn = getConnection()) {
+            PreparedStatement st = conn.prepareStatement(sql);
             return executeAndReturnCollection(st, DiscountCardDAO::createFromResultSet);
         }
     }
@@ -56,7 +54,8 @@ class DiscountCardDAO implements DAO<DiscountCard> {
     public Optional<DiscountCard> getById(int id) throws SQLException {
         final String sql = "select * from public.\"DiscountCardModel\" where dcard_id = ?;";
 
-        try (PreparedStatement st = getConnection().prepareStatement(sql)) {
+        try (final Connection conn = getConnection()) {
+            PreparedStatement st = conn.prepareStatement(sql);
             st.setInt(1, id);
             return executeAndReturnObject(st, DiscountCardDAO::createFromResultSet);
         }
@@ -68,7 +67,9 @@ class DiscountCardDAO implements DAO<DiscountCard> {
                 " set dcard_number = ?, dcard_percent = ? " +
                 "where dcard_id = ?;";
 
-        try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
+        try (final Connection conn = getConnection()) {
+            final PreparedStatement st = conn.prepareStatement(sql);
+
             st.setString(1, model.getNumber());
             st.setBigDecimal(2, model.getPercent());
             st.setInt(3, model.getId());
@@ -81,7 +82,9 @@ class DiscountCardDAO implements DAO<DiscountCard> {
     public boolean delete(int id) throws SQLException {
         final String sql = "delete from public.\"DiscountCardModel\" where dcard_id = ?;";
 
-        try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
+        try (final Connection conn = getConnection()) {
+            final PreparedStatement st = conn.prepareStatement(sql);
+
             st.setInt(1, id);
             return st.executeUpdate() > 0;
         }

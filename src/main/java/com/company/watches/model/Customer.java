@@ -9,6 +9,13 @@ public class Customer {
     private BigDecimal sumOfOrders;
     private DiscountCard discountCard;
 
+    public Customer() {
+        id = -1;
+        name = "";
+        sumOfOrders = BigDecimal.ZERO;
+        discountCard = new DiscountCard();
+    }
+
     public Customer(int id, String name, BigDecimal sumOfOrders, DiscountCard discountCard) {
         this.id = id;
         this.name = name;
@@ -18,6 +25,10 @@ public class Customer {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {

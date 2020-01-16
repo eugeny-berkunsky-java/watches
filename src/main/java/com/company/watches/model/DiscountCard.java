@@ -8,6 +8,12 @@ public class DiscountCard {
     private String number;
     private BigDecimal percent;
 
+    public DiscountCard() {
+        id = -1;
+        number = "";
+        percent = BigDecimal.ZERO;
+    }
+
     public DiscountCard(int id, String number, BigDecimal percent) {
         this.id = id;
         this.number = number;
@@ -16,6 +22,10 @@ public class DiscountCard {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getNumber() {
