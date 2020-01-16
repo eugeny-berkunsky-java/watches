@@ -1,6 +1,10 @@
 package com.company.watches.manage;
 
-import com.company.watches.model.*;
+import com.company.watches.dao.DAO;
+import com.company.watches.dao.DAOContainer;
+import com.company.watches.model.Country;
+import com.company.watches.model.Vendor;
+import com.company.watches.model.Watch;
 import com.company.watches.utils.DBException;
 
 import java.math.BigDecimal;

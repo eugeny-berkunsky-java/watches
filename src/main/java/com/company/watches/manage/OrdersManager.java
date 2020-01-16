@@ -1,6 +1,10 @@
 package com.company.watches.manage;
 
-import com.company.watches.model.*;
+import com.company.watches.dao.DAO;
+import com.company.watches.dao.DAOContainer;
+import com.company.watches.model.Customer;
+import com.company.watches.model.Item;
+import com.company.watches.model.Order;
 import com.company.watches.utils.DBException;
 import com.company.watches.utils.Settings;
 

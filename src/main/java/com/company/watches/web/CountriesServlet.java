@@ -2,10 +2,10 @@ package com.company.watches.web;
 
 
 import com.alibaba.fastjson.JSON;
+import com.company.watches.dao.DAOContainer;
 import com.company.watches.manage.CountriesManager;
 import com.company.watches.manage.ManagersContainer;
 import com.company.watches.model.Country;
-import com.company.watches.model.DAOContainer;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;

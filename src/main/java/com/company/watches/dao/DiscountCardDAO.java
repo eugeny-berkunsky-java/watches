@@ -1,5 +1,6 @@
-package com.company.watches.model;
+package com.company.watches.dao;
 
+import com.company.watches.model.DiscountCard;
 import com.company.watches.utils.DBException;
 
 import java.math.BigDecimal;

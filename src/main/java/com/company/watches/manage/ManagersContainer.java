@@ -1,6 +1,6 @@
 package com.company.watches.manage;
 
-import com.company.watches.model.DAOContainer;
+import com.company.watches.dao.DAOContainer;
 
 public class ManagersContainer {
 

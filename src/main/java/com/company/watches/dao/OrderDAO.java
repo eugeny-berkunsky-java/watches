@@ -1,5 +1,8 @@
-package com.company.watches.model;
+package com.company.watches.dao;
 
+import com.company.watches.model.Customer;
+import com.company.watches.model.Item;
+import com.company.watches.model.Order;
 import com.company.watches.utils.DBException;
 
 import java.math.BigDecimal;

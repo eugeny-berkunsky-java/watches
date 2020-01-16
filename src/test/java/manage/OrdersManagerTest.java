@@ -1,8 +1,8 @@
 package manage;
 
+import com.company.watches.dao.DAO;
+import com.company.watches.dao.DAOContainer;
 import com.company.watches.manage.OrdersManager;
-import com.company.watches.model.DAO;
-import com.company.watches.model.DAOContainer;
 import com.company.watches.model.Item;
 import com.company.watches.model.Order;
 import com.company.watches.utils.DBException;

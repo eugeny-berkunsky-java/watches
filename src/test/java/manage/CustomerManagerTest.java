@@ -1,9 +1,9 @@
 package manage;
 
+import com.company.watches.dao.DAO;
+import com.company.watches.dao.DAOContainer;
 import com.company.watches.manage.CustomerManager;
 import com.company.watches.model.Customer;
-import com.company.watches.model.DAO;
-import com.company.watches.model.DAOContainer;
 import com.company.watches.model.DiscountCard;
 import com.company.watches.utils.DBException;
 import org.junit.jupiter.api.BeforeEach;
