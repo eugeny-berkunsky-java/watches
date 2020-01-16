@@ -103,14 +103,14 @@ public class WatchesReportsMenu {
 
         System.out.println("----------------------- Result ----------------------");
         watchManager.getVendorByTotalSumNotGreaterThan(upperLimit).stream()
-                .map(Vendor::getVendorName)
+                .map(Vendor::getName)
                 .forEach(System.out::println);
         System.out.println("-----------------------------------------------------");
     }
 
     private String defaultWatchView(Watch watch) {
         return String.format("%d - %s - %s [%s]",
-                watch.getId(), watch.getBrand(), watch.getVendor().getVendorName(),
+                watch.getId(), watch.getBrand(), watch.getVendor().getName(),
                 watch.getVendor().getCountry().getName());
     }
 }

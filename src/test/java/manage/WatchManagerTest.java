@@ -513,15 +513,15 @@ class WatchManagerTest {
     void getVendorByTotalSumNotGreaterThanBelowCorrectArgs() throws SQLException {
         final Vendor v1 = mock(Vendor.class);
         when(v1.getId()).thenReturn(1);
-        when(v1.getVendorName()).thenReturn("vendor1");
+        when(v1.getName()).thenReturn("vendor1");
 
         final Vendor v2 = mock(Vendor.class);
         when(v2.getId()).thenReturn(2);
-        when(v2.getVendorName()).thenReturn("vendor2");
+        when(v2.getName()).thenReturn("vendor2");
 
         final Vendor v3 = mock(Vendor.class);
         when(v3.getId()).thenReturn(3);
-        when(v3.getVendorName()).thenReturn("vendor3");
+        when(v3.getName()).thenReturn("vendor3");
         //
         final Watch w1 = mock(Watch.class);
         when(w1.getId()).thenReturn(1);
@@ -561,22 +561,22 @@ class WatchManagerTest {
         //
         result = manager.getVendorByTotalSumNotGreaterThan(BigDecimal.valueOf(100));
         assertEquals(1, result.size());
-        assertEquals("vendor1", result.get(0).getVendorName());
+        assertEquals("vendor1", result.get(0).getName());
 
         //
         result = manager.getVendorByTotalSumNotGreaterThan(BigDecimal.valueOf(200));
         assertEquals(2, result.size());
         result.sort(Comparator.comparing(Vendor::getId));
-        assertEquals("vendor1", result.get(0).getVendorName());
-        assertEquals("vendor2", result.get(1).getVendorName());
+        assertEquals("vendor1", result.get(0).getName());
+        assertEquals("vendor2", result.get(1).getName());
 
         //
         result = manager.getVendorByTotalSumNotGreaterThan(BigDecimal.valueOf(250));
         assertEquals(3, result.size());
         result.sort(Comparator.comparing(Vendor::getId));
-        assertEquals("vendor1", result.get(0).getVendorName());
-        assertEquals("vendor2", result.get(1).getVendorName());
-        assertEquals("vendor3", result.get(2).getVendorName());
+        assertEquals("vendor1", result.get(0).getName());
+        assertEquals("vendor2", result.get(1).getName());
+        assertEquals("vendor3", result.get(2).getName());
     }
 
     @Test

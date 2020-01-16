@@ -74,7 +74,7 @@ public class WatchesMenu {
     private void showWatches() {
 
         Function<Watch, String> watchView = w -> String.format("%d - %s - %s [%s]",
-                w.getId(), w.getBrand(), w.getVendor().getVendorName(),
+                w.getId(), w.getBrand(), w.getVendor().getName(),
                 w.getVendor().getCountry().getName());
 
         System.out.println("----------------------- Watches ----------------------");

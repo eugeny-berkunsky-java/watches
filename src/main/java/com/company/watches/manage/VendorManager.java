@@ -33,6 +33,16 @@ public class VendorManager {
         return Collections.emptyList();
     }
 
+    public Optional<Vendor> getById(int vendorId) {
+        try {
+            return vendorId == -1 ? Optional.empty() : dao.getById(vendorId);
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "getById error");
+        }
+
+        return Optional.empty();
+    }
+
     public Optional<Vendor> addVendor(String vendorName, int countryId) {
         if (countryId == -1 || vendorName == null || vendorName.trim().length() == 0) {
             return Optional.empty();
@@ -49,18 +59,19 @@ public class VendorManager {
         return Optional.empty();
     }
 
-    public boolean updateVendor(Vendor vendor) {
-        if (vendor == null
-                || vendor.getId() == -1
-                || vendor.getVendorName() == null
-                || vendor.getVendorName().trim().length() == 0
-                || vendor.getCountry() == null
-                || vendor.getCountry().getId() == -1) {
+    public boolean updateVendor(int vendorId, String name, int countryId) {
+        if (vendorId == -1
+                || name == null
+                || name.trim().length() == 0
+                || countryId == -1) {
             return false;
         }
+
         try {
-            vendor.setVendorName(vendor.getVendorName().trim());
+            final Vendor vendor = new Vendor(vendorId, name.trim(),
+                    new Country(countryId, ""));
             return dao.update(vendor);
+
         } catch (SQLException | DBException e) {
             logger.log(Level.SEVERE, "update vendor error", e);
         }

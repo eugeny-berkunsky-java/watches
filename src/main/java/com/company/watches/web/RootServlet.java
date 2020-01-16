@@ -23,8 +23,10 @@ public class RootServlet extends HttpServlet {
     @Override
     public void init() {
         final ManagersContainer managers = ManagersContainer.getInstance(DAOContainer.getInstance());
+
         registerController("country/", new CountryController(managers));
         registerController("customer/", new CustomerController(managers));
+        registerController("vendor/", new VendorController(managers));
     }
 
     @Override

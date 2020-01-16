@@ -4,12 +4,18 @@ import java.util.Objects;
 
 public class Vendor {
     private int id;
-    private String vendorName;
+    private String name;
     private Country country;
 
-    public Vendor(int id, String vendorName, Country country) {
+    public Vendor() {
+        id = -1;
+        name = "";
+        country = new Country();
+    }
+
+    public Vendor(int id, String name, Country country) {
         this.id = id;
-        this.vendorName = vendorName;
+        this.name = name;
         this.country = country;
     }
 
@@ -21,12 +27,12 @@ public class Vendor {
         this.id = id;
     }
 
-    public String getVendorName() {
-        return vendorName;
+    public String getName() {
+        return name;
     }
 
-    public void setVendorName(String vendorName) {
-        this.vendorName = vendorName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Country getCountry() {
@@ -57,7 +63,7 @@ public class Vendor {
     @Override
     public String toString() {
         return "Vendor{" +
-                "vendorName='" + vendorName + '\'' +
+                "vendorName='" + name + '\'' +
                 ", country=" + country +
                 '}';
     }

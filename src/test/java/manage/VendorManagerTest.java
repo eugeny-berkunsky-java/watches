@@ -83,7 +83,7 @@ class VendorManagerTest {
         verify(dao).create(args.capture());
         final Vendor value = args.getValue();
         assertEquals(-1, value.getId());
-        assertEquals("abc", value.getVendorName());
+        assertEquals("abc", value.getName());
         assertEquals(2, value.getCountry().getId());
     }
 
@@ -122,60 +122,48 @@ class VendorManagerTest {
 
     @Test
     void updateVendorAboveTrashArgs() throws SQLException {
-        assertFalse(manager.updateVendor(null));
+
+        assertFalse(manager.updateVendor(-1, "abc", -1));
         verify(dao, times(0)).update(any());
 
-        assertFalse(manager.updateVendor(new Vendor(-1, "abc", new Country(-1, "abc"))));
+        assertFalse(manager.updateVendor(1, "", 1));
         verify(dao, times(0)).update(any());
 
-        assertFalse(manager.updateVendor(new Vendor(1, "", new Country(1, null))));
+        assertFalse(manager.updateVendor(1, "  ", 1));
         verify(dao, times(0)).update(any());
 
-        assertFalse(manager.updateVendor(new Vendor(1, "  ", new Country(1, null))));
-        verify(dao, times(0)).update(any());
 
-        assertFalse(manager.updateVendor(new Vendor(-1, "abc", null)));
-        verify(dao, times(0)).update(any());
-
-        assertFalse(manager.updateVendor(new Vendor(1, "abc", null)));
-        verify(dao, times(0)).update(any());
-
-        assertFalse(manager.updateVendor(new Vendor(1, "abc", new Country(-1, "abc"))));
+        assertFalse(manager.updateVendor(1, "abc", 1));
         verify(dao, times(0)).update(any());
     }
 
     @Test
     void updateVendorAboveCorrectArgs() throws SQLException {
-        final Vendor vendor = new Vendor(10, "  abc  ", new Country(20, null));
 
         final ArgumentCaptor<Vendor> args = ArgumentCaptor.forClass(Vendor.class);
 
-        manager.updateVendor(vendor);
+        manager.updateVendor(10, "  abc  ", 20);
         verify(dao, times(1)).update(args.capture());
         final Vendor value = args.getValue();
         assertEquals(10, value.getId());
-        assertEquals("abc", value.getVendorName());
+        assertEquals("abc", value.getName());
         assertEquals(20, value.getCountry().getId());
     }
 
     @Test
     void updateVendorBelowArgs() throws SQLException {
-        final Vendor vendor = new Vendor(10, "  abc  ", new Country(20, null));
-
         when(dao.update(any())).thenReturn(true);
-        assertTrue(manager.updateVendor(vendor));
+        assertTrue(manager.updateVendor(10, "  abc  ", 20));
 
         //
         when(dao.update(any())).thenReturn(false);
-        assertFalse(manager.updateVendor(vendor));
+        assertFalse(manager.updateVendor(10, "  abc  ", 20));
     }
 
     @Test
     void updateVendorSQLException() throws SQLException {
-        final Vendor vendor = new Vendor(10, "  abc  ", new Country(20, null));
-
         when(dao.update(any())).thenThrow(new SQLException());
-        assertFalse(manager.updateVendor(vendor));
+        assertFalse(manager.updateVendor(10, "  abc  ", 20));
     }
 
     @Test
@@ -183,7 +171,7 @@ class VendorManagerTest {
         final Vendor vendor = new Vendor(10, "  abc  ", new Country(20, null));
 
         when(dao.update(any())).thenThrow(new DBException(new SQLException()));
-        assertFalse(manager.updateVendor(vendor));
+        assertFalse(manager.updateVendor(10, "  abc  ", 20));
     }
 
 

@@ -2,7 +2,6 @@ package com.company.watches.ui;
 
 import com.company.watches.manage.ManagersContainer;
 import com.company.watches.manage.VendorManager;
-import com.company.watches.model.Country;
 import com.company.watches.model.Vendor;
 import com.company.watches.utils.UserInput;
 
@@ -65,7 +64,7 @@ public class VendorsMenu {
 
     private void showVendors() {
         Function<Vendor, String> vendorView = v -> String.format("%d - %s [%s]",
-                v.getId(), v.getVendorName(), v.getCountry().getName());
+                v.getId(), v.getName(), v.getCountry().getName());
 
         System.out.println("------------------------Vendors-----------------------");
         vendorManager.getAll().stream().map(vendorView).forEach(System.out::println);
@@ -93,9 +92,7 @@ public class VendorsMenu {
 
         int countryId = userInput.getNumber("NEW country ID", -1);
 
-        Vendor vendor = new Vendor(vendorId, vendorName, new Country(countryId, null));
-
-        if (vendorManager.updateVendor(vendor)) {
+        if (vendorManager.updateVendor(vendorId, vendorName, countryId)) {
             System.out.println("updated successfully");
         } else {
             System.out.println("operation failed");

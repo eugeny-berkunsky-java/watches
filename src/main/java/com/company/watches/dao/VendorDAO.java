@@ -3,10 +3,7 @@ package com.company.watches.dao;
 import com.company.watches.model.Vendor;
 import com.company.watches.utils.DBException;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,9 +27,10 @@ class VendorDAO implements DAO<Vendor> {
         final String sql = "insert into public.\"VendorModel\" (vendor_name, country_id) " +
                 "VALUES (?, ?) returning *;";
 
-        try (final PreparedStatement st
-                     = getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            st.setString(1, model.getVendorName());
+        try (final Connection conn = getConnection()) {
+            final PreparedStatement st
+                    = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            st.setString(1, model.getName());
             st.setInt(2, model.getCountry().getId());
             st.execute();
 
@@ -46,7 +44,9 @@ class VendorDAO implements DAO<Vendor> {
     public List<Vendor> getAll() throws SQLException {
         final String sql = "select * from public.\"VendorModel\";";
 
-        try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
+        try (final Connection conn = getConnection()) {
+            final PreparedStatement st = conn.prepareStatement(sql);
+
             return executeAndReturnCollection(st, VendorDAO::createFromResultSet);
         }
     }
@@ -55,7 +55,8 @@ class VendorDAO implements DAO<Vendor> {
     public Optional<Vendor> getById(int id) throws SQLException {
         final String sql = "select * from public.\"VendorModel\" where vendor_id = ?;";
 
-        try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
+        try (final Connection conn = getConnection()) {
+            final PreparedStatement st = conn.prepareStatement(sql);
             st.setInt(1, id);
             return executeAndReturnObject(st, VendorDAO::createFromResultSet);
         }
@@ -66,8 +67,9 @@ class VendorDAO implements DAO<Vendor> {
         final String sql = "update public.\"VendorModel\" set vendor_name=?, country_id = ? " +
                 "where vendor_id = ?;";
 
-        try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
-            st.setString(1, model.getVendorName());
+        try (final Connection conn = getConnection()) {
+            final PreparedStatement st = conn.prepareStatement(sql);
+            st.setString(1, model.getName());
             st.setInt(2, model.getCountry().getId());
             st.setInt(3, model.getId());
 
@@ -79,7 +81,8 @@ class VendorDAO implements DAO<Vendor> {
     public boolean delete(int id) throws SQLException {
         final String sql = "delete from public.\"VendorModel\" where vendor_id = ?;";
 
-        try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
+        try (final Connection conn = getConnection()) {
+            final PreparedStatement st = conn.prepareStatement(sql);
             st.setInt(1, id);
             return st.executeUpdate() > 0;
         }
