@@ -10,8 +10,7 @@ public class ConnectionManager {
 
     private static InitialContext context;
 
-    private static TConnection tConnection;
-
+    private static ThreadLocal<TConnection> tConnection = new ThreadLocal<>();
 
     public static Connection getConnection() {
         try {
@@ -19,11 +18,10 @@ public class ConnectionManager {
                 context = new InitialContext();
             }
 
-            if (tConnection != null) {
-                return tConnection;
-            } else {
-                return ((DataSource) context.lookup("java:/comp/env/jdbc/watches")).getConnection();
-            }
+            return tConnection.get() != null
+                    ? tConnection.get()
+                    : ((DataSource) context.lookup("java:/comp/env/jdbc/watches")).getConnection();
+
         } catch (SQLException | NamingException e) {
             throw new RuntimeException(e);
         }
@@ -31,9 +29,10 @@ public class ConnectionManager {
 
     public static void startTransaction() {
         try {
-            if (tConnection == null) {
-                tConnection = new TConnection(getConnection());
-                tConnection.setAutoCommit(false);
+
+            if (tConnection.get() == null) {
+                tConnection.set(new TConnection(getConnection()));
+                tConnection.get().setAutoCommit(false);
             }
         } catch (SQLException e) {
             e.printStackTrace(System.err);
@@ -42,10 +41,10 @@ public class ConnectionManager {
 
     public static void endTransaction() {
         try {
-            if (tConnection != null) {
-                tConnection.setAutoCommit(true);
-                tConnection.getConnection().close();
-                tConnection = null;
+            if (tConnection.get() != null) {
+                tConnection.get().setAutoCommit(true);
+                tConnection.get().getConnection().close();
+                tConnection.remove();
             }
         } catch (SQLException e) {
             e.printStackTrace(System.err);
