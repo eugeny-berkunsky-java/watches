@@ -8,7 +8,9 @@ import com.company.watches.utils.DBException;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static com.company.watches.utils.Settings.getConnection;
 
@@ -49,35 +51,13 @@ public class OrderDAO implements DAO<Order> {
 
     @Override
     public List<Order> getAll() throws SQLException {
-        final String sql = "select * from public.\"OrderModel\";";
+        final String sql = "select * from public.\"ShortOrderModel\";";
 
         try (final Connection conn = getConnection()) {
             final PreparedStatement st = conn.prepareStatement(sql);
 
-            final ResultSet rs = st.executeQuery();
-
-            Map<Integer, Order> orders = new HashMap<>();
-
-            while (rs.next()) {
-                final int orderId = rs.getInt("order_id");
-                orders.putIfAbsent(orderId, createOrderFromResultSet(rs));
-
-                rs.getInt("item_id");
-                final Order order = orders.get(orderId);
-                if (!rs.wasNull()) {
-                    if (order.getItems() == null) {
-                        order.setItems(new ArrayList<>());
-                    }
-
-                    order.getItems().add(ItemDAO.createFromResultSet(rs));
-                } else {
-                    order.setItems(Collections.emptyList());
-                }
-            }
-
-            return new ArrayList<>(orders.values());
+            return executeAndReturnCollection(st, OrderDAO::createOrderFromResultSet);
         }
-
     }
 
     @Override

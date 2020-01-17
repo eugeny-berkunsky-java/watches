@@ -96,7 +96,7 @@ public class OrdersManager {
 
             Settings.getConnection().commit();
 
-            return Optional.of(order);
+            return getById(savedOrder.get().getId());
 
         } catch (SQLException | DBException e) {
             logger.log(Level.SEVERE, "create order error", e);

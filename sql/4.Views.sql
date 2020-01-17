@@ -70,5 +70,21 @@ select
     im.*
 from public."Order" o
          inner join public."CustomerModel" cm on o.customer_id = cm.customer_id
+    -- DO NOT CHANGE TO INNER JOIN !!!
          left join public."ItemModel" im on o.id = im.item_order_id
+where o.deleted is false;
+
+----
+create or replace view public."ShortOrderModel" as
+select
+    -- order fields
+    o.id         as order_id,
+    o.date       as order_date,
+    o.totalprice as order_totalprice,
+
+    --customer fields
+    cm.*
+
+from public."Order" o
+         inner join public."CustomerModel" cm on o.customer_id = cm.customer_id
 where o.deleted is false;
