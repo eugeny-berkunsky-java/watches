@@ -24,13 +24,15 @@ where v.deleted is false;
 
 ----
 create or replace view public."CustomerModel" as
-select c.id          as customer_id,
-       c.name        as customer_name,
-       c.sumoforders as customer_sumoforders,
+select c.id                              as customer_id,
+       c.name                            as customer_name,
+       sum(o.totalprice)::numeric(15, 2) as customer_sumoforders,
        dcm.*
 from public."Customer" c
          inner join public."DiscountCardModel" dcm on c.discountcard_id = dcm.dcard_id
-where c.deleted is false;
+         inner join public."Order" o on c.id = o.customer_id
+where c.deleted is false
+group by c.id, c.name, dcm.dcard_id, dcm.dcard_number, dcm.dcard_percent;
 
 ----
 create or replace view public."WatchModel" as
@@ -70,5 +72,21 @@ select
     im.*
 from public."Order" o
          inner join public."CustomerModel" cm on o.customer_id = cm.customer_id
+    -- DO NOT CHANGE TO INNER JOIN !!!
          left join public."ItemModel" im on o.id = im.item_order_id
+where o.deleted is false;
+
+----
+create or replace view public."ShortOrderModel" as
+select
+    -- order fields
+    o.id         as order_id,
+    o.date       as order_date,
+    o.totalprice as order_totalprice,
+
+    --customer fields
+    cm.*
+
+from public."Order" o
+         inner join public."CustomerModel" cm on o.customer_id = cm.customer_id
 where o.deleted is false;

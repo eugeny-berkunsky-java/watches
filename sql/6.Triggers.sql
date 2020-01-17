@@ -35,7 +35,6 @@ begin
     elsif tg_op = 'UPDATE' then
         update public."Customer"
         set name            = new.customer_name,
-            sumoforders     = new.customer_sumoforders,
             discountcard_id = new.dcard_id
         where id = new.customer_id;
 
