@@ -8,7 +8,7 @@ import java.sql.*;
 import java.util.List;
 import java.util.Optional;
 
-import static com.company.watches.utils.Settings.getConnection;
+import static com.company.watches.utils.ConnectionManager.getConnection;
 
 class DiscountCardDAO implements DAO<DiscountCard> {
 

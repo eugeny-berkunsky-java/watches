@@ -1,15 +1,10 @@
 package com.company.watches.utils;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Properties;
 import java.util.logging.*;
 
@@ -18,11 +13,6 @@ public class Settings {
     private final static String WATCHES_SETTINGS_FILE = "watches.properties";
 
     private final static Properties properties = new Properties();
-
-    private static InitialContext context;
-
-    private static TConnection tConnection;
-
     public static void init() {
         // init logger
         try (final InputStream inputStream = Files.newInputStream(Paths.get(LOGGING_SETTINGS_FILE))) {
@@ -68,45 +58,4 @@ public class Settings {
             Logger.getLogger("").log(Level.WARNING, "can't find program settings file", e);
         }
     }
-
-    public static Connection getConnection() {
-        try {
-            if (context == null) {
-                context = new InitialContext();
-            }
-
-            if (tConnection != null) {
-                return tConnection;
-            } else {
-                return ((DataSource) context.lookup("java:/comp/env/jdbc/watches")).getConnection();
-            }
-        } catch (SQLException | NamingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static void startTransaction() {
-        try {
-            if (tConnection == null) {
-                tConnection = new TConnection(getConnection());
-                tConnection.setAutoCommit(false);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace(System.err);
-        }
-    }
-
-    public static void endTransaction() {
-        try {
-            if (tConnection != null) {
-                tConnection.setAutoCommit(true);
-                tConnection.getConnection().close();
-                tConnection = null;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace(System.err);
-        }
-    }
-
-
 }

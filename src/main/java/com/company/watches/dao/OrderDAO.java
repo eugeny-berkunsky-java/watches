@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.company.watches.utils.Settings.getConnection;
+import static com.company.watches.utils.ConnectionManager.getConnection;
 
 public class OrderDAO implements DAO<Order> {
 

@@ -5,7 +5,6 @@ import com.company.watches.dao.DAOContainer;
 import com.company.watches.model.Item;
 import com.company.watches.model.Order;
 import com.company.watches.utils.DBException;
-import com.company.watches.utils.Settings;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -15,6 +14,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static com.company.watches.utils.ConnectionManager.*;
 
 public class OrdersManager {
 
@@ -60,14 +61,14 @@ public class OrdersManager {
         BigDecimal finalPrice = calcFinalPrice(order);
 
         try {
-            Settings.startTransaction();
+            startTransaction();
 
             // phase 1 -  add new Order to OrderModel
             order.setTotalPrice(finalPrice);
             final Optional<Order> savedOrder = ordersDAO.create(order);
 
             if (!savedOrder.isPresent()) {
-                Settings.getConnection().rollback();
+                getConnection().rollback();
                 return Optional.empty();
             }
             // end phase 1
@@ -78,7 +79,7 @@ public class OrdersManager {
                         || item.getPrice().compareTo(BigDecimal.ZERO) <= 0
                         || item.getQty() <= 0
                 ) {
-                    Settings.getConnection().rollback();
+                    getConnection().rollback();
                     return Optional.empty();
                 }
 
@@ -87,19 +88,19 @@ public class OrdersManager {
             }
             // end phase 2
 
-            Settings.getConnection().commit();
+            getConnection().commit();
 
             return getById(savedOrder.get().getId());
 
         } catch (SQLException | DBException e) {
             logger.log(Level.SEVERE, "create order error", e);
             try {
-                Settings.getConnection().rollback();
+                getConnection().rollback();
             } catch (SQLException ex) {
                 logger.log(Level.SEVERE, "rollback transaction error", e);
             }
         } finally {
-            Settings.endTransaction();
+            endTransaction();
         }
 
         return Optional.empty();
