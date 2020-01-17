@@ -63,7 +63,7 @@ public class OrdersManager {
         BigDecimal finalPrice = calcFinalPrice(order);
 
         try {
-            Settings.getConnection().setAutoCommit(false);
+            Settings.startTransaction();
 
             // add new Order to OrderModel
             order.setTotalPrice(finalPrice);
@@ -89,7 +89,9 @@ public class OrdersManager {
             }
 
             // update customer total sum of orders
-            savedOrder.get().getCustomer().setSumOfOrders(order.getCustomer().getSumOfOrders().add(finalPrice));
+            savedOrder.get().getCustomer()
+                    .setSumOfOrders(order.getCustomer().getSumOfOrders().add(finalPrice));
+
             customerDAO.update(savedOrder.get().getCustomer());
 
             Settings.getConnection().commit();
@@ -104,11 +106,7 @@ public class OrdersManager {
                 logger.log(Level.SEVERE, "rollback transaction error", e);
             }
         } finally {
-            try {
-                Settings.getConnection().setAutoCommit(true);
-            } catch (SQLException e) {
-                logger.log(Level.SEVERE, "set autocommit mode on error", e);
-            }
+            Settings.endTransaction();
         }
 
         return Optional.empty();

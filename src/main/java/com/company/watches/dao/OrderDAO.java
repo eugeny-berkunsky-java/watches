@@ -32,8 +32,10 @@ public class OrderDAO implements DAO<Order> {
         final String sql = "insert into public.\"OrderModel\" (order_date, order_totalprice, customer_id) " +
                 "values (?, ?, ?) returning *;";
 
-        try (final PreparedStatement st = getConnection().prepareStatement(sql,
-                Statement.RETURN_GENERATED_KEYS)) {
+        try (final Connection conn = getConnection()) {
+            final PreparedStatement st = conn.prepareStatement(sql,
+                    Statement.RETURN_GENERATED_KEYS);
+
             st.setObject(1, model.getDate(), Types.TIMESTAMP);
             st.setBigDecimal(2, model.getTotalPrice());
             st.setInt(3, model.getCustomer().getId());
@@ -49,7 +51,9 @@ public class OrderDAO implements DAO<Order> {
     public List<Order> getAll() throws SQLException {
         final String sql = "select * from public.\"OrderModel\";";
 
-        try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
+        try (final Connection conn = getConnection()) {
+            final PreparedStatement st = conn.prepareStatement(sql);
+
             final ResultSet rs = st.executeQuery();
 
             Map<Integer, Order> orders = new HashMap<>();
@@ -80,7 +84,9 @@ public class OrderDAO implements DAO<Order> {
     public Optional<Order> getById(int id) throws SQLException {
         final String sql = "select * from public.\"OrderModel\" where order_id = ?;";
 
-        try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
+        try (final Connection conn = getConnection()) {
+            final PreparedStatement st = conn.prepareStatement(sql);
+
             st.setInt(1, id);
             final ResultSet rs = st.executeQuery();
 
@@ -108,7 +114,9 @@ public class OrderDAO implements DAO<Order> {
                 "set order_date = ?, order_totalprice = ?, customer_id = ? " +
                 "where order_id = ?;";
 
-        try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
+        try (final Connection conn = getConnection()) {
+            final PreparedStatement st = conn.prepareStatement(sql);
+
             st.setObject(1, model.getDate(), Types.TIMESTAMP);
             st.setBigDecimal(2, model.getTotalPrice());
             st.setInt(3, model.getCustomer().getId());
@@ -122,7 +130,9 @@ public class OrderDAO implements DAO<Order> {
     public boolean delete(int id) throws SQLException {
         final String sql = "delete from public.\"OrderModel\" where order_id = ?;";
 
-        try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
+        try (final Connection conn = getConnection()) {
+            final PreparedStatement st = conn.prepareStatement(sql);
+
             st.setInt(1, id);
 
             return st.executeUpdate() > 0;

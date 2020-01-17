@@ -2,6 +2,7 @@ package com.company.watches.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -11,6 +12,14 @@ public class Order {
     private Customer customer;
     private List<Item> items;
     private BigDecimal totalPrice;
+
+    public Order() {
+        id = -1;
+        date = LocalDateTime.now();
+        customer = new Customer();
+        items = Collections.emptyList();
+        totalPrice = BigDecimal.ZERO;
+    }
 
     public Order(int id, LocalDateTime date, Customer customer, List<Item> items, BigDecimal totalPrice) {
         this.id = id;
@@ -32,8 +41,16 @@ public class Order {
         return date;
     }
 
+    public void setDate(LocalDateTime date) {
+        this.date = date;
+    }
+
     public Customer getCustomer() {
         return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     public List<Item> getItems() {

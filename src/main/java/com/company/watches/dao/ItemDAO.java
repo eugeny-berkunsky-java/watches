@@ -4,10 +4,7 @@ import com.company.watches.model.Item;
 import com.company.watches.utils.DBException;
 
 import java.math.BigDecimal;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,8 +31,10 @@ public class ItemDAO implements DAO<Item> {
                 "(item_price, item_qty, item_order_id, watch_id) " +
                 "VALUES (?, ?, ?, ?) returning *;";
 
-        try (final PreparedStatement st = getConnection().prepareStatement(sql,
-                Statement.RETURN_GENERATED_KEYS)) {
+        try (final Connection conn = getConnection()) {
+            final PreparedStatement st = conn.prepareStatement(sql,
+                    Statement.RETURN_GENERATED_KEYS);
+
             st.setBigDecimal(1, model.getPrice());
             st.setInt(2, model.getQty());
             st.setInt(3, model.getOrderId());
@@ -52,7 +51,9 @@ public class ItemDAO implements DAO<Item> {
     public List<Item> getAll() throws SQLException {
         final String sql = "select * from public.\"ItemModel\";";
 
-        try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
+        try (final Connection conn = getConnection()) {
+            final PreparedStatement st = conn.prepareStatement(sql);
+
             return executeAndReturnCollection(st, ItemDAO::createFromResultSet);
         }
     }
@@ -61,7 +62,9 @@ public class ItemDAO implements DAO<Item> {
     public Optional<Item> getById(int id) throws SQLException {
         final String sql = "select * from public.\"ItemModel\" where item_id = ?;";
 
-        try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
+        try (final Connection conn = getConnection()) {
+            final PreparedStatement st = conn.prepareStatement(sql);
+
             st.setInt(1, id);
 
             return executeAndReturnObject(st, ItemDAO::createFromResultSet);
@@ -74,7 +77,9 @@ public class ItemDAO implements DAO<Item> {
                 "set item_price = ?, item_qty = ? " +
                 "where item_id = ? and item_order_id = ?;";
 
-        try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
+        try (final Connection conn = getConnection()) {
+            final PreparedStatement st = conn.prepareStatement(sql);
+
             st.setBigDecimal(1, model.getPrice());
             st.setInt(2, model.getQty());
             st.setInt(3, model.getId());
@@ -88,7 +93,9 @@ public class ItemDAO implements DAO<Item> {
     public boolean delete(int id) throws SQLException {
         final String sql = "delete from public.\"ItemModel\" where item_id = ?;";
 
-        try (final PreparedStatement st = getConnection().prepareStatement(sql)) {
+        try (final Connection conn = getConnection()) {
+            final PreparedStatement st = conn.prepareStatement(sql);
+
             st.setInt(1, id);
 
             return st.executeUpdate() > 0;
