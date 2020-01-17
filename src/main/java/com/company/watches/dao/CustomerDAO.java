@@ -71,15 +71,14 @@ public class CustomerDAO implements DAO<Customer> {
     @Override
     public boolean update(Customer model) throws SQLException {
         final String sql = "update public.\"CustomerModel\" " +
-                "set customer_name = ?, customer_sumoforders=?, dcard_id = ? " +
+                "set customer_name = ?, dcard_id = ? " +
                 "where customer_id = ?;";
 
         try (final Connection conn = getConnection()) {
             final PreparedStatement st = conn.prepareStatement(sql);
             st.setString(1, model.getName());
-            st.setBigDecimal(2, model.getSumOfOrders());
-            st.setInt(3, model.getDiscountCard().getId());
-            st.setInt(4, model.getId());
+            st.setInt(2, model.getDiscountCard().getId());
+            st.setInt(3, model.getId());
 
             return st.executeUpdate() > 0;
         }

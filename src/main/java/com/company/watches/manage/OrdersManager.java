@@ -2,7 +2,6 @@ package com.company.watches.manage;
 
 import com.company.watches.dao.DAO;
 import com.company.watches.dao.DAOContainer;
-import com.company.watches.model.Customer;
 import com.company.watches.model.Item;
 import com.company.watches.model.Order;
 import com.company.watches.utils.DBException;
@@ -23,12 +22,10 @@ public class OrdersManager {
 
     private DAO<Order> ordersDAO;
     private DAO<Item> itemsDAO;
-    private DAO<Customer> customerDAO;
 
     public OrdersManager(DAOContainer container) {
         ordersDAO = container.getOrdersDAO();
         itemsDAO = container.getItemsDAO();
-        customerDAO = container.getCustomerDAO();
     }
 
     public List<Order> getAll() {
@@ -65,7 +62,7 @@ public class OrdersManager {
         try {
             Settings.startTransaction();
 
-            // add new Order to OrderModel
+            // phase 1 -  add new Order to OrderModel
             order.setTotalPrice(finalPrice);
             final Optional<Order> savedOrder = ordersDAO.create(order);
 
@@ -73,8 +70,9 @@ public class OrdersManager {
                 Settings.getConnection().rollback();
                 return Optional.empty();
             }
+            // end phase 1
 
-            // add all items to ItemModel
+            // phase 2 -  add all items to ItemModel
             for (Item item : order.getItems()) {
                 if (item.getPrice() == null
                         || item.getPrice().compareTo(BigDecimal.ZERO) <= 0
@@ -87,12 +85,7 @@ public class OrdersManager {
                 item.setOrderId(savedOrder.get().getId());
                 itemsDAO.create(item);
             }
-
-            // update customer total sum of orders
-            savedOrder.get().getCustomer()
-                    .setSumOfOrders(order.getCustomer().getSumOfOrders().add(finalPrice));
-
-            customerDAO.update(savedOrder.get().getCustomer());
+            // end phase 2
 
             Settings.getConnection().commit();
 
