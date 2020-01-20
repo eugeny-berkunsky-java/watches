@@ -66,8 +66,9 @@ public class CustomerController implements Controller {
             int id = Integer.parseInt(rw.path.split("/")[1]);
 
             return Optional.ofNullable(JSON.parseObject(rw.payload, Customer.class))
-                    .flatMap(c -> manager.updateCustomer(id, c.getName(), c.getSumOfOrders(),
-                            c.getDiscountCard().getId()) ? manager.getById(id) : Optional.empty())
+                    .flatMap(c -> manager.updateCustomer(id, c.getName(), c.getDiscountCard().getId())
+                            ? manager.getById(id)
+                            : Optional.empty())
                     .map(c -> new ResponseWrapper(JSON.toJSONString(c)))
                     .orElse(ResponseWrapper.BadRequest("error updating customer"));
         } catch (NumberFormatException e) {

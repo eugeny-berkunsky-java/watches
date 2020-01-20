@@ -51,17 +51,16 @@ public class CustomerManager {
         return Optional.empty();
     }
 
-    public boolean updateCustomer(int id, String name, BigDecimal sum, int cardId) {
+    public boolean updateCustomer(int id, String name, int cardId) {
         if (id == -1
                 || name == null
                 || name.trim().length() == 0
-                || sum == null
                 || cardId == -1
         ) {
             return false;
         }
 
-        final Customer customer = new Customer(id, name, sum,
+        final Customer customer = new Customer(id, name, BigDecimal.ZERO,
                 new DiscountCard(cardId, null, BigDecimal.ZERO));
 
         try {

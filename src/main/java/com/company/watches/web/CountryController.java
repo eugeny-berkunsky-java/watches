@@ -67,8 +67,9 @@ public class CountryController implements Controller {
             int id = Integer.parseInt(request.path.split("/")[1]);
 
             return Optional.ofNullable(JSON.parseObject(request.payload, Country.class))
-                    .flatMap(c -> manager.updateCountry(id, c.getName()) ?
-                            manager.getById(id) : Optional.empty())
+                    .flatMap(c -> manager.updateCountry(id, c.getName())
+                            ? manager.getById(id)
+                            : Optional.empty())
                     .map(c -> new ResponseWrapper(JSON.toJSONString(c)))
                     .orElse(ResponseWrapper.BadRequest());
 
