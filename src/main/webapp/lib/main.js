@@ -27,7 +27,8 @@ const storage = {
     orders: [],
     //
     selectedCustomer: -1,
-    selectCountry: -1,
+    selectedCountry: -1,
+    selectedVendor: -1,
 };
 
 // toggle default plane
@@ -41,7 +42,6 @@ if (customerId == null) {
     console.log("customerId is:" + customerId);
     loadCustomer(customerId);
 
-    //todo: build main screen
     const itemCustomers = document.getElementById("item-customers");
     itemCustomers.addEventListener('click', menuItemClicked);
 
@@ -113,11 +113,7 @@ function menuItemClicked(event) {
                 }
 
                 const tbody = rootElement.querySelector("tbody");
-                let child = tbody.lastElementChild;
-                while (child) {
-                    tbody.removeChild(child);
-                    child = tbody.lastElementChild;
-                }
+                removeChildElements(tbody);
 
                 data.forEach(customer => {
                     const tr = document.createElement("tr");
@@ -156,15 +152,15 @@ function menuItemClicked(event) {
         }
 
         case 'countries': {
-            storage.selectCountry = -1;
+            storage.selectedCountry = -1;
             document.getElementById("country-edit-button").classList.add("disabled");
             document.getElementById("country-delete-button").classList.add("disabled");
 
             function buildCountryTable(rootElement, data) {
 
                 function selectTableRow(event) {
-                    if (storage.selectCountry !== -1) {
-                        const previousRow = this.parentElement.querySelector(`tr[data-country-id="${storage.selectCountry}"]`);
+                    if (storage.selectedCountry !== -1) {
+                        const previousRow = this.parentElement.querySelector(`tr[data-country-id="${storage.selectedCountry}"]`);
                         if (previousRow !== null) {
                             previousRow.classList.remove("table-info");
                         }
@@ -173,16 +169,12 @@ function menuItemClicked(event) {
                     document.getElementById("country-edit-button").classList.remove("disabled");
                     document.getElementById("country-delete-button").classList.remove("disabled");
 
-                    storage.selectCountry = Number.parseInt(this.getAttribute("data-country-id"));
+                    storage.selectedCountry = Number.parseInt(this.getAttribute("data-country-id"));
                     this.classList.add("table-info");
                 }
 
                 const tbody = rootElement.querySelector("tbody");
-                let child = tbody.lastElementChild;
-                while (child) {
-                    tbody.removeChild(child);
-                    child = tbody.lastElementChild;
-                }
+                removeChildElements(tbody);
 
                 data.forEach(country => {
                     const tr = document.createElement("tr");
@@ -214,8 +206,57 @@ function menuItemClicked(event) {
         }
 
         case 'vendors': {
-            console.log('vendors menu clicked');
-            storage.vendors = loadDataFromServer('vendor');
+            storage.selectedVendor = -1;
+            document.getElementById("vendor-edit-button").classList.add("disabled");
+            document.getElementById("vendor-delete-button").classList.add("disabled");
+
+            function buildVendorTable(rootElement, data) {
+                function selectTableRow() {
+                    if (storage.selectedVendor !== -1) {
+                        console.log("deselect row:", storage.selectedVendor);
+                        const previousRow = this.parentElement.querySelector(`tr[data-vendor-id="${storage.selectedVendor}"]`);
+                        if (previousRow !== null) {
+                            previousRow.classList.remove("table-info");
+                        }
+                    }
+
+                    document.getElementById("vendor-edit-button").classList.remove("disabled");
+                    document.getElementById("vendor-delete-button").classList.remove("disabled");
+
+                    storage.selectedVendor = Number.parseInt(this.getAttribute("data-vendor-id"));
+                    this.classList.add("table-info");
+                }
+
+                const tbody = rootElement.querySelector("tbody");
+                removeChildElements(tbody);
+
+                data.forEach(vendor => {
+                    const tr = document.createElement("tr");
+                    tr.setAttribute("data-vendor-id", vendor.id);
+                    tr.addEventListener('click', selectTableRow);
+
+                    const tdId = document.createElement("td");
+                    tdId.appendChild(document.createTextNode(vendor.id));
+                    tr.appendChild(tdId);
+
+                    const tdName = document.createElement("td");
+                    tdName.appendChild(document.createTextNode(vendor.name));
+                    tr.appendChild(tdName);
+
+                    const tCountry = document.createElement("td");
+                    tCountry.appendChild(document.createTextNode(vendor.country.name));
+                    tr.appendChild(tCountry);
+
+                    tbody.appendChild(tr);
+                });
+            }
+
+            loadDataFromServer('vendor')
+                .then(vendors => {
+                    storage.vendors = vendors;
+                    buildVendorTable(document.getElementById("vendors-table"),
+                        storage.vendors);
+                });
 
             togglePlane(planes, 'vendors-plane');
             break;
@@ -263,4 +304,12 @@ function loadDataFromServer(data) {
             .then(resolve)
             .catch(reject);
     });
+}
+
+function removeChildElements(rootElement) {
+    let child = rootElement.lastElementChild;
+    while (child) {
+        rootElement.removeChild(child);
+        child = rootElement.lastElementChild;
+    }
 }

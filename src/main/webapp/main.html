@@ -82,16 +82,18 @@
   </div>
 
   <div id="vendors-plane">
-    <h1>Vendors plane</h1>
+    <h1 class="text-center">Vendors</h1>
     <div>
-      <button class="btn btn-primary mb-4">Add new</button>
+      <button class="btn btn-primary mb-4" id="vendor-add-button">Add new</button>
+      <button class="btn btn-success disabled mb-4" id="vendor-edit-button">Edit</button>
+      <button class="btn btn-danger disabled mb-4" id="vendor-delete-button">Delete</button>
     </div>
-    <table class="table">
-      <thead>
+    <table class="table table-striped" id="vendors-table">
+      <thead class="thead-dark">
       <tr>
         <th>#</th>
-        <th>name</th>
-        <th>country</th>
+        <th>Name</th>
+        <th>Country</th>
       </tr>
       </thead>
       <tbody>
