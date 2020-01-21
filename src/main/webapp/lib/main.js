@@ -26,7 +26,8 @@ const storage = {
     watches: [],
     orders: [],
     //
-    selectedCustomer: -1
+    selectedCustomer: -1,
+    selectCountry: -1,
 };
 
 // toggle default plane
@@ -88,30 +89,29 @@ function menuItemClicked(event) {
 
     switch (item) {
         case 'customers': {
-            console.log('customers menu clicked');
 
             storage.selectedCustomer = -1;
             document.getElementById("customer-edit-button").classList.add("disabled");
             document.getElementById("customer-delete-button").classList.add("disabled");
 
-            function selectTableRow(event) {
-                if (storage.selectedCustomer !== -1) {
-                    console.log("deselect row:", storage.selectedCustomer);
-                    const previousRow = this.parentElement.querySelector(`tr[data-customer-id="${storage.selectedCustomer}"]`);
-                    if (previousRow !== null) {
-                        previousRow.classList.remove("table-info");
+            function buildCustomerTable(rootElement, data) {
+
+                function selectTableRow(event) {
+                    if (storage.selectedCustomer !== -1) {
+                        console.log("deselect row:", storage.selectedCustomer);
+                        const previousRow = this.parentElement.querySelector(`tr[data-customer-id="${storage.selectedCustomer}"]`);
+                        if (previousRow !== null) {
+                            previousRow.classList.remove("table-info");
+                        }
                     }
+
+                    document.getElementById("customer-edit-button").classList.remove("disabled");
+                    document.getElementById("customer-delete-button").classList.remove("disabled");
+
+                    storage.selectedCustomer = Number.parseInt(this.getAttribute("data-customer-id"));
+                    this.classList.add("table-info");
                 }
 
-                document.getElementById("customer-edit-button").classList.remove("disabled");
-                document.getElementById("customer-delete-button").classList.remove("disabled");
-
-                storage.selectedCustomer = Number.parseInt(this.getAttribute("data-customer-id"));
-                this.classList.add("table-info");
-                console.info("customer table, selected row: ", this.getAttribute("data-customer-id"));
-            }
-
-            function buildCustomerTable(rootElement, data) {
                 const tbody = rootElement.querySelector("tbody");
                 let child = tbody.lastElementChild;
                 while (child) {
@@ -123,10 +123,6 @@ function menuItemClicked(event) {
                     const tr = document.createElement("tr");
                     tr.setAttribute("data-customer-id", customer.id);
                     tr.addEventListener('click', selectTableRow);
-
-                    /*  const tdId = document.createElement("td");
-                      tdId.appendChild(document.createTextNode(customer.id));
-                      tr.appendChild(tdId);*/
 
                     const tdName = document.createElement("td");
                     tdName.appendChild(document.createTextNode(customer.name));
@@ -160,8 +156,58 @@ function menuItemClicked(event) {
         }
 
         case 'countries': {
-            console.log('countries menu clicked');
-            storage.countries = loadDataFromServer('country');
+            storage.selectCountry = -1;
+            document.getElementById("country-edit-button").classList.add("disabled");
+            document.getElementById("country-delete-button").classList.add("disabled");
+
+            function buildCountryTable(rootElement, data) {
+
+                function selectTableRow(event) {
+                    if (storage.selectCountry !== -1) {
+                        const previousRow = this.parentElement.querySelector(`tr[data-country-id="${storage.selectCountry}"]`);
+                        if (previousRow !== null) {
+                            previousRow.classList.remove("table-info");
+                        }
+                    }
+
+                    document.getElementById("country-edit-button").classList.remove("disabled");
+                    document.getElementById("country-delete-button").classList.remove("disabled");
+
+                    storage.selectCountry = Number.parseInt(this.getAttribute("data-country-id"));
+                    this.classList.add("table-info");
+                }
+
+                const tbody = rootElement.querySelector("tbody");
+                let child = tbody.lastElementChild;
+                while (child) {
+                    tbody.removeChild(child);
+                    child = tbody.lastElementChild;
+                }
+
+                data.forEach(country => {
+                    const tr = document.createElement("tr");
+                    tr.setAttribute("data-country-id", country.id);
+                    tr.addEventListener('click', selectTableRow);
+                    tr.addEventListener('click', selectTableRow);
+
+                    const tdId = document.createElement("td");
+                    tdId.appendChild(document.createTextNode(country.id));
+                    tr.appendChild(tdId);
+
+                    const tdName = document.createElement("td");
+                    tdName.appendChild(document.createTextNode(country.name));
+                    tr.appendChild(tdName);
+
+                    tbody.appendChild(tr);
+                });
+            }
+
+            loadDataFromServer('country')
+                .then(countries => {
+                    storage.countries = countries;
+                    buildCountryTable(document.getElementById("countries-table"),
+                        storage.countries);
+                });
 
             togglePlane(planes, 'countries-plane');
             break;

@@ -62,15 +62,17 @@
   </div>
 
   <div id="countries-plane">
-    <h1>Countries plane</h1>
+    <h1 class="text-center">Countries</h1>
     <div>
-      <button class="btn btn-primary mb-4">Add new</button>
+      <button class="btn btn-primary mb-4" id="country-add-button">Add new</button>
+      <button class="btn btn-success disabled mb-4" id="country-edit-button">Edit</button>
+      <button class="btn btn-danger disabled mb-4" id="country-delete-button">Delete</button>
     </div>
-    <table class="table">
-      <thead>
+    <table class="table table-striped" id="countries-table">
+      <thead class="thead-dark">
       <tr>
         <th>#</th>
-        <th>name</th>
+        <th>Name</th>
       </tr>
       </thead>
       <tbody>
