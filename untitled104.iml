@@ -43,5 +43,6 @@
     <orderEntry type="library" scope="PROVIDED" name="org.postgresql:postgresql:42.2.9" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="javax.servlet:javax.servlet-api:4.0.0" level="project" />
     <orderEntry type="library" name="com.alibaba:fastjson:1.2.62" level="project" />
+    <orderEntry type="library" name="bootstrap" level="application" />
   </component>
 </module>
