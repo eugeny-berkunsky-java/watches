@@ -186,7 +186,6 @@ function menuItemClicked(event) {
             function buildVendorTable(rootElement, data) {
                 function selectTableRow() {
                     if (storage.selectedVendor !== -1) {
-                        console.log("deselect row:", storage.selectedVendor);
                         const previousRow = this.parentElement.querySelector(`tr[data-vendor-id="${storage.selectedVendor}"]`);
                         if (previousRow !== null) {
                             previousRow.classList.remove("table-info");
@@ -232,7 +231,37 @@ function menuItemClicked(event) {
             document.getElementById("watch-delete-button").classList.add("disabled");
 
             function buildWatchTable(rootElement, data) {
-                //todo: complete me
+                function selectTableRow() {
+                    if (storage.selectedWatch !== -1) {
+                        const previousRow = this.parentElement.querySelector(`tr[data-watch-id="${storage.selectedWatch}"]`);
+                        if (previousRow !== null) {
+                            previousRow.classList.remove("table-info");
+                        }
+                    }
+
+                    document.getElementById("watch-edit-button").classList.remove("disabled");
+                    document.getElementById("watch-delete-button").classList.remove("disabled");
+
+                    storage.selectedWatch = Number.parseInt(this.getAttribute("data-watch-id"));
+                    this.classList.add("table-info");
+                }
+
+
+                const tbody = rootElement.querySelector("tbody");
+                removeChildElements(tbody);
+
+                data.forEach(watch => {
+                    const tr = createElement("tr", {"data-watch-id": watch.id},
+                        createElement("td", {}, createTextElement(watch.brand)),
+                        createElement("td", {}, createTextElement(watch.type)),
+                        createElement("td", {}, createTextElement(watch.qty)),
+                        createElement("td", {}, createTextElement(watch.price.toFixed(2))),
+                        createElement("td", {}, createTextElement(watch.vendor.name)),
+                    );
+
+                    tr.addEventListener('click', selectTableRow);
+                    tbody.appendChild(tr);
+                })
             }
 
             loadDataFromServer('watch')
