@@ -64,6 +64,7 @@ public class RootServlet extends HttpServlet {
         response.setCharacterEncoding("utf-8");
         response.setStatus(responseWrapper.statusCode);
         response.setContentType(responseWrapper.contentType.typeName);
+        response.setHeader("Access-Control-Allow-Origin", "*");
         try {
             response.getWriter().print(responseWrapper.data);
         } catch (IOException e) {
