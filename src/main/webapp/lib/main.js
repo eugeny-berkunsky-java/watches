@@ -29,6 +29,7 @@ const storage = {
     selectedCustomer: -1,
     selectedCountry: -1,
     selectedVendor: -1,
+    selectedWatch: -1,
 };
 
 // toggle default plane
@@ -39,30 +40,21 @@ if (customerId == null) {
     console.log("customerId not found");
     document.location.replace(document.location.origin + '/');
 } else {
-    console.log("customerId is:" + customerId);
-    loadCustomer(customerId);
 
-    const itemCustomers = document.getElementById("item-customers");
-    itemCustomers.addEventListener('click', menuItemClicked);
+    loadCustomer(customerId)
+        .then(updateNavBar);
 
-    const itemCountries = document.getElementById("item-countries");
-    itemCountries.addEventListener('click', menuItemClicked);
-
-    const itemVendors = document.getElementById("item-vendors");
-    itemVendors.addEventListener('click', menuItemClicked);
-
-    const itemWatches = document.getElementById("item-watches");
-    itemWatches.addEventListener('click', menuItemClicked);
-
-    const itemOrders = document.getElementById("item-orders");
-    itemOrders.addEventListener('click', menuItemClicked);
+    menuItems.forEach(item => item.addEventListener('click', menuItemClicked));
 }
 
 function loadCustomer(id) {
     const endpoint = `http://localhost:8080/api/customer/${id}`;
-    fetch(endpoint)
-        .then(response => response.json())
-        .then(updateNavBar);
+    return new Promise((resolve, reject) => {
+        fetch(endpoint)
+            .then(response => response.json())
+            .then(resolve)
+            .catch(reject);
+    })
 }
 
 function updateNavBar(customer) {
@@ -96,9 +88,8 @@ function menuItemClicked(event) {
 
             function buildCustomerTable(rootElement, data) {
 
-                function selectTableRow(event) {
+                function selectTableRow() {
                     if (storage.selectedCustomer !== -1) {
-                        console.log("deselect row:", storage.selectedCustomer);
                         const previousRow = this.parentElement.querySelector(`tr[data-customer-id="${storage.selectedCustomer}"]`);
                         if (previousRow !== null) {
                             previousRow.classList.remove("table-info");
@@ -116,26 +107,14 @@ function menuItemClicked(event) {
                 removeChildElements(tbody);
 
                 data.forEach(customer => {
-                    const tr = document.createElement("tr");
-                    tr.setAttribute("data-customer-id", customer.id);
+                    const tr = createElement("tr", {"data-customer-id": customer.id},
+                        createElement("td", {}, createTextElement(customer.name)),
+                        createElement("td", {}, createTextElement(customer.sumOfOrders.toFixed(2))),
+                        createElement("td", {}, createTextElement(customer.discountCard.number)),
+                        createElement("td", {}, createTextElement(customer.discountCard.percent.toFixed(2)))
+                    );
+
                     tr.addEventListener('click', selectTableRow);
-
-                    const tdName = document.createElement("td");
-                    tdName.appendChild(document.createTextNode(customer.name));
-                    tr.appendChild(tdName);
-
-                    const tdSum = document.createElement("td");
-                    tdSum.appendChild(document.createTextNode(customer.sumOfOrders.toFixed(2)));
-                    tr.appendChild(tdSum);
-
-                    const tdCardNumber = document.createElement("td");
-                    tdCardNumber.appendChild(document.createTextNode(customer.discountCard.number));
-                    tr.appendChild(tdCardNumber);
-
-                    const tdPercent = document.createElement("td");
-                    tdPercent.appendChild(document.createTextNode(customer.discountCard.percent.toFixed(2)));
-                    tr.appendChild(tdPercent);
-
                     tbody.appendChild(tr);
                 });
             }
@@ -158,7 +137,7 @@ function menuItemClicked(event) {
 
             function buildCountryTable(rootElement, data) {
 
-                function selectTableRow(event) {
+                function selectTableRow() {
                     if (storage.selectedCountry !== -1) {
                         const previousRow = this.parentElement.querySelector(`tr[data-country-id="${storage.selectedCountry}"]`);
                         if (previousRow !== null) {
@@ -177,19 +156,13 @@ function menuItemClicked(event) {
                 removeChildElements(tbody);
 
                 data.forEach(country => {
-                    const tr = document.createElement("tr");
-                    tr.setAttribute("data-country-id", country.id);
+
+                    const tr = createElement("tr", {"data-country-id": country.id},
+                        createElement("td", {}, createTextElement(country.id)),
+                        createElement("td", {}, createTextElement(country.name)),
+                    );
+
                     tr.addEventListener('click', selectTableRow);
-                    tr.addEventListener('click', selectTableRow);
-
-                    const tdId = document.createElement("td");
-                    tdId.appendChild(document.createTextNode(country.id));
-                    tr.appendChild(tdId);
-
-                    const tdName = document.createElement("td");
-                    tdName.appendChild(document.createTextNode(country.name));
-                    tr.appendChild(tdName);
-
                     tbody.appendChild(tr);
                 });
             }
@@ -231,22 +204,13 @@ function menuItemClicked(event) {
                 removeChildElements(tbody);
 
                 data.forEach(vendor => {
-                    const tr = document.createElement("tr");
-                    tr.setAttribute("data-vendor-id", vendor.id);
+                    const tr = createElement("tr", {"data-vendor-id": vendor.id},
+                        createElement("td", {}, createTextElement(vendor.id)),
+                        createElement("td", {}, createTextElement(vendor.name)),
+                        createElement("td", {}, createTextElement(vendor.country.name))
+                    );
+
                     tr.addEventListener('click', selectTableRow);
-
-                    const tdId = document.createElement("td");
-                    tdId.appendChild(document.createTextNode(vendor.id));
-                    tr.appendChild(tdId);
-
-                    const tdName = document.createElement("td");
-                    tdName.appendChild(document.createTextNode(vendor.name));
-                    tr.appendChild(tdName);
-
-                    const tCountry = document.createElement("td");
-                    tCountry.appendChild(document.createTextNode(vendor.country.name));
-                    tr.appendChild(tCountry);
-
                     tbody.appendChild(tr);
                 });
             }
@@ -263,8 +227,20 @@ function menuItemClicked(event) {
         }
 
         case 'watches': {
-            console.log('watches menu clicked');
-            storage.watches = loadDataFromServer('watch');
+            storage.selectedWatch = -1;
+            document.getElementById("watch-edit-button").classList.add("disabled");
+            document.getElementById("watch-delete-button").classList.add("disabled");
+
+            function buildWatchTable(rootElement, data) {
+                //todo: complete me
+            }
+
+            loadDataFromServer('watch')
+                .then(watches => {
+                    storage.watches = watches;
+                    buildWatchTable(document.getElementById("watches-table"),
+                        storage.watches);
+                });
 
             togglePlane(planes, 'watches-plane');
             break;
@@ -312,4 +288,19 @@ function removeChildElements(rootElement) {
         rootElement.removeChild(child);
         child = rootElement.lastElementChild;
     }
+}
+
+function createElement(tagName, attributes, ...children) {
+    const element = document.createElement(tagName);
+    Object.keys(attributes).forEach(key => {
+        element.setAttribute(key, attributes[key]);
+    });
+
+    children.forEach(child => element.appendChild(child));
+
+    return element;
+}
+
+function createTextElement(data) {
+    return document.createTextNode(data);
 }
