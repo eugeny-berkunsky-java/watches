@@ -90,13 +90,18 @@ function menuItemClicked(event) {
                 });
             }
 
-            loadDataFromServer('customer')
-                .then(customers => {
-                    storage.customers = customers;
-                    buildCustomerTable(document.getElementById("customers-table"),
-                        storage.customers);
-                });
-            // build table
+            if (storage.customers.length > 0) {
+                buildCustomerTable(document.getElementById("customers-table"), storage.customers);
+            } else {
+                loadDataFromServer('customer')
+                    .then(customers => {
+                        storage.customers = customers;
+                        buildCustomerTable(document.getElementById("customers-table"),
+                            storage.customers);
+                    });
+            }
+
+            // show plane
             togglePlane(planes, 'customers-plane');
             break;
         }
@@ -138,12 +143,16 @@ function menuItemClicked(event) {
                 });
             }
 
-            loadDataFromServer('country')
-                .then(countries => {
-                    storage.countries = countries;
-                    buildCountryTable(document.getElementById("countries-table"),
-                        storage.countries);
-                });
+            if (storage.countries.length > 0) {
+                buildCountryTable(document.getElementById("countries-table"), storage.countries);
+            } else {
+                loadDataFromServer('country')
+                    .then(countries => {
+                        storage.countries = countries;
+                        buildCountryTable(document.getElementById("countries-table"),
+                            storage.countries);
+                    });
+            }
 
             togglePlane(planes, 'countries-plane');
             break;
@@ -185,12 +194,16 @@ function menuItemClicked(event) {
                 });
             }
 
-            loadDataFromServer('vendor')
-                .then(vendors => {
-                    storage.vendors = vendors;
-                    buildVendorTable(document.getElementById("vendors-table"),
-                        storage.vendors);
-                });
+            if (storage.vendors.length > 0) {
+                buildVendorTable(document.getElementById("vendors-table"), storage.vendors);
+            } else {
+                loadDataFromServer('vendor')
+                    .then(vendors => {
+                        storage.vendors = vendors;
+                        buildVendorTable(document.getElementById("vendors-table"),
+                            storage.vendors);
+                    });
+            }
 
             togglePlane(planes, 'vendors-plane');
             break;
@@ -235,12 +248,16 @@ function menuItemClicked(event) {
                 })
             }
 
-            loadDataFromServer('watch')
-                .then(watches => {
-                    storage.watches = watches;
-                    buildWatchTable(document.getElementById("watches-table"),
-                        storage.watches);
-                });
+            if (storage.watches.length > 0) {
+                buildWatchTable(document.getElementById("watches-table"), storage.watches);
+            } else {
+                loadDataFromServer('watch')
+                    .then(watches => {
+                        storage.watches = watches;
+                        buildWatchTable(document.getElementById("watches-table"),
+                            storage.watches);
+                    });
+            }
 
             togglePlane(planes, 'watches-plane');
             break;
@@ -285,16 +302,20 @@ function menuItemClicked(event) {
                 });
             }
 
-            loadDataFromServer('order')
-                .then(orders => {
-                    storage.orders = orders.filter(order =>
-                        order.customer.id === storage.customerId
-                    );
+            if (storage.orders.length > 0) {
+                buildOrderTable(document.getElementById("orders-table"), storage.orders);
+            } else {
+                loadDataFromServer('order')
+                    .then(orders => {
+                        storage.orders = orders.filter(order =>
+                            order.customer.id === storage.customerId
+                        );
 
-                    storage.orders.sort((a, b) => a.id - b.id);
+                        storage.orders.sort((a, b) => a.id - b.id);
 
-                    buildOrderTable(document.getElementById("orders-table"), storage.orders);
-                });
+                        buildOrderTable(document.getElementById("orders-table"), storage.orders);
+                    });
+            }
 
             togglePlane(planes, 'orders-plane');
             break;
