@@ -1,40 +1,6 @@
 const customerId = localStorage.getItem("customerId");
 document.getElementById("logout-button").addEventListener("click", logoutCustomer);
 
-// planes
-const planes = [
-    document.getElementById('customers-plane'),
-    document.getElementById('countries-plane'),
-    document.getElementById('vendors-plane'),
-    document.getElementById('watches-plane'),
-    document.getElementById('orders-plane'),
-];
-
-// menu items
-const menuItems = [
-    document.getElementById('item-customers'),
-    document.getElementById('item-countries'),
-    document.getElementById('item-vendors'),
-    document.getElementById('item-watches'),
-    document.getElementById('item-orders'),
-];
-
-const storage = {
-    customerId: -1,
-    //
-    customers: [],
-    countries: [],
-    vendors: [],
-    watches: [],
-    orders: [],
-    //
-    selectedCustomer: -1,
-    selectedCountry: -1,
-    selectedVendor: -1,
-    selectedWatch: -1,
-    selectedOrder: -1,
-};
-
 // toggle default plane
 togglePlane(planes, 'countries-plane');
 
@@ -349,51 +315,4 @@ function togglePlane(planesArray, activePlane) {
             plane.style.display = 'none';
         }
     });
-}
-
-function loadDataFromServer(data) {
-    const endpoint = `http://localhost:8080/api/${data}/`;
-
-    return new Promise((resolve, reject) => {
-        fetch(endpoint)
-            .then(response => response.json())
-            .then(resolve)
-            .catch(reject);
-    });
-}
-
-function removeChildElements(rootElement) {
-    let child = rootElement.lastElementChild;
-    while (child) {
-        rootElement.removeChild(child);
-        child = rootElement.lastElementChild;
-    }
-}
-
-function createElement(tagName, attributes, ...children) {
-    const element = document.createElement(tagName);
-    Object.keys(attributes).forEach(key => {
-        element.setAttribute(key, attributes[key]);
-    });
-
-    children.forEach(child => element.appendChild(child));
-
-    return element;
-}
-
-function createTextElement(data) {
-    return document.createTextNode(data);
-}
-
-function formatDate(isoString) {
-    const date = new Date(isoString);
-    const day = ("0" + date.getDate()).slice(-2);
-    const month = ("0" + (date.getMonth() + 1)).slice(-2);
-    const year = date.getFullYear();
-
-    const hours = ("0" + date.getHours()).slice(-2);
-    const minutes = ("0" + date.getMinutes()).slice(-2);
-    const seconds = ("0" + date.getSeconds()).slice(-2);
-
-    return `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
 }
