@@ -127,17 +127,21 @@
   </div>
 
   <div id="orders-plane">
-    <h1>Orders plane</h1>
+    <h1 class="text-center">Orders</h1>
     <div>
-      <button class="btn btn-primary mb-4">Add new</button>
+      <button class="btn btn-primary mb-4" id="order-add-button">Add new</button>
+      <button class="btn btn-info mb-4" id="order-details-button">Details</button>
+      <button class="btn btn-success disabled mb-4" id="order-edit-button">Edit</button>
+      <button class="btn btn-danger disabled mb-4" id="order-delete-button">Delete</button>
+
     </div>
-    <table class="table">
-      <thead>
+    <table class="table table-striped" id="orders-table">
+      <thead class="thead-dark">
       <tr>
         <th>#</th>
-        <th>date</th>
-        <th>customer</th>
-        <th>total price</th>
+        <th>Date</th>
+        <th>Customer</th>
+        <th>Total price</th>
       </tr>
       </thead>
       <tbody>

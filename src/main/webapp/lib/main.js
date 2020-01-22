@@ -20,6 +20,8 @@ const menuItems = [
 ];
 
 const storage = {
+    customerId: -1,
+    //
     customers: [],
     countries: [],
     vendors: [],
@@ -30,6 +32,7 @@ const storage = {
     selectedCountry: -1,
     selectedVendor: -1,
     selectedWatch: -1,
+    selectedOrder: -1,
 };
 
 // toggle default plane
@@ -43,6 +46,8 @@ if (customerId == null) {
 
     loadCustomer(customerId)
         .then(updateNavBar);
+
+    storage.customerId = Number.parseInt(customerId);
 
     menuItems.forEach(item => item.addEventListener('click', menuItemClicked));
 }
@@ -276,8 +281,54 @@ function menuItemClicked(event) {
         }
 
         case 'orders': {
-            console.log('orders menu clicked');
-            storage.orders = loadDataFromServer('order');
+            storage.selectedOrder = -1;
+            document.getElementById("order-details-button").classList.add("disabled");
+            document.getElementById("order-edit-button").classList.add("disabled");
+            document.getElementById("order-delete-button").classList.add("disabled");
+
+            function buildOrderTable(rootElement, data) {
+                function selectTableRow() {
+                    if (storage.selectedOrder !== -1) {
+                        const previousRow = this.parentElement.querySelector(`tr[data-order-id="${storage.selectedOrder}"]`);
+                        if (previousRow !== null) {
+                            previousRow.classList.remove("table-info");
+                        }
+                    }
+
+                    document.getElementById("order-details-button").classList.remove("disabled");
+                    document.getElementById("order-edit-button").classList.remove("disabled");
+                    document.getElementById("order-delete-button").classList.remove("disabled");
+
+                    storage.selectedOrder = Number.parseInt(this.getAttribute("data-order-id"));
+                    this.classList.add("table-info");
+                }
+
+                const tbody = rootElement.querySelector("tbody");
+                removeChildElements(tbody);
+
+                data.forEach(order => {
+                    // const date = new Date(order.date).toGMTString();
+                    const tr = createElement("tr", {"data-order-id": order.id},
+                        createElement("td", {}, createTextElement(order.id)),
+                        createElement("td", {}, createTextElement(formatDate(order.date))),
+                        createElement("td", {}, createTextElement(order.customer.name)),
+                        createElement("td", {}, createTextElement(order.totalPrice.toFixed(2))));
+
+                    tr.addEventListener('click', selectTableRow);
+                    tbody.appendChild(tr);
+                });
+            }
+
+            loadDataFromServer('order')
+                .then(orders => {
+                    storage.orders = orders.filter(order =>
+                        order.customer.id === storage.customerId
+                    );
+
+                    storage.orders.sort((a, b) => a.id - b.id);
+
+                    buildOrderTable(document.getElementById("orders-table"), storage.orders);
+                });
 
             togglePlane(planes, 'orders-plane');
             break;
@@ -332,4 +383,17 @@ function createElement(tagName, attributes, ...children) {
 
 function createTextElement(data) {
     return document.createTextNode(data);
+}
+
+function formatDate(isoString) {
+    const date = new Date(isoString);
+    const day = ("0" + date.getDate()).slice(-2);
+    const month = ("0" + (date.getMonth() + 1)).slice(-2);
+    const year = date.getFullYear();
+
+    const hours = ("0" + date.getHours()).slice(-2);
+    const minutes = ("0" + date.getMinutes()).slice(-2);
+    const seconds = ("0" + date.getSeconds()).slice(-2);
+
+    return `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
 }
