@@ -3,11 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Main</title>
-  <link
-          rel="stylesheet"
-          href="/lib/bootstrap.min.css"
-          type="text/css"
-  />
+  <link rel="stylesheet" href="/lib/bootstrap.min.css" type="text/css"/>
+  <link rel="stylesheet" href="/lib/main.css" type="text/css"/>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
@@ -39,6 +36,7 @@
 </nav>
 
 <div class="container-fluid">
+  <!-- customers begin -->
   <div id="customers-plane">
     <h1 class="text-center">Customers</h1>
     <div>
@@ -46,6 +44,7 @@
       <button class="btn btn-success disabled mb-4" id="customer-edit-button">Edit</button>
       <button class="btn btn-danger disabled mb-4" id="customer-delete-button">Delete</button>
     </div>
+
     <table class="table table-striped" id="customers-table">
       <thead class="thead-dark">
       <tr>
@@ -61,13 +60,75 @@
     </table>
   </div>
 
+  <!-- customers end -->
+
+  <!--------------- countries begin --------------->
+
+  <!--------------- countries create/update dialog --------------->
+  <div class="modal" tabindex="-1" role="dialog" id="country-dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="country-dialog-title"></h5>
+          <button type="button" class="close" id="country-dialog-close-button"
+                  onclick="closeCountryDialog();">
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="form-group">
+              <label for="country-dialog-name">Name:</label>
+              <input type="text" class="form-control" id="country-dialog-name">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="country-dialog-button-title"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--------------- countries delete dialog --------------->
+  <div class="modal" tabindex="-1" role="dialog" id="country-dialog-delete">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="country-dialog-delete-title">Delete Country</h5>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="form-group">
+              <label for="country-dialog-delete-name">Do you really want to delete record:&nbsp;</label>
+              <input type="text" readonly id="country-dialog-delete-name"
+                     class="form-control-plaintext font-weight-bolder" value="">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="country-dialog-delete-button-cancel"
+                  onclick="cancelDeleteCountryHandler();">Cancel
+          </button>
+          <button type="button" class="btn btn-danger" id="country-dialog-delete-button-ok"
+                  onclick="proceedDeleteCountryHandler();">Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="countries-plane">
     <h1 class="text-center">Countries</h1>
     <div>
-      <button class="btn btn-primary mb-4" id="country-add-button">Add new</button>
-      <button class="btn btn-success disabled mb-4" id="country-edit-button">Edit</button>
-      <button class="btn btn-danger disabled mb-4" id="country-delete-button">Delete</button>
+      <button class="btn btn-primary mb-4" id="country-add-button" onclick="showCreateCountryDialog();">Add new</button>
+      <button class="btn btn-success disabled mb-4" id="country-edit-button" onclick="showUpdateCountryDialog();">Edit
+      </button>
+      <button class="btn btn-danger disabled mb-4" id="country-delete-button" onclick="showDeleteCountryDialog();">
+        Delete
+      </button>
     </div>
+
     <table class="table table-striped" id="countries-table">
       <thead class="thead-dark">
       <tr>
@@ -81,6 +142,9 @@
     </table>
   </div>
 
+  <!-- countries end -->
+
+  <!-- vendors begin -->
   <div id="vendors-plane">
     <h1 class="text-center">Vendors</h1>
     <div>
@@ -101,7 +165,9 @@
       </tbody>
     </table>
   </div>
+  <!-- vendors end -->
 
+  <!-- watches begin -->
   <div id="watches-plane">
     <h1 class="text-center">Watches</h1>
     <div>
@@ -125,13 +191,14 @@
       </tbody>
     </table>
   </div>
+  <!-- watches end -->
 
+  <!-- orders begin -->
   <div id="orders-plane">
     <h1 class="text-center">Orders</h1>
     <div>
       <button class="btn btn-primary mb-4" id="order-add-button">Add new</button>
       <button class="btn btn-info mb-4" id="order-details-button">Details</button>
-      <button class="btn btn-success disabled mb-4" id="order-edit-button">Edit</button>
       <button class="btn btn-danger disabled mb-4" id="order-delete-button">Delete</button>
 
     </div>
@@ -150,6 +217,7 @@
     </table>
   </div>
 </div>
+<!-- orders end -->
 
 <script src="/lib/constants.js"></script>
 <script src="/lib/utils.js"></script>

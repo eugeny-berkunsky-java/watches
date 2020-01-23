@@ -1,7 +1,6 @@
 function redrawOrdersTable() {
     storage.selectedOrder = -1;
     document.getElementById("order-details-button").classList.add("disabled");
-    document.getElementById("order-edit-button").classList.add("disabled");
     document.getElementById("order-delete-button").classList.add("disabled");
 
     if (storage.orders.length > 0) {
@@ -18,7 +17,6 @@ function redrawOrdersTable() {
                 buildOrderTable(document.getElementById("orders-table"), storage.orders);
             });
     }
-
 }
 
 function buildOrderTable(rootElement, data) {
@@ -31,7 +29,6 @@ function buildOrderTable(rootElement, data) {
         }
 
         document.getElementById("order-details-button").classList.remove("disabled");
-        document.getElementById("order-edit-button").classList.remove("disabled");
         document.getElementById("order-delete-button").classList.remove("disabled");
 
         storage.selectedOrder = Number.parseInt(this.getAttribute("data-order-id"));
