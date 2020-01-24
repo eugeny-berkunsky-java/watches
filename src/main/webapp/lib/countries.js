@@ -1,7 +1,5 @@
-const updateCountryDialog = document.getElementById("country-dialog");
-const deleteCountryDialog = document.getElementById("country-dialog-delete");
+const countryDialog = document.getElementById("country-dialog");
 const nameField = document.getElementById("country-dialog-name");
-const deleteNameField = document.getElementById("country-dialog-delete-name");
 
 function redrawCountriesPlane() {
   storage.selectedCountry = -1;
@@ -63,7 +61,7 @@ function showUpdateCountryDialog() {
           redrawCountriesPlane();
         }
       )
-      .catch(error => console.error(error));
+      .catch(console.error);
   }
 
 
@@ -86,35 +84,6 @@ function showCreateCountryDialog() {
   showCountryDialog("Add new Country", null, "Create", processCreate);
 }
 
-function showDeleteCountryDialog() {
-  if (storage.selectedCountry !== -1) {
-    const country = storage.countries.find(country => country.id === storage.selectedCountry);
-    if (country) {
-      deleteNameField.value = country.name;
-    }
-
-    deleteCountryDialog.style.display = 'block';
-
-  }
-}
-
-function cancelDeleteCountryHandler() {
-  deleteCountryDialog.style.display = 'none';
-}
-
-function proceedDeleteCountryHandler() {
-  countryService.delete(storage.selectedCountry)
-    .then(() => {
-      const removedId = storage.selectedCountry;
-      storage.countries = storage.countries.filter(c => c.id !== removedId);
-      redrawCountriesPlane();
-    })
-    .catch(console.error)
-    .finally(() => {
-      deleteCountryDialog.style.display = 'none'
-    });
-}
-
 function showCountryDialog(title, model, buttonTitle, processFunction) {
   const buttonHandler = () => {
     processFunction({name: nameField.value, id: storage.selectedCountry});
@@ -135,9 +104,26 @@ function showCountryDialog(title, model, buttonTitle, processFunction) {
     nameField.value = '';
   }
 
-  updateCountryDialog.style.display = 'block';
+  countryDialog.style.display = 'block';
 }
 
 function closeCountryDialog() {
-  updateCountryDialog.style.display = 'none';
+  countryDialog.style.display = 'none';
+}
+
+function showDeleteCountryDialog() {
+  if (storage.selectedCountry !== -1) {
+    const country = storage.countries.find(c => c.id === storage.selectedCountry);
+    if (country) {
+      showDeleteDialog("Delete Country", country.name, () => {
+        countryService.delete(country.id)
+          .then(() => {
+            const removedId = storage.selectedCountry;
+            storage.countries = storage.countries.filter(c => c.id !== removedId);
+            redrawCountriesPlane();
+          })
+          .catch(console.error);
+      });
+    }
+  }
 }
