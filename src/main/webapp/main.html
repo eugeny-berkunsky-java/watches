@@ -149,7 +149,7 @@
 
   <!-- customers end -->
 
-  <!--------------- countries begin --------------->
+  <!------------------------- countries begin ------------------------->
 
   <!--------------- countries create/update dialog --------------->
   <div class="modal" tabindex="-1" role="dialog" id="country-dialog">
@@ -226,11 +226,11 @@
     </table>
   </div>
 
-  <!--------------- countries end --------------->
+  <!------------------------- countries end ------------------------->
 
-  <!--------------- vendors begin --------------->
+  <!------------------------- vendors begin ------------------------->
 
-  <!--------------- vendors create/update dialog --------------->
+  <!------------------------- vendors create/update dialog ------------------------->
   <div class="modal" tabindex="-1" role="dialog" id="vendor-dialog">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
@@ -307,19 +307,97 @@
       <tbody></tbody>
     </table>
   </div>
-  <!--------------- vendors end --------------->
+  <!------------------------- vendors end ------------------------->
 
-  <!-- watches begin -->
+  <!------------------------- watches begin ------------------------->
+
+  <!------------------------- watches create/update dialog ------------------------->
+  <div class="modal" tabindex="-1" role="dialog" id="watch-dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="watch-dialog-title"></h5>
+          <button
+                  type="button"
+                  class="close"
+                  id="watch-dialog-close-button"
+          >
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form class="mt-4 mb-4">
+            <div class="row align-items-center">
+              <div class="col-2 ">
+                <label class="mb-0" for="watch-dialog-brand">Brand:</label>
+              </div>
+              <div class="col-10">
+                <input type="text" class="form-control" id="watch-dialog-brand"/>
+              </div>
+            </div>
+
+            <div class="row mt-4 align-items-center">
+              <div class="col-2">
+                <label class="mb-0" for="watch-dialog-type">Type:</label>
+              </div>
+              <div class="col-10">
+                <select class="form-control" id="watch-dialog-type">
+                  <option>ANALOGUE</option>
+                  <option>DIGITAL</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row mt-4 align-items-center">
+              <div class="col-2">
+                <label class="mb-0" for="watch-dialog-qty">Quantity:</label>
+              </div>
+              <div class="col-10">
+                <input type="number" class="form-control" id="watch-dialog-qty"/>
+              </div>
+            </div>
+
+            <div class="row mt-4 align-items-center">
+              <div class="col-2">
+                <label class="mb-0" for="watch-dialog-price">Price:</label>
+              </div>
+              <div class="col-10">
+                <input type="number" class="form-control" id="watch-dialog-price"/>
+              </div>
+            </div>
+
+            <div class="row mt-4 align-items-center">
+              <div class="col-2">
+                <label class="mb-0" for="watch-dialog-vendor">Vendor:</label>
+              </div>
+              <div class="col-10">
+                <select id="watch-dialog-vendor" class="form-control"> </select>
+              </div>
+            </div>
+
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button
+                  type="button"
+                  class="btn btn-primary"
+                  id="watch-dialog-button-title"
+          ></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="watches-plane">
     <h1 class="text-center">Watches</h1>
     <div>
-      <button class="btn btn-primary mb-4" id="watch-add-button">
+      <button class="btn btn-primary mb-4" id="watch-add-button" onclick="showCreateWatchDialog();">
         Add new
       </button>
-      <button class="btn btn-success disabled mb-4" id="watch-edit-button">
+      <button class="btn btn-success disabled mb-4" id="watch-edit-button" onclick="showUpdateWatchDialog();">
         Edit
       </button>
-      <button class="btn btn-danger disabled mb-4" id="watch-delete-button">
+      <button class="btn btn-danger disabled mb-4" id="watch-delete-button" onclick="showDeleteWatchDialog();">
         Delete
       </button>
     </div>
@@ -336,9 +414,9 @@
       <tbody></tbody>
     </table>
   </div>
-  <!-- watches end -->
+  <!------------------------- watches end ------------------------->
 
-  <!-- orders begin -->
+  <!------------------------- orders begin ------------------------->
   <div id="orders-plane">
     <h1 class="text-center">Orders</h1>
     <div>
@@ -365,7 +443,7 @@
     </table>
   </div>
 </div>
-<!-- orders end -->
+<!------------------------- orders end ------------------------->
 
 <script src="/lib/constants.js"></script>
 <script src="/lib/utils.js"></script>

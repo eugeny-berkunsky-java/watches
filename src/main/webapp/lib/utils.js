@@ -150,3 +150,17 @@ const vendorService = {
   delete: id =>
     service.delete(`http://localhost:8080/api/vendor/${id}`),
 };
+
+const watchService = {
+  getAll: () =>
+    service.get("http://localhost:8080/api/watch/"),
+
+  create: data =>
+    service.create('http://localhost:8080/api/watch/', data),
+
+  update: data =>
+    service.update(`http://localhost:8080/api/watch/${data.id}`, data),
+
+  delete: id =>
+    service.delete(`http://localhost:8080/api/watch/${id}`),
+};
