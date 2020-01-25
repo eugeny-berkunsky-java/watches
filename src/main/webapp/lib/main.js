@@ -10,22 +10,12 @@ if (customerId == null) {
     document.location.replace(document.location.origin + '/');
 } else {
 
-    loadCustomer(customerId)
+    customerService.getById(customerId)
         .then(updateNavBar);
 
     storage.customerId = Number.parseInt(customerId);
 
     menuItems.forEach(item => item.addEventListener('click', menuItemClicked));
-}
-
-function loadCustomer(id) {
-    const endpoint = `http://localhost:8080/api/customer/${id}`;
-    return new Promise((resolve, reject) => {
-        fetch(endpoint)
-            .then(response => response.json())
-            .then(resolve)
-            .catch(reject);
-    })
 }
 
 function updateNavBar(customer) {

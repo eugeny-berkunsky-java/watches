@@ -32,17 +32,6 @@ const formatDate = isoString => {
   return `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
 };
 
-const loadDataFromServer = data => {
-  const endpoint = `http://localhost:8080/api/${data}/`;
-
-  return new Promise((resolve, reject) => {
-    fetch(endpoint)
-      .then(response => response.json())
-      .then(resolve)
-      .catch(reject);
-  });
-};
-
 const showDeleteDialog = (title, message, onDeleteDo, onCancelDo = () => {
 }) => {
   const deleteDialog = document.getElementById('dialog-delete');
@@ -120,6 +109,14 @@ const service = {
       .catch(promise => promise.then(json => reject(json.message)))),
 };
 
+const customerService = {
+  getAll: () =>
+    service.get("http://localhost:8080/api/customer/"),
+
+  getById: id =>
+    service.get(`http://localhost:8080/api/customer/${id}`),
+};
+
 const countryService = {
   getAll: () =>
     service.get("http://localhost:8080/api/country/"),
@@ -163,4 +160,9 @@ const watchService = {
 
   delete: id =>
     service.delete(`http://localhost:8080/api/watch/${id}`),
+};
+
+const orderService = {
+  getAll: () =>
+    service.get("http://localhost:8080/api/order/"),
 };

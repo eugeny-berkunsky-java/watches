@@ -10,7 +10,7 @@ function redrawWatchesTable() {
   if (storage.watches.length > 0) {
     buildWatchTable(table, storage.watches);
   } else {
-    loadDataFromServer('watch')
+    watchService.getAll()
       .then(watches => {
         storage.watches = watches;
         buildWatchTable(table, storage.watches);
