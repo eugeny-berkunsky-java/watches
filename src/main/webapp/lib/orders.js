@@ -90,3 +90,20 @@ function showOrderDetailsDialog() {
     }
   }
 }
+
+function showDeleteOrderDialog() {
+  if (storage.selectedOrder !== -1) {
+    const order = storage.orders.find(o => o.id === storage.selectedOrder);
+    if (order) {
+      showDeleteDialog("Delete Order", `Order #${order.id}`, () => {
+        orderService.delete(order.id)
+          .then(() => {
+            storage.orders
+              = storage.orders.filter(o => o.id !== storage.selectedOrder);
+            redrawOrdersTable();
+          });
+      });
+    }
+  }
+}
+
