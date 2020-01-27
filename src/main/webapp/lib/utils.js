@@ -165,4 +165,13 @@ const watchService = {
 const orderService = {
   getAll: () =>
     service.get("http://localhost:8080/api/order/"),
+
+  getById: id =>
+    service.get(`http://localhost:8080/api/order/${id}`),
+
+  create: data =>
+    service.create('http://localhost:8080/api/order/', data),
+
+  delete: id =>
+    service.delete(`http://localhost:8080/api/order/${id}`),
 };

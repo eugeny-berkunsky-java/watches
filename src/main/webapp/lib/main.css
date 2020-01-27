@@ -1,4 +1,8 @@
-#country-dialog, #country-dialog-delete, #vendor-dialog, #watch-dialog {
+#country-dialog,
+#country-dialog-delete,
+#vendor-dialog,
+#watch-dialog,
+#order-detail-dialog {
     display: none;
     position: fixed;
     z-index: 1;

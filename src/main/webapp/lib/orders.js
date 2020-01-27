@@ -1,3 +1,7 @@
+const orderDetailsDialog = document.getElementById("order-detail-dialog");
+const orderDetailsTitle = document.getElementById("order-detail-dialog-title");
+const orderDetailsCloseButton = document.getElementById("order-detail-dialog-close-button");
+
 function redrawOrdersTable() {
   storage.selectedOrder = -1;
   document.getElementById("order-details-button").classList.add("disabled");
@@ -48,4 +52,41 @@ function buildOrderTable(rootElement, data) {
     tr.addEventListener('click', selectTableRow);
     tbody.appendChild(tr);
   });
+}
+
+function buildOrderDetailsTable(rootElement, data) {
+  const tbody = rootElement.querySelector("tbody");
+  removeChildElements(tbody);
+
+  data.forEach(item => {
+    tbody.appendChild(
+      createElement("tr", {},
+        createElement("td", {}, createTextElement(item.watch.brand)),
+        createElement("td", {}, createTextElement(item.qty)),
+        createElement("td", {}, createTextElement(item.price.toFixed(2))),
+      )
+    );
+  });
+}
+
+function showOrderDetailsDialog() {
+  const closeButtonHandler = () => {
+    orderDetailsCloseButton.removeEventListener('click', closeButtonHandler);
+    orderDetailsDialog.style.display = 'none';
+  };
+
+  if (storage.selectedOrder !== -1) {
+    const order = storage.orders.find(o => o.id === storage.selectedOrder);
+    if (order) {
+      orderDetailsTitle.innerText = `Order #${order.id} details`;
+      orderDetailsCloseButton.addEventListener('click', closeButtonHandler);
+
+      const detailsTable = document.getElementById("order-details-table");
+      orderService.getById(order.id)
+        .then(od => {
+          buildOrderDetailsTable(detailsTable, od.items);
+        })
+        .finally(() => orderDetailsDialog.style.display = 'block')
+    }
+  }
 }
