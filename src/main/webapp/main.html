@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Main</title>
+  <link rel="stylesheet" href="/lib/bootstrap.min.css" type="text/css"/>
+  <link rel="stylesheet" href="/lib/main.css" type="text/css"/>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+  <span class="navbar-brand">Watches STore</span>
+  <ul class="navbar-nav ml-5 mr-auto">
+    <li class="nav-item">
+      <a
+              class="nav-link "
+              href="#"
+              data-menu-item="customers"
+              id="item-customers"
+      >Customers</a
+      >
+    </li>
+    <li>
+      <a
+              class="nav-link pl-4 active"
+              href="#"
+              data-menu-item="countries"
+              id="item-countries"
+      >Countries</a
+      >
+    </li>
+    <li>
+      <a
+              class="nav-link pl-4"
+              href="#"
+              data-menu-item="vendors"
+              id="item-vendors"
+      >Vendors</a
+      >
+    </li>
+    <li>
+      <a
+              class="nav-link pl-4"
+              href="#"
+              data-menu-item="watches"
+              id="item-watches"
+      >Watches</a
+      >
+    </li>
+    <li>
+      <a
+              class="nav-link pl-4"
+              href="#"
+              data-menu-item="orders"
+              id="item-orders"
+      >Orders</a
+      >
+    </li>
+  </ul>
+  <form class="form-inline my-2 my-lg-0">
+    <div class="form-group">
+      <input
+              type="text"
+              readonly
+              class="form-control-plaintext text-right font-weight-bold mr-5"
+              id="customer-name"
+              value="Customer"
+      />
+    </div>
+    <button
+            class="btn btn-outline-secondary my-sm-0"
+            type="submit"
+            id="logout-button"
+    >
+      Logout
+    </button>
+  </form>
+</nav>
+
+<div class="container-fluid">
+
+
+  <!--------------- delete dialog --------------->
+  <div class="modal" tabindex="-1" role="dialog" id="dialog-delete">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="dialog-delete-title"></h5>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="form-group">
+              <label for="dialog-delete-message">Do you really want to delete record ?</label>
+              <input
+                      type="text"
+                      readonly
+                      id="dialog-delete-message"
+                      class="form-control-plaintext font-weight-bolder"
+                      value=""
+              />
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="dialog-delete-button-cancel">
+            Cancel
+          </button>
+          <button type="button" class="btn btn-danger" id="dialog-delete-button-ok">
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- customers begin -->
+  <div id="customers-plane">
+    <h1 class="text-center">Customers</h1>
+    <div>
+      <button class="btn btn-primary mb-4" id="customer-add-button">
+        Add new
+      </button>
+      <button
+              class="btn btn-success disabled mb-4"
+              id="customer-edit-button"
+      >
+        Edit
+      </button>
+      <button
+              class="btn btn-danger disabled mb-4"
+              id="customer-delete-button"
+              onclick="showDeleteCountryDialog();"
+      >
+        Delete
+      </button>
+    </div>
+
+    <table class="table table-striped" id="customers-table">
+      <thead class="thead-dark">
+      <tr>
+        <th>Name</th>
+        <th>Sum of Orders</th>
+        <th>Card Number</th>
+        <th>Discount Percent</th>
+      </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <!-- customers end -->
+
+  <!------------------------- countries begin ------------------------->
+
+  <!--------------- countries create/update dialog --------------->
+  <div class="modal" tabindex="-1" role="dialog" id="country-dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="country-dialog-title"></h5>
+          <button
+                  type="button"
+                  class="close"
+                  id="country-dialog-close-button"
+                  onclick="closeCountryDialog();"
+          >
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="form-group">
+              <label for="country-dialog-name">Name:</label>
+              <input
+                      type="text"
+                      class="form-control"
+                      id="country-dialog-name"
+              />
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button
+                  type="button"
+                  class="btn btn-primary"
+                  id="country-dialog-button-title"
+          ></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="countries-plane">
+    <h1 class="text-center">Countries</h1>
+    <div>
+      <button
+              class="btn btn-primary mb-4"
+              id="country-add-button"
+              onclick="showCreateCountryDialog();"
+      >
+        Add new
+      </button>
+      <button
+              class="btn btn-success disabled mb-4"
+              id="country-edit-button"
+              onclick="showUpdateCountryDialog();"
+      >
+        Edit
+      </button>
+      <button
+              class="btn btn-danger disabled mb-4"
+              id="country-delete-button"
+              onclick="showDeleteCountryDialog();"
+      >
+        Delete
+      </button>
+    </div>
+
+    <table class="table table-striped" id="countries-table">
+      <thead class="thead-dark">
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+      </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <!------------------------- countries end ------------------------->
+
+  <!------------------------- vendors begin ------------------------->
+
+  <!------------------------- vendors create/update dialog ------------------------->
+  <div class="modal" tabindex="-1" role="dialog" id="vendor-dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="vendor-dialog-title"></h5>
+          <button
+                  type="button"
+                  class="close"
+                  id="vendor-dialog-close-button"
+                  onclick="closeVendorDialog();"
+          >
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="form-group">
+              <label for="vendor-dialog-name">Name:</label>
+              <input
+                      type="text"
+                      class="form-control mb-4"
+                      id="vendor-dialog-name"
+              />
+              <label for="vendor-dialog-country">Country:</label>
+              <select id="vendor-dialog-country" class="form-control">
+              </select>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button
+                  type="button"
+                  class="btn btn-primary"
+                  id="vendor-dialog-button-title"
+          ></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="vendors-plane">
+    <h1 class="text-center">Vendors</h1>
+    <div>
+      <button
+              class="btn btn-primary mb-4"
+              id="vendor-add-button"
+              onclick="showCreateVendorDialog();"
+      >
+        Add new
+      </button>
+      <button
+              class="btn btn-success disabled mb-4"
+              id="vendor-edit-button"
+              onclick="showUpdateVendorDialog();"
+      >
+        Edit
+      </button>
+      <button
+              class="btn btn-danger disabled mb-4"
+              id="vendor-delete-button"
+              onclick="showDeleteVendorDialog();"
+      >
+        Delete
+      </button>
+    </div>
+    <table class="table table-striped" id="vendors-table">
+      <thead class="thead-dark">
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Country</th>
+      </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <!------------------------- vendors end ------------------------->
+
+  <!------------------------- watches begin ------------------------->
+
+  <!------------------------- watches create/update dialog ------------------------->
+  <div class="modal" tabindex="-1" role="dialog" id="watch-dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="watch-dialog-title"></h5>
+          <button
+                  type="button"
+                  class="close"
+                  id="watch-dialog-close-button"
+          >
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form class="mt-4 mb-4">
+            <div class="row align-items-center">
+              <div class="col-2 ">
+                <label class="mb-0" for="watch-dialog-brand">Brand:</label>
+              </div>
+              <div class="col-10">
+                <input type="text" class="form-control" id="watch-dialog-brand"/>
+              </div>
+            </div>
+
+            <div class="row mt-4 align-items-center">
+              <div class="col-2">
+                <label class="mb-0" for="watch-dialog-type">Type:</label>
+              </div>
+              <div class="col-10">
+                <select class="form-control" id="watch-dialog-type">
+                  <option>ANALOGUE</option>
+                  <option>DIGITAL</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row mt-4 align-items-center">
+              <div class="col-2">
+                <label class="mb-0" for="watch-dialog-qty">Quantity:</label>
+              </div>
+              <div class="col-10">
+                <input type="number" class="form-control" id="watch-dialog-qty"/>
+              </div>
+            </div>
+
+            <div class="row mt-4 align-items-center">
+              <div class="col-2">
+                <label class="mb-0" for="watch-dialog-price">Price:</label>
+              </div>
+              <div class="col-10">
+                <input type="number" class="form-control" id="watch-dialog-price"/>
+              </div>
+            </div>
+
+            <div class="row mt-4 align-items-center">
+              <div class="col-2">
+                <label class="mb-0" for="watch-dialog-vendor">Vendor:</label>
+              </div>
+              <div class="col-10">
+                <select id="watch-dialog-vendor" class="form-control"> </select>
+              </div>
+            </div>
+
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button
+                  type="button"
+                  class="btn btn-primary"
+                  id="watch-dialog-button-title"
+          ></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="watches-plane">
+    <h1 class="text-center">Watches</h1>
+    <div>
+      <button class="btn btn-primary mb-4" id="watch-add-button" onclick="showCreateWatchDialog();">
+        Add new
+      </button>
+      <button class="btn btn-success disabled mb-4" id="watch-edit-button" onclick="showUpdateWatchDialog();">
+        Edit
+      </button>
+      <button class="btn btn-danger disabled mb-4" id="watch-delete-button" onclick="showDeleteWatchDialog();">
+        Delete
+      </button>
+    </div>
+    <table class="table table-striped" id="watches-table">
+      <thead class="thead-dark">
+      <tr>
+        <th>Brand</th>
+        <th>Type</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Vendor</th>
+      </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <!------------------------- watches end ------------------------->
+
+  <!------------------------- orders begin ------------------------->
+
+  <!------------------------- order details dialog begin ------------------->
+  <div class="modal" tabindex="-1" role="dialog" id="order-detail-dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="order-detail-dialog-title">Order Details</h5>
+          <button
+                  type="button"
+                  class="close"
+                  id="order-detail-dialog-close-button"
+          >
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row p-2">
+            <table class="table table-striped" id="order-details-table">
+              <thead class="thead-dark">
+              <tr>
+                <th>Brand</th>
+                <th>Quantity</th>
+                <th>Price</th>
+              </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!------------------------- order details dialog end ------------------->
+
+  <!------------------------- add order dialog begin ------------------->
+  <div class="modal" tabindex="-1" role="dialog" id="order-add-dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="order-add-dialog-title">New order</h5>
+          <button
+                  type="button"
+                  class="close"
+                  id="order-add-dialog-close-button"
+          >
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row p-2">
+            <button class="btn btn-success font-weight-bolder" onclick="showAddItemDialog();">+</button>
+          </div>
+          <div class="row p-2">
+            <table class="table table-striped" id="order-add-table">
+              <thead class="thead-dark">
+              <tr>
+                <th></th>
+                <th>Brand</th>
+                <th>Quantity</th>
+                <th>Price</th>
+              </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+                  type="button"
+                  class="btn btn-primary"
+                  id="order-add-dialog-button"
+          >Add
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!------------------------- add order dialog end ------------------->
+
+  <!------------------------- add item dialog begin ------------------->
+  <div class="modal" tabindex="-1" role="dialog" id="item-add-dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="item-add-dialog-title">New Item</h5>
+          <button
+                  type="button"
+                  class="close"
+                  id="item-add-dialog-close-button"
+          >
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="row p-2">
+              <div class="col-6">
+                <label for="item-add-watch">Watch</label>
+                <select class="form-control" id="item-add-watch"></select>
+              </div>
+              <div class="col-3 text-right">
+                <label for="item-add-qty">Quantity</label>
+                <input class="form-control" type="number" id="item-add-qty">
+              </div>
+              <div class="col-3 text-right">
+                <label for="item-add-price">Price</label>
+                <input class="form-control" type="number" id="item-add-price">
+              </div>
+            </div>
+            <div class="row mt-4 p-2 ">
+              <div class="col text-right">
+                <button type="button" class="btn btn-primary" id="item-add-dialog-button">Add</button>
+              </div>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <!------------------------- add item dialog end ------------------->
+
+  <div id="orders-plane">
+    <h1 class="text-center">Orders</h1>
+    <div>
+      <button class="btn btn-primary mb-4" id="order-add-button" onclick="showAddOrderDialog();">
+        Add new
+      </button>
+      <button class="btn btn-info mb-4" id="order-details-button" onclick="showOrderDetailsDialog();">
+        Details
+      </button>
+      <button class="btn btn-danger disabled mb-4" id="order-delete-button" onclick="showDeleteOrderDialog();">
+        Delete
+      </button>
+    </div>
+    <table class="table table-striped" id="orders-table">
+      <thead class="thead-dark">
+      <tr>
+        <th>#</th>
+        <th>Date</th>
+        <th>Customer</th>
+        <th>Total price</th>
+      </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+<!------------------------- orders end ------------------------->
+
+<script src="/lib/constants.js"></script>
+<script src="/lib/utils.js"></script>
+<script src="/lib/customers.js"></script>
+<script src="/lib/countries.js"></script>
+<script src="/lib/vendors.js"></script>
+<script src="/lib/watches.js"></script>
+<script src="/lib/orders.js"></script>
+<script src="/lib/main.js"></script>
+</body>
+</html>

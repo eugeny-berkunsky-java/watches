@@ -93,7 +93,7 @@ public class CustomersMenu {
 
         int cardId = userInput.getNumber("card number ID", -1);
 
-        if (customerManager.updateCustomer(id, name, totalSum, cardId)) {
+        if (customerManager.updateCustomer(id, name, cardId)) {
             System.out.println("updated successfully");
         } else {
             System.out.println("operation failed");

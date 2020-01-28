@@ -1,11 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Watches</title>
+  <meta charset="UTF-8"/>
+  <title>Watches</title>
 </head>
+<link
+        rel="stylesheet"
+        href="/lib/bootstrap.min.css"
+        type="text/css"
+/>
+
+<style>
+  #select-customer-form {
+    min-width: 200px;
+  }
+</style>
 <body>
-<a href="/country/">Countries</a>
-<a href="/vendor/">Vendors</a>
+<div class="container">
+  <div class="row vh-100  justify-content-center">
+    <div class="col-8 col-lg-6 align-self-center">
+      <div
+              id="select-customer-form"
+              class="border border-secondary rounded p-3"
+      >
+        <div class="form-group">
+          <label for="customer-select"><h4>Select Customer</h4></label>
+          <select id="customer-select" class="form-control">
+
+          </select>
+          <button class="btn btn-primary mb-2 mt-5" id="login-button">log in</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/lib/utils.js"></script>
+<script src="/lib/index.js"></script>
 </body>
 </html>

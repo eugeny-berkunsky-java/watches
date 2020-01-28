@@ -33,8 +33,12 @@ public class RootServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) {
-        ResponseWrapper responseWrapper = dispatchRequest(toRequestWrapper(request));
-        sendResponse(response, responseWrapper);
+        if ("OPTIONS".equals(request.getMethod())) {
+            sendOptionsResponse(response);
+        } else {
+            ResponseWrapper responseWrapper = dispatchRequest(toRequestWrapper(request));
+            sendResponse(response, responseWrapper);
+        }
     }
 
     private ResponseWrapper dispatchRequest(RequestWrapper requestWrapper) {
@@ -64,11 +68,18 @@ public class RootServlet extends HttpServlet {
         response.setCharacterEncoding("utf-8");
         response.setStatus(responseWrapper.statusCode);
         response.setContentType(responseWrapper.contentType.typeName);
+        response.setHeader("Access-Control-Allow-Origin", "*");
         try {
             response.getWriter().print(responseWrapper.data);
         } catch (IOException e) {
             logger.log(Level.SEVERE, "send response error", e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    private void sendOptionsResponse(HttpServletResponse response) {
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type");
     }
 }
