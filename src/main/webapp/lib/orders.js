@@ -2,6 +2,14 @@ const orderDetailsDialog = document.getElementById("order-detail-dialog");
 const orderDetailsTitle = document.getElementById("order-detail-dialog-title");
 const orderDetailsCloseButton = document.getElementById("order-detail-dialog-close-button");
 
+const orderAddDialog = document.getElementById("order-add-dialog");
+const orderAddDialogCloseButton = document.getElementById("order-add-dialog-close-button");
+const orderAddDialogButton = document.getElementById("order-add-dialog-button");
+
+const itemAddDialog = document.getElementById("item-add-dialog");
+const itemAddDialogCloseButton = document.getElementById("item-add-dialog-close-button");
+const itemAddDialogAddButton = document.getElementById("item-add-dialog-button");
+
 function redrawOrdersTable() {
   storage.selectedOrder = -1;
   document.getElementById("order-details-button").classList.add("disabled");
@@ -107,3 +115,131 @@ function showDeleteOrderDialog() {
   }
 }
 
+function showAddOrderDialog() {
+  const buttonHandler = () => {
+    orderService.create({
+      items: storage.items,
+      customer: {id: localStorage.getItem("customerId")}
+    })
+      .then(order => {
+        storage.orders = [...storage.orders, order];
+        storage.items = [];
+        redrawOrdersTable();
+      });
+
+    orderAddDialogCloseButton.removeEventListener('click', closeDialogHandler);
+    orderAddDialogButton.removeEventListener('click', buttonHandler);
+    orderAddDialog.style.display = 'none';
+  };
+
+  const closeDialogHandler = () => {
+    orderAddDialogCloseButton.removeEventListener('click', closeDialogHandler);
+    orderAddDialogButton.removeEventListener('click', buttonHandler);
+    orderAddDialog.style.display = 'none';
+  };
+
+  redrawItemsTable();
+  orderAddDialogCloseButton.addEventListener('click', closeDialogHandler);
+  orderAddDialogButton.addEventListener('click', buttonHandler);
+  orderAddDialog.style.display = 'block';
+}
+
+///
+
+function redrawItemsTable() {
+  const table = document.getElementById("order-add-table").querySelector("tbody");
+  removeChildElements(table);
+
+  const removeItemRowHandler = event => {
+    console.info(event);
+    removeItemButton.removeEventListener('click', removeItemRowHandler);
+  };
+
+  const removeItemButton = id => {
+    const handler = () => {
+      // console.log(`I was made to destroy ${id}`);
+      storage.items = storage.items.filter(i => i.watch.id !== id);
+      redrawItemsTable();
+
+      element.removeEventListener('click', handler);
+    };
+
+    const element = createElement("button", {
+      "class": "btn btn-danger font-weight-bolder",
+    }, createTextElement("-"));
+    element.addEventListener('click', handler);
+
+    return element;
+  };
+
+  storage.items.forEach(item => table.appendChild(
+    createElement("tr", {},
+      createElement("td", {},
+        removeItemButton(item.watch.id)),
+      createElement("td", {"class": "align-middle"}, createTextElement(item.watch.brand)),
+      createElement("td", {"class": "align-middle"}, createTextElement(item.qty)),
+      createElement("td", {"class": "align-middle"}, createTextElement(item.price))
+    )
+  ))
+}
+
+function showAddItemDialog() {
+  const closeButtonHandler = () => {
+    itemAddDialogCloseButton.removeEventListener('click', closeButtonHandler);
+    itemAddDialogAddButton.removeEventListener('click', addButtonHandler);
+    itemAddDialog.style.display = 'none';
+  };
+
+  const addButtonHandler = () => {
+    const watchField = document.getElementById("item-add-watch");
+
+    const watchId = Number.parseInt(
+      watchField.item(watchField.selectedIndex).getAttribute("data-watch-id"));
+
+    const watchBrand = watchField.value;
+
+    const item = {
+      qty: Number.parseInt(document.getElementById("item-add-qty").value),
+      price: Number.parseFloat(document.getElementById("item-add-price").value),
+      watch: {id: watchId, brand: watchBrand}
+    };
+
+    storage.items = [...storage.items, item];
+    redrawItemsTable();
+    itemAddDialogCloseButton.removeEventListener('click', closeButtonHandler);
+    itemAddDialogAddButton.removeEventListener('click', addButtonHandler);
+    itemAddDialog.style.display = 'none';
+  };
+
+  new Promise((resolve, reject) => {
+    if (storage.watches.length > 0) {
+      resolve(storage.watches);
+    } else {
+      watchService.getAll()
+        .then(watches => {
+          storage.watches = watches;
+          storage.watches.sort((a, b) => a.id - b.id);
+          resolve(watches);
+        })
+        .catch(reject);
+    }
+  })
+    .then(watches => {
+      const selectWatch = document.getElementById("item-add-watch");
+      removeChildElements(selectWatch);
+
+      watches
+        .filter(watch => !storage.items.some(i => i.watch.id === watch.id))
+        .forEach(watch => selectWatch.appendChild(
+          createElement("option", {"data-watch-id": watch.id}, createTextElement(watch.brand))
+        ));
+    })
+    .catch(console.error)
+    .finally(() => {
+      document.getElementById("item-add-qty").value = 1;
+      document.getElementById("item-add-price").value = 0;
+      itemAddDialogCloseButton.addEventListener('click', closeButtonHandler);
+      itemAddDialogAddButton.addEventListener('click', addButtonHandler);
+      itemAddDialog.style.display = 'block';
+    });
+}

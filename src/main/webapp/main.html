@@ -418,7 +418,7 @@
 
   <!------------------------- orders begin ------------------------->
 
-  <!------------------------- order details begin ------------------->
+  <!------------------------- order details dialog begin ------------------->
   <div class="modal" tabindex="-1" role="dialog" id="order-detail-dialog">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
@@ -449,17 +449,106 @@
       </div>
     </div>
   </div>
+  <!------------------------- order details dialog end ------------------->
+
+  <!------------------------- add order dialog begin ------------------->
+  <div class="modal" tabindex="-1" role="dialog" id="order-add-dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="order-add-dialog-title">New order</h5>
+          <button
+                  type="button"
+                  class="close"
+                  id="order-add-dialog-close-button"
+          >
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row p-2">
+            <button class="btn btn-success font-weight-bolder" onclick="showAddItemDialog();">+</button>
+          </div>
+          <div class="row p-2">
+            <table class="table table-striped" id="order-add-table">
+              <thead class="thead-dark">
+              <tr>
+                <th></th>
+                <th>Brand</th>
+                <th>Quantity</th>
+                <th>Price</th>
+              </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+                  type="button"
+                  class="btn btn-primary"
+                  id="order-add-dialog-button"
+          >Add
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!------------------------- add order dialog end ------------------->
+
+  <!------------------------- add item dialog begin ------------------->
+  <div class="modal" tabindex="-1" role="dialog" id="item-add-dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="item-add-dialog-title">New Item</h5>
+          <button
+                  type="button"
+                  class="close"
+                  id="item-add-dialog-close-button"
+          >
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="row p-2">
+              <div class="col-6">
+                <label for="item-add-watch">Watch</label>
+                <select class="form-control" id="item-add-watch"></select>
+              </div>
+              <div class="col-3 text-right">
+                <label for="item-add-qty">Quantity</label>
+                <input class="form-control" type="number" id="item-add-qty">
+              </div>
+              <div class="col-3 text-right">
+                <label for="item-add-price">Price</label>
+                <input class="form-control" type="number" id="item-add-price">
+              </div>
+            </div>
+            <div class="row mt-4 p-2 ">
+              <div class="col text-right">
+                <button type="button" class="btn btn-primary" id="item-add-dialog-button">Add</button>
+              </div>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <!------------------------- add item dialog end ------------------->
 
   <div id="orders-plane">
     <h1 class="text-center">Orders</h1>
     <div>
-      <button class="btn btn-primary mb-4" id="order-add-button">
+      <button class="btn btn-primary mb-4" id="order-add-button" onclick="showAddOrderDialog();">
         Add new
       </button>
       <button class="btn btn-info mb-4" id="order-details-button" onclick="showOrderDetailsDialog();">
         Details
       </button>
-      <button class="btn btn-danger disabled mb-4" id="order-delete-button" onclick="showDeleteOrderDialog()">
+      <button class="btn btn-danger disabled mb-4" id="order-delete-button" onclick="showDeleteOrderDialog();">
         Delete
       </button>
     </div>

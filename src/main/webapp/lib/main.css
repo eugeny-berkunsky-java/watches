@@ -1,8 +1,9 @@
 #country-dialog,
-#country-dialog-delete,
 #vendor-dialog,
 #watch-dialog,
-#order-detail-dialog {
+#order-detail-dialog,
+#order-add-dialog,
+#item-add-dialog {
     display: none;
     position: fixed;
     z-index: 1;
