@@ -1,10 +1,12 @@
 package com.company.watches.web;
 
-import com.alibaba.fastjson.JSON;
 import com.company.watches.manage.CustomerManager;
 import com.company.watches.manage.ManagersContainer;
 import com.company.watches.model.Customer;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.IOException;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -12,12 +14,15 @@ import java.util.logging.Logger;
 import static com.company.watches.web.RequestWrapper.RequestMethod.*;
 
 public class CustomerController implements Controller {
-    private static Logger logger = Logger.getLogger(CustomerController.class.getName());
+    private static final Logger logger = Logger.getLogger(CustomerController.class.getName());
 
-    private CustomerManager manager;
+    private final CustomerManager manager;
+
+    private final ObjectMapper objectMapper;
 
     public CustomerController(ManagersContainer container) {
         manager = container.getCustomerManager();
+        objectMapper = new ObjectMapper();
     }
 
     @Override
@@ -38,14 +43,14 @@ public class CustomerController implements Controller {
     }
 
     private ResponseWrapper getAll() {
-        return new ResponseWrapper(JSON.toJSONString(manager.getAll()));
+        return new ResponseWrapper(toJSONString(manager.getAll()));
     }
 
     private ResponseWrapper getById(RequestWrapper rw) {
         try {
             int id = Integer.parseInt(rw.path.split("/")[1]);
             return manager.getById(id)
-                    .map(c -> new ResponseWrapper(JSON.toJSONString(c)))
+                    .map(c -> new ResponseWrapper(toJSONString(c)))
                     .orElse(ResponseWrapper.NotFound("customer not found"));
         } catch (NumberFormatException e) {
             logger.log(Level.SEVERE, "bad id", e);
@@ -55,9 +60,10 @@ public class CustomerController implements Controller {
     }
 
     private ResponseWrapper create(RequestWrapper rw) {
-        return Optional.ofNullable(JSON.parseObject(rw.payload, Customer.class))
+
+        return Optional.ofNullable(toObject(rw.payload))
                 .flatMap(c -> manager.addCustomer(c.getName()))
-                .map(c -> new ResponseWrapper(JSON.toJSONString(c)))
+                .map(c -> new ResponseWrapper(toJSONString(c)))
                 .orElse(ResponseWrapper.BadRequest("error creating customer"));
     }
 
@@ -65,11 +71,11 @@ public class CustomerController implements Controller {
         try {
             int id = Integer.parseInt(rw.path.split("/")[1]);
 
-            return Optional.ofNullable(JSON.parseObject(rw.payload, Customer.class))
+            return Optional.ofNullable(toObject(rw.payload))
                     .flatMap(c -> manager.updateCustomer(id, c.getName(), c.getDiscountCard().getId())
                             ? manager.getById(id)
                             : Optional.empty())
-                    .map(c -> new ResponseWrapper(JSON.toJSONString(c)))
+                    .map(c -> new ResponseWrapper(toJSONString(c)))
                     .orElse(ResponseWrapper.BadRequest("error updating customer"));
         } catch (NumberFormatException e) {
             logger.log(Level.SEVERE, "bad id", e);
@@ -91,6 +97,25 @@ public class CustomerController implements Controller {
         }
 
         return ResponseWrapper.BadRequest();
+    }
+
+    private Customer toObject(String data) {
+        try {
+            final Customer customer = objectMapper.readValue(data, Customer.class);
+            return customer;
+        } catch (IOException e) {
+            logger.log(Level.SEVERE, "deserialize error", e);
+            return null;
+        }
+    }
+
+    private String toJSONString(Object object) {
+        try {
+            return objectMapper.writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            logger.log(Level.SEVERE, "serialize error", e);
+            return "";
+        }
     }
 
 }
