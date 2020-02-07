@@ -16,7 +16,7 @@ public class WatchDAO implements DAO<Watch> {
         try {
             int watchId = rs.getInt("watch_id");
             String watchBrand = rs.getString("watch_brand");
-            Watch.WatchType watchType = Watch.WatchType.valueOf(rs.getString("watch_type"));
+            Watch.WatchType watchType = Watch.WatchType.of(rs.getString("watch_type"));
             BigDecimal watchPrice = rs.getBigDecimal("watch_price");
             int watchQty = rs.getInt("watch_qty");
 

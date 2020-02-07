@@ -15,6 +15,8 @@ public class ItemDAO implements DAO<Item> {
     static Item createFromResultSet(ResultSet rs) {
         try {
             int id = rs.getInt("item_id");
+            id = rs.wasNull() ? -1 : id;
+
             BigDecimal price = rs.getBigDecimal("item_price");
             int qty = rs.getInt("item_qty");
             int orderId = rs.getInt("item_order_id");

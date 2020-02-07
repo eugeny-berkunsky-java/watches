@@ -1,6 +1,7 @@
 package com.company.watches.model;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class Watch {
@@ -106,6 +107,12 @@ public class Watch {
     }
 
     public enum WatchType {
-        ANALOGUE, DIGITAL
+        ANALOGUE, DIGITAL, UNKNOWN;
+
+        public static WatchType of(String name) {
+            return Arrays.stream(WatchType.values()).anyMatch(wt -> wt.name().equals(name))
+                    ? WatchType.valueOf(name)
+                    : WatchType.UNKNOWN;
+        }
     }
 }

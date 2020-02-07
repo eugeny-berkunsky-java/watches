@@ -77,11 +77,15 @@ public class OrderDAO implements DAO<Order> {
             final Order order = createOrderFromResultSet(rs);
 
             List<Item> items = new ArrayList<>();
-            items.add(ItemDAO.createFromResultSet(rs));
 
-            while (rs.next()) {
-                items.add(ItemDAO.createFromResultSet(rs));
-            }
+            do {
+                final Item item = ItemDAO.createFromResultSet(rs);
+                if (item.getId() != -1) {
+                    items.add(item);
+                }
+
+            } while (rs.next());
+
             order.setItems(items);
 
             return Optional.of(order);
