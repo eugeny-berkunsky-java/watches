@@ -1,19 +1,17 @@
 package com.company.watches.web;
 
-
-import com.alibaba.fastjson.JSON;
 import com.company.watches.manage.CountriesManager;
 import com.company.watches.manage.ManagersContainer;
 import com.company.watches.model.Country;
+import com.company.watches.utils.JSONUtils;
 
-import java.util.List;
 import java.util.Optional;
 
 import static com.company.watches.web.RequestWrapper.RequestMethod.*;
 
 public class CountryController implements Controller {
 
-    private CountriesManager manager;
+    private final CountriesManager manager;
 
     public CountryController(ManagersContainer container) {
         manager = container.getCountriesManager();
@@ -37,9 +35,7 @@ public class CountryController implements Controller {
     }
 
     private ResponseWrapper getAll() {
-        final List<Country> countries = manager.getAll();
-
-        return new ResponseWrapper(JSON.toJSONString(countries));
+        return new ResponseWrapper(JSONUtils.toJSONString(manager.getAll()));
     }
 
     private ResponseWrapper getById(RequestWrapper request) {
@@ -47,7 +43,7 @@ public class CountryController implements Controller {
             int id = Integer.parseInt(request.path.split("/")[1]);
 
             return manager.getById(id)
-                    .map(c -> new ResponseWrapper(JSON.toJSONString(c)))
+                    .map(c -> new ResponseWrapper(JSONUtils.toJSONString(c)))
                     .orElse(ResponseWrapper.NotFound("country not found"));
 
         } catch (NumberFormatException e) {
@@ -56,9 +52,9 @@ public class CountryController implements Controller {
     }
 
     private ResponseWrapper create(RequestWrapper request) {
-        return Optional.ofNullable(JSON.parseObject(request.payload, Country.class))
+        return Optional.ofNullable(JSONUtils.toObject(request.payload, Country.class))
                 .flatMap(c -> manager.addCountry(c.getName()))
-                .map(c -> new ResponseWrapper(JSON.toJSONString(c)))
+                .map(c -> new ResponseWrapper(JSONUtils.toJSONString(c)))
                 .orElse(ResponseWrapper.BadRequest("error creating country"));
     }
 
@@ -66,11 +62,11 @@ public class CountryController implements Controller {
         try {
             int id = Integer.parseInt(request.path.split("/")[1]);
 
-            return Optional.ofNullable(JSON.parseObject(request.payload, Country.class))
+            return Optional.ofNullable(JSONUtils.toObject(request.payload, Country.class))
                     .flatMap(c -> manager.updateCountry(id, c.getName())
                             ? manager.getById(id)
                             : Optional.empty())
-                    .map(c -> new ResponseWrapper(JSON.toJSONString(c)))
+                    .map(c -> new ResponseWrapper(JSONUtils.toJSONString(c)))
                     .orElse(ResponseWrapper.BadRequest());
 
         } catch (NumberFormatException e) {
