@@ -1,18 +1,15 @@
 package com.company.watches.web;
 
-import com.alibaba.fastjson.JSON;
 import com.company.watches.manage.ManagersContainer;
 import com.company.watches.manage.VendorManager;
 import com.company.watches.model.Vendor;
+import com.company.watches.utils.JSONUtils;
 
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static com.company.watches.web.RequestWrapper.RequestMethod.*;
 
 public class VendorController implements Controller {
-    private static Logger logger = Logger.getLogger(VendorController.class.getName());
     private VendorManager manager;
 
     public VendorController(ManagersContainer container) {
@@ -37,7 +34,7 @@ public class VendorController implements Controller {
     }
 
     private ResponseWrapper getAll() {
-        return new ResponseWrapper(JSON.toJSONString(manager.getAll()));
+        return new ResponseWrapper(JSONUtils.toJSONString(manager.getAll()));
     }
 
     private ResponseWrapper getById(RequestWrapper rw) {
@@ -45,19 +42,18 @@ public class VendorController implements Controller {
             int id = Integer.parseInt(rw.path.split("/")[1]);
 
             return manager.getById(id)
-                    .map(v -> new ResponseWrapper(JSON.toJSONString(v)))
+                    .map(v -> new ResponseWrapper(JSONUtils.toJSONString(v)))
                     .orElse(ResponseWrapper.NotFound());
         } catch (NumberFormatException e) {
-            logger.log(Level.SEVERE, "bad id", e);
+            return ResponseWrapper.BadRequest();
         }
 
-        return ResponseWrapper.BadRequest();
     }
 
     private ResponseWrapper create(RequestWrapper rw) {
-        return Optional.ofNullable(JSON.parseObject(rw.payload, Vendor.class))
+        return Optional.ofNullable(JSONUtils.toObject(rw.payload, Vendor.class))
                 .flatMap(v -> manager.addVendor(v.getName(), v.getCountry().getId()))
-                .map(v -> new ResponseWrapper(JSON.toJSONString(v)))
+                .map(v -> new ResponseWrapper(JSONUtils.toJSONString(v)))
                 .orElse(ResponseWrapper.BadRequest("error creating vendor"));
     }
 
@@ -65,16 +61,15 @@ public class VendorController implements Controller {
         try {
             int id = Integer.parseInt(rw.path.split("/")[1]);
 
-            return Optional.ofNullable(JSON.parseObject(rw.payload, Vendor.class))
+            return Optional.ofNullable(JSONUtils.toObject(rw.payload, Vendor.class))
                     .flatMap(v -> manager.updateVendor(id, v.getName(), v.getCountry().getId())
                             ? manager.getById(id) : Optional.empty())
-                    .map(v -> new ResponseWrapper(JSON.toJSONString(v)))
+                    .map(v -> new ResponseWrapper(JSONUtils.toJSONString(v)))
                     .orElse(ResponseWrapper.BadRequest("error updating vendor"));
         } catch (NumberFormatException e) {
-            logger.log(Level.SEVERE, "bad id", e);
+            return ResponseWrapper.BadRequest();
         }
 
-        return ResponseWrapper.BadRequest();
     }
 
     private ResponseWrapper delete(RequestWrapper rw) {
@@ -85,10 +80,7 @@ public class VendorController implements Controller {
                     ? ResponseWrapper.OK()
                     : ResponseWrapper.NotFound();
         } catch (NumberFormatException e) {
-            logger.log(Level.SEVERE, "bad id", e);
+            return ResponseWrapper.BadRequest();
         }
-
-        return ResponseWrapper.BadRequest();
-
     }
 }
