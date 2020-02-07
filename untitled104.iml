@@ -55,20 +55,6 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
-      <library type="repository">
-        <properties maven-id="com.alibaba:fastjson:1.2.62" />
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/fastjson-1.2.62.jar!/" />
-        </CLASSES>
-        <JAVADOC>
-          <root url="jar://$MODULE_DIR$/lib/fastjson-1.2.62-javadoc.jar!/" />
-        </JAVADOC>
-        <SOURCES>
-          <root url="jar://$MODULE_DIR$/lib/fastjson-1.2.62-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
     <orderEntry type="library" name="bootstrap" level="application" />
     <orderEntry type="library" name="com.fasterxml.jackson.core:jackson-core:2.9.6" level="project" />
     <orderEntry type="library" name="com.fasterxml.jackson.core:jackson-annotations:2.9.6" level="project" />
