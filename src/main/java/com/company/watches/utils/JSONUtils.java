@@ -2,6 +2,7 @@ package com.company.watches.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -10,6 +11,11 @@ import java.util.logging.Logger;
 public class JSONUtils {
     private static final Logger logger = Logger.getLogger(JSONUtils.class.getName());
     private final static ObjectMapper objectMapper = new ObjectMapper();
+
+    static {
+        objectMapper.findAndRegisterModules();
+        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+    }
 
     public static <T> T toObject(String data, Class<T> clazz) {
         try {

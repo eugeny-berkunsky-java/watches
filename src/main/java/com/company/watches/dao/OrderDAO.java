@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,7 +24,7 @@ public class OrderDAO implements DAO<Order> {
             BigDecimal orderTotalPrice = rs.getBigDecimal("order_totalprice");
             Customer customer = CustomerDAO.createFromResultSet(rs);
 
-            return new Order(orderId, orderDate, customer, null, orderTotalPrice);
+            return new Order(orderId, orderDate, customer, Collections.emptyList(), orderTotalPrice);
         } catch (SQLException e) {
             throw new DBException(e);
         }

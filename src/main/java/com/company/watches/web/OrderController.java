@@ -1,18 +1,15 @@
 package com.company.watches.web;
 
-import com.alibaba.fastjson.JSON;
 import com.company.watches.manage.ManagersContainer;
 import com.company.watches.manage.OrdersManager;
 import com.company.watches.model.Order;
+import com.company.watches.utils.JSONUtils;
 
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static com.company.watches.web.RequestWrapper.RequestMethod.*;
 
 public class OrderController implements Controller {
-    private static Logger logger = Logger.getLogger(OrderController.class.getName());
 
     private OrdersManager manager;
 
@@ -36,7 +33,7 @@ public class OrderController implements Controller {
     }
 
     private ResponseWrapper getAll() {
-        return new ResponseWrapper(JSON.toJSONString(manager.getAll()));
+        return new ResponseWrapper(JSONUtils.toJSONString(manager.getAll()));
     }
 
     private ResponseWrapper getById(RequestWrapper rw) {
@@ -44,19 +41,17 @@ public class OrderController implements Controller {
             int id = Integer.parseInt(rw.path.split("/")[1]);
 
             return manager.getById(id)
-                    .map(o -> new ResponseWrapper(JSON.toJSONString(o)))
+                    .map(o -> new ResponseWrapper(JSONUtils.toJSONString(o)))
                     .orElse(ResponseWrapper.NotFound());
         } catch (NumberFormatException e) {
-            logger.log(Level.SEVERE, "bad id", e);
+            return ResponseWrapper.BadRequest();
         }
-
-        return ResponseWrapper.BadRequest();
     }
 
     private ResponseWrapper create(RequestWrapper rw) {
-        return Optional.ofNullable(JSON.parseObject(rw.payload, Order.class))
+        return Optional.ofNullable(JSONUtils.toObject(rw.payload, Order.class))
                 .flatMap(manager::addOrder)
-                .map(o -> new ResponseWrapper(JSON.toJSONString(o)))
+                .map(o -> new ResponseWrapper(JSONUtils.toJSONString(o)))
                 .orElse(ResponseWrapper.BadRequest("error adding order"));
     }
 
@@ -68,9 +63,7 @@ public class OrderController implements Controller {
                     ? ResponseWrapper.OK()
                     : ResponseWrapper.NotFound();
         } catch (NumberFormatException e) {
-            logger.log(Level.SEVERE, "bad id", e);
+            return ResponseWrapper.BadRequest();
         }
-
-        return ResponseWrapper.BadRequest();
     }
 }
